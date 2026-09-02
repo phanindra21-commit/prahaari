@@ -43,6 +43,20 @@ export const EVENT_CONFIDENCE_LEVELS = ["HIGH", "MEDIUM", "LOW"] as const;
 
 export const EXPLANATION_DIRECTIONS = ["INCREASES_RISK", "DECREASES_RISK"] as const;
 
+export const AUDIT_SEVERITIES = ["INFO", "WARNING", "CRITICAL"] as const;
+
+export const FIELD_REPORT_OBSERVATION_TYPES = [
+  "STRUCTURAL_DAMAGE",
+  "GROUND_CRACK",
+  "WATER_LOGGING",
+  "EROSION",
+  "LANDSLIDE_ACTIVITY",
+  "INFRASTRUCTURE_DAMAGE",
+  "OTHER",
+] as const;
+
+export const FIELD_REPORT_VERIFICATION_STATUSES = ["PENDING", "VERIFIED", "REJECTED"] as const;
+
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },
   { name: "Ganjam", state: "Odisha", primaryHazard: "coastalErosion" },

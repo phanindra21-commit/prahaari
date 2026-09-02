@@ -6,6 +6,7 @@ import priorityWeightsJson from "./priority-weights.json";
 import suitabilityAhpJson from "./suitability-ahp.json";
 import capacityNormsJson from "./capacity-norms.json";
 import exclusionCriteriaJson from "./exclusion-criteria.json";
+import permissionsJson from "./permissions.json";
 import {
   hazardWeightsSchema,
   zoneThresholdsSchema,
@@ -14,6 +15,7 @@ import {
   suitabilityAhpSchema,
   capacityNormsSchema,
   exclusionCriteriaSchema,
+  permissionsConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
   type VulnerabilityWeightsConfig,
@@ -21,6 +23,7 @@ import {
   type SuitabilityAhpConfig,
   type CapacityNormsConfig,
   type ExclusionCriteriaConfig,
+  type PermissionsConfig,
 } from "./schemas";
 
 const WEIGHT_SUM_TOLERANCE = 1e-6;
@@ -109,6 +112,35 @@ function loadExclusionCriteria(): ExclusionCriteriaConfig {
   return parseConfig(exclusionCriteriaSchema, exclusionCriteriaJson, "exclusion-criteria.json");
 }
 
+function loadPermissions(): PermissionsConfig {
+  const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
+
+  const knownPermissions = new Set(config.permissions);
+  for (const [role, granted] of Object.entries(config.roles)) {
+    for (const permission of granted) {
+      if (!knownPermissions.has(permission)) {
+        throw new Error(
+          `[shared/config] permissions.json roles.${role} grants unknown permission "${permission}" (not in the top-level permissions list)`,
+        );
+      }
+    }
+  }
+
+  const approverPermission = "recommendation:approve";
+  const approverRoles = new Set<string>(config.separationOfDuties.approverRoles);
+  for (const [role, granted] of Object.entries(config.roles)) {
+    const hasApprove = granted.includes(approverPermission);
+    const shouldHaveApprove = approverRoles.has(role);
+    if (hasApprove !== shouldHaveApprove) {
+      throw new Error(
+        `[shared/config] permissions.json separation-of-duties violation: "${approverPermission}" must be granted to exactly [${config.separationOfDuties.approverRoles.join(", ")}] (role "${role}" ${hasApprove ? "has" : "lacks"} it, expected ${shouldHaveApprove ? "to have" : "not to have"} it)`,
+      );
+    }
+  }
+
+  return config;
+}
+
 /** Validated at module-load time; importing this module throws if any config file is invalid. */
 export const hazardWeights: HazardWeightsConfig = loadHazardWeights();
 export const zoneThresholds: ZoneThresholdsConfig = loadZoneThresholds();
@@ -117,3 +149,4 @@ export const priorityWeights: PriorityWeightsConfig = loadPriorityWeights();
 export const suitabilityAhp: SuitabilityAhpConfig = loadSuitabilityAhp();
 export const capacityNorms: CapacityNormsConfig = loadCapacityNorms();
 export const exclusionCriteria: ExclusionCriteriaConfig = loadExclusionCriteria();
+export const permissionsConfig: PermissionsConfig = loadPermissions();

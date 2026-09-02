@@ -1,22 +1,17 @@
 import "dotenv/config";
-import express, { type Request, type Response } from "express";
-import cors from "cors";
-import type { HealthCheckResponse } from "@punarvas/shared";
+import { createApp } from "./app";
+import { connectDb } from "./lib/db";
+import { env } from "./lib/env";
 
-const app = express();
-const PORT = process.env.PORT ?? 4000;
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/health", (_req: Request, res: Response<HealthCheckResponse>) => {
-  res.json({
-    status: "ok",
-    service: "punarvas-api",
-    timestamp: new Date().toISOString(),
+async function main(): Promise<void> {
+  await connectDb(env.MONGODB_URI);
+  const app = createApp();
+  app.listen(env.PORT, () => {
+    console.log(`[api] PunarVas API listening on http://localhost:${env.PORT}`);
   });
-});
+}
 
-app.listen(PORT, () => {
-  console.log(`[api] PunarVas API listening on http://localhost:${PORT}`);
+main().catch((error: unknown) => {
+  console.error("[api] Failed to start:", error);
+  process.exitCode = 1;
 });

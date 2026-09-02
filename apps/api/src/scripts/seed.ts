@@ -10,10 +10,11 @@
 import "dotenv/config";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import bcrypt from "bcryptjs";
 import { Types, type AnyBulkWriteOperation } from "mongoose";
 import { z } from "zod";
 import { connectDb, disconnectDb } from "../lib/db";
+import { env } from "../lib/env";
+import { hashPassword } from "../lib/password";
 import {
   District,
   Habitation,
@@ -36,12 +37,21 @@ import {
   seedHazardEventSchema,
   seedRelocationSiteCollectionSchema,
   seedUserSchema,
-  type SeedUser,
 } from "./seedSchemas";
 
 const SEED_DIR = join(__dirname, "..", "..", "..", "..", "data", "seed");
 const isReset = process.argv.includes("--reset");
-const BCRYPT_ROUNDS = 10;
+
+/**
+ * Per-user password: an optional per-role override (SEED_PASSWORD_<ROLE>,
+ * e.g. SEED_PASSWORD_SUPER_ADMIN) falling back to the documented
+ * SEED_DEFAULT_PASSWORD (apps/api/.env.example). Never a literal secret
+ * baked into data/seed/users.json.
+ */
+function resolveSeedPassword(role: string): string {
+  const override = process.env[`SEED_PASSWORD_${role}`];
+  return override && override.length > 0 ? override : env.SEED_DEFAULT_PASSWORD;
+}
 
 function readSeedFile(fileName: string): unknown {
   const raw = readFileSync(join(SEED_DIR, fileName), "utf-8");
@@ -320,12 +330,24 @@ async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId
   recordSummary("relocationSites", inserted, updated);
 }
 
-async function seedUsers(districtByLgdCode: Map<string, Types.ObjectId>): Promise<SeedUser[]> {
+interface SeededCredential {
+  role: string;
+  email: string;
+  password: string;
+}
+
+async function seedUsers(
+  districtByLgdCode: Map<string, Types.ObjectId>,
+): Promise<SeededCredential[]> {
   const users = z.array(seedUserSchema).parse(readSeedFile("users.json"));
 
   const ops: AnyBulkWriteOperation<UserDoc>[] = [];
+  const credentials: SeededCredential[] = [];
+
   for (const user of users) {
-    const passwordHash = await bcrypt.hash(user.devPassword, BCRYPT_ROUNDS);
+    const password = resolveSeedPassword(user.role);
+    const passwordHash = await hashPassword(password);
+    credentials.push({ role: user.role, email: user.email, password });
 
     const scope: { state?: string; districtId?: Types.ObjectId } = {};
     if (user.scope.state) {
@@ -359,7 +381,7 @@ async function seedUsers(districtByLgdCode: Map<string, Types.ObjectId>): Promis
 
   const result = await User.bulkWrite(ops);
   recordSummary("users", result.upsertedCount, result.matchedCount);
-  return users;
+  return credentials;
 }
 
 function printSummaryTable(): void {
@@ -369,21 +391,16 @@ function printSummaryTable(): void {
   console.log(`[seed] Total documents processed: ${totalDocs}\n`);
 }
 
-function printUserCredentials(users: SeedUser[]): void {
+function printUserCredentials(credentials: SeededCredential[]): void {
   console.log(
-    "[seed] Dev-only login credentials (synthetic demo DB — never reuse these passwords for anything real):",
+    "[seed] Dev-only login credentials (synthetic demo DB — sourced from SEED_DEFAULT_PASSWORD / SEED_PASSWORD_<ROLE> env vars, never reuse for anything real):",
   );
-  console.table(users.map((u) => ({ role: u.role, email: u.email, password: u.devPassword })));
+  console.table(credentials);
 }
 
 async function main(): Promise<void> {
-  const mongoUri = process.env.MONGODB_URI;
-  if (!mongoUri) {
-    throw new Error("[seed] MONGODB_URI is not set — copy apps/api/.env.example to .env first.");
-  }
-
-  await connectDb(mongoUri);
-  console.log(`[seed] Connected to ${mongoUri}`);
+  await connectDb(env.MONGODB_URI);
+  console.log(`[seed] Connected to ${env.MONGODB_URI}`);
 
   if (isReset) {
     await resetCollections();

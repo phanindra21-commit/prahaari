@@ -33,6 +33,19 @@ export type EventConfidence = "HIGH" | "MEDIUM" | "LOW";
 
 export type ExplanationDirection = "INCREASES_RISK" | "DECREASES_RISK";
 
+export type AuditSeverity = "INFO" | "WARNING" | "CRITICAL";
+
+export type FieldReportObservationType =
+  | "STRUCTURAL_DAMAGE"
+  | "GROUND_CRACK"
+  | "WATER_LOGGING"
+  | "EROSION"
+  | "LANDSLIDE_ACTIVITY"
+  | "INFRASTRUCTURE_DAMAGE"
+  | "OTHER";
+
+export type FieldReportVerificationStatus = "PENDING" | "VERIFIED" | "REJECTED";
+
 export interface HealthCheckResponse {
   status: "ok";
   service: string;

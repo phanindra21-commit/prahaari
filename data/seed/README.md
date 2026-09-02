@@ -18,7 +18,7 @@ for anyone to run a working demo of the app.
 | `hazard-events.json`               | Real historical events (see Provenance below)                 |
 | `wayanad-relocation-sites.geojson` | 10 candidate sites, 3 deliberately failing exclusion          |
 | `ganjam-relocation-sites.geojson`  | 10 candidate sites, 3 deliberately failing exclusion          |
-| `users.json`                       | 5 dev users, one per role, with dev-only passwords            |
+| `users.json`                       | 6 dev users covering all 5 roles (2x DISTRICT_OFFICER)        |
 
 ## Provenance
 
@@ -64,10 +64,24 @@ real `overallSuitabilityScore` and `carryingCapacity` computed against the
 actual weights/norms in `packages/shared/src/config/`, not arbitrary
 numbers.
 
-## Dev user passwords
+## Users
 
-`users.json` has a `devPassword` field per user — `seed.ts` hashes it into
-`passwordHash` on insert and then prints the plaintext table to the
-console so anyone running the seed script can log in locally. These are
-**dev-only credentials for a synthetic demo database** and are expected to
-be public in this repo; never reuse them for anything real.
+`users.json` holds 6 users: one each for SUPER_ADMIN, STATE_ADMIN (scoped
+to Kerala), ANALYST, and FIELD_VOLUNTEER (scoped to Ganjam district), plus
+**two** DISTRICT_OFFICER accounts — one scoped to Wayanad, one to Ganjam —
+since `recommendation:approve` is a DISTRICT_OFFICER-only permission
+(`docs/SECURITY.md` Section 4) and both pilot districts need an approver
+for the demo. This deliberately reads as "6 users, not 5" against a
+literal one-per-role count; the second officer account is what makes
+Ganjam's recommendations approvable at all.
+
+No `users.json` entry carries a password. `seed.ts` resolves each user's
+password from environment variables: `SEED_DEFAULT_PASSWORD`
+(`apps/api/.env.example`, documented dev default
+`PunarVas@DevDefault123`) unless a per-role override
+`SEED_PASSWORD_<ROLE>` is set (e.g. `SEED_PASSWORD_SUPER_ADMIN`). The
+resolved passwords are hashed with bcrypt (cost 12) before being stored,
+and the plaintext values are printed as a table at the end of the seed
+run so anyone running it can log in locally. These are **dev-only
+credentials for a synthetic demo database**; never reuse them for
+anything real.

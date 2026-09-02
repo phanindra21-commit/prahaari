@@ -13,6 +13,9 @@ import {
   HAZARD_EVENT_SOURCES,
   EVENT_CONFIDENCE_LEVELS,
   EXPLANATION_DIRECTIONS,
+  AUDIT_SEVERITIES,
+  FIELD_REPORT_OBSERVATION_TYPES,
+  FIELD_REPORT_VERIFICATION_STATUSES,
 } from "../constants";
 
 /** 24-character hex string — the wire representation of a Mongoose ObjectId. */
@@ -31,6 +34,9 @@ export const dataProvenanceSchema = z.enum(DATA_PROVENANCE_VALUES);
 export const hazardEventSourceSchema = z.enum(HAZARD_EVENT_SOURCES);
 export const eventConfidenceSchema = z.enum(EVENT_CONFIDENCE_LEVELS);
 export const explanationDirectionSchema = z.enum(EXPLANATION_DIRECTIONS);
+export const auditSeveritySchema = z.enum(AUDIT_SEVERITIES);
+export const fieldReportObservationTypeSchema = z.enum(FIELD_REPORT_OBSERVATION_TYPES);
+export const fieldReportVerificationStatusSchema = z.enum(FIELD_REPORT_VERIFICATION_STATUSES);
 
 const longitudeSchema = z.number().min(-180).max(180);
 const latitudeSchema = z.number().min(-90).max(90);

@@ -16,8 +16,18 @@ corresponding table below to match — never the other way around.
 Core risk model (applies throughout):
 
 ```
-Risk = (Hazard Intensity x Exposure x Vulnerability) / Coping Capacity
+Risk = (Hazard Intensity x Exposure x VulnerabilityIndex) / (1 + CopingCapacity)
 ```
+
+`VulnerabilityIndex` (`VI`) and `CopingCapacity` are each independent 0–1
+indices (Sections 2.1 and 2.2). `CopingCapacity` is added to **1** in the
+denominator, not used as a bare divisor: this means the formula can never
+divide by zero, Risk can never go negative, a habitation with zero
+measured coping capacity yields the un-discounted `Risk = H x E x VI`,
+and higher coping capacity smoothly discounts Risk (capped at halving it
+when `CopingCapacity = 1`). `CopingCapacity` is deliberately used in this
+one place only — see Section 2.2 for why it is not also subtracted
+inside `VI`.
 
 ---
 
@@ -171,26 +181,39 @@ increase combined risk beyond what any single hazard's rating captures
 qualitatively different risk profile than one that is Orange for flood
 alone).
 
-Only habitations intersecting a **Red Zone** enter the vulnerability
-assessment and Relocation Priority Index pipeline (Sections 2–3).
-Habitations in Orange/Yellow/Green zones are tracked but do not generate
-relocation recommendations.
+Habitations intersecting a **Red or Orange Zone** enter the vulnerability
+assessment and Relocation Priority Index pipeline (Sections 2–3) — it is
+the RPI buckets computed there (Immediate / Short-term / Medium-term,
+Section 3.1), not the zone class alone, that perform the triage of how
+urgently each one needs to move. Habitations in Yellow/Green zones are
+tracked but do not enter the pipeline or generate recommendations.
+
+Gating the pipeline on Red zones alone would make the platform
+**reactive**: it would only ever look at habitations already at the
+highest hazard tier, deferring assessment until conditions had already
+deteriorated to the worst class. Admitting Orange-zone habitations too —
+and trusting the RPI to correctly bucket the less-urgent ones into
+Medium-term rather than dropping them from consideration — is what makes
+proactive, before-the-disaster triage possible, which is this platform's
+entire stated purpose (see `CLAUDE.md` Project Purpose).
 
 ---
 
 ## 2. Vulnerability Index
 
-For each habitation within a Red Zone, a Vulnerability Index (`VI`) is
-computed as a weighted combination of four positive dimensions, reduced
-by coping capacity:
+For each habitation within a Red or Orange Zone (Section 1.3), a
+Vulnerability Index (`VI`) is computed as a weighted combination of four
+dimensions, clamped to [0, 1]:
 
 ```
-VI = W_d * V_demographic + W_s * V_socioeconomic + W_st * V_structural
-     + W_a * V_accessibility - W_c * CopingCapacity
+VI = clamp( W_d * V_demographic + W_s * V_socioeconomic
+            + W_st * V_structural + W_a * V_accessibility ,  0, 1 )
 ```
 
-Each dimension score is itself a weighted sum of its indicators, each
-normalized to 0–1.
+`CopingCapacity` is deliberately **not** part of this formula — it is
+computed as its own independent index and used only as the Risk divisor
+(Section 0); see Section 2.2 for why. Each dimension score is itself a
+weighted sum of its indicators, each normalized to 0–1.
 
 ### 2.1 Dimension and Indicator Weights
 
@@ -216,16 +239,6 @@ Dimension weights sum to 1.0; each dimension's indicator weights sum to
 |                            |        | Mobile network coverage (inverse)     | 0.20             |
 |                            |        | Evacuation route redundancy (inverse) | 0.20             |
 
-**Coping capacity** (`W_c` = 0.25, applied as a **reducing** term, not
-pooled into the sum above):
-
-| Indicator                                    | Weight |
-| -------------------------------------------- | ------ |
-| SDRF response time (inverse)                 | 0.25   |
-| Cyclone/flood shelter within 2 km (presence) | 0.30   |
-| Community task force (presence)              | 0.20   |
-| Early-warning coverage                       | 0.25   |
-
 **Justification.** Dimension weights follow standard disaster-vulnerability
 framing (NDMA vulnerability assessment guidance, UNDRR/Sendai Framework
 vulnerability indicators): **socio-economic status is weighted highest
@@ -239,9 +252,36 @@ service access and evacuation speed. **Demographic** composition (0.20)
 is weighted lowest of the four not because it is unimportant, but because
 much of its effect (e.g. poverty correlating with larger dependent-age
 shares) is already partially captured by the socio-economic dimension —
-weighting it too heavily would double-count that signal. Within
-coping capacity, shelter presence is weighted highest (0.30) as the single
-most concrete, verifiable mitigation asset a habitation can have.
+weighting it too heavily would double-count that signal.
+
+### 2.2 Coping Capacity
+
+`CopingCapacity` is computed independently as its own weighted index of
+four indicators — source of truth: the `copingCapacity` block in
+`packages/shared/src/config/vulnerability-weights.json`, a **sibling of**
+`dimensions`, not a fifth dimension inside it:
+
+```
+CopingCapacity = clamp( sum( W_k * Indicator_k ), 0, 1 )   for k in coping-capacity indicators
+```
+
+| Indicator                                    | Weight |
+| -------------------------------------------- | ------ |
+| SDRF response time (inverse)                 | 0.25   |
+| Cyclone/flood shelter within 2 km (presence) | 0.30   |
+| Community task force (presence)              | 0.20   |
+| Early-warning coverage                       | 0.25   |
+
+`CopingCapacity` is used **only** as the divisor in the top-level `Risk`
+formula (Section 0: `Risk = H x E x VI / (1 + CopingCapacity)`) — never
+subtracted from or blended into `VI`. Combining the same signal in two
+places (subtracted inside `VI` _and_ divided into `Risk`) would
+double-count coping capacity's effect and systematically understate risk
+for habitations that are well-resourced but still highly exposed and
+vulnerable in every other respect. Confining it to a single divisor role
+keeps its effect traceable to one place in the model. Shelter presence is
+weighted highest (0.30) among its indicators as the single most concrete,
+verifiable mitigation asset a habitation can have.
 
 ---
 
@@ -343,6 +383,16 @@ geometric-mean method, per `packages/shared/src/config/suitability-ahp.json`:
 per Saaty's table) — comfortably below the 0.10 acceptance threshold; the
 config loader asserts `consistencyRatio < 0.10` at load time and refuses
 to start if a future edit to the pairwise matrix breaks consistency.
+
+**Honesty note:** this pairwise matrix was constructed to be internally
+consistent (hence the low CR) as a defensible starting point, not derived
+from an expert-elicitation survey — it is pending a formal
+pairwise-comparison round with state DM officials to replace it with
+judgments actually elicited from domain experts. The consistency
+assertion is a floor, not a substitute for that process: it guarantees
+the matrix is _self-consistent_, not that its rankings are _correct_. Any
+future matrix — whether from this team or from the expert round — must
+still clear `consistencyRatio < 0.10` for the loader to accept it.
 
 **Justification.** The pairwise judgments rank criteria by how
 catastrophic or how hard-to-remedy a poor outcome on that criterion would

@@ -141,6 +141,5 @@ export const seedUserSchema = z.object({
     state: z.string().optional(),
     districtLgdCode: z.string().optional(),
   }),
-  devPassword: z.string().min(8),
 });
 export type SeedUser = z.infer<typeof seedUserSchema>;

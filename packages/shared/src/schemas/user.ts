@@ -17,12 +17,24 @@ export const userSchema = z
     scope: userScopeSchema,
     isActive: z.boolean(),
     lastLoginAt: z.date().nullable(),
+    tokenVersion: z.number().int().nonnegative(),
+    failedLoginAttempts: z.number().int().nonnegative(),
+    lockedUntil: z.date().nullable(),
   })
   .merge(timestampsSchema);
 export type User = z.infer<typeof userSchema>;
 
 export const createUserInputSchema = userSchema
-  .omit({ _id: true, createdAt: true, updatedAt: true, lastLoginAt: true, passwordHash: true })
+  .omit({
+    _id: true,
+    createdAt: true,
+    updatedAt: true,
+    lastLoginAt: true,
+    passwordHash: true,
+    tokenVersion: true,
+    failedLoginAttempts: true,
+    lockedUntil: true,
+  })
   .extend({
     password: z.string().min(8),
   });

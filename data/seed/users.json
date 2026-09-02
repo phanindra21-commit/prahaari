@@ -3,8 +3,7 @@
     "name": "Anjali Menon",
     "email": "superadmin@punarvas.gov.in",
     "role": "SUPER_ADMIN",
-    "scope": {},
-    "devPassword": "SuperAdmin@2025"
+    "scope": {}
   },
   {
     "name": "Ravi Varma",
@@ -12,8 +11,7 @@
     "role": "STATE_ADMIN",
     "scope": {
       "state": "Kerala"
-    },
-    "devPassword": "StateAdmin@2025"
+    }
   },
   {
     "name": "Priya Nair",
@@ -22,15 +20,25 @@
     "scope": {
       "state": "Kerala",
       "districtLgdCode": "DEMO-WYD-001"
-    },
-    "devPassword": "DistrictOfficer@2025"
+    }
+  },
+  {
+    "name": "Satyabrata Mohanty",
+    "email": "officer.ganjam@punarvas.gov.in",
+    "role": "DISTRICT_OFFICER",
+    "scope": {
+      "state": "Odisha",
+      "districtLgdCode": "DEMO-GJM-001"
+    }
   },
   {
     "name": "Suresh Babu",
     "email": "analyst@punarvas.gov.in",
     "role": "ANALYST",
-    "scope": {},
-    "devPassword": "Analyst@2025"
+    "scope": {
+      "state": "Kerala",
+      "districtLgdCode": "DEMO-WYD-001"
+    }
   },
   {
     "name": "Debika Patra",
@@ -39,7 +47,6 @@
     "scope": {
       "state": "Odisha",
       "districtLgdCode": "DEMO-GJM-001"
-    },
-    "devPassword": "FieldVolunteer@2025"
+    }
   }
 ]

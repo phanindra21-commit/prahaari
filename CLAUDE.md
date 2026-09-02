@@ -34,8 +34,12 @@ identify multi-hazard Red Zones
 **Core risk model:**
 
 ```
-Risk = (Hazard Intensity x Exposure x Vulnerability) / Coping Capacity
+Risk = (Hazard Intensity x Exposure x VulnerabilityIndex) / (1 + CopingCapacity)
 ```
+
+(`CopingCapacity` is a 0–1 index added to 1 in the denominator so the
+formula never divides by zero and Risk is never negative — see
+`docs/METHODOLOGY.md` Section 0/2.2.)
 
 **Hazards in scope:** landslide, flood, coastal erosion, cloudburst.
 
@@ -47,7 +51,8 @@ Risk = (Hazard Intensity x Exposure x Vulnerability) / Coping Capacity
 Full formulas, thresholds, and index definitions live in
 `docs/METHODOLOGY.md`. System design and data flow live in
 `docs/ARCHITECTURE.md`. Source datasets are catalogued in
-`docs/DATA_SOURCES.md`.
+`docs/DATA_SOURCES.md`. Auth, RBAC, and the audit trail are covered in
+`docs/SECURITY.md`.
 
 ## Tech Stack
 
@@ -66,13 +71,16 @@ SIH/
 ├── apps/
 │   ├── web/            React + Vite frontend (map UI, officer workbench)
 │   └── api/             Express API (auth, CRUD, orchestrates services/ml)
-│       └── src/models/    Mongoose models (11 collections, see below)
+│       └── src/models/    Mongoose models (13 collections, see below)
+│       └── src/lib/        JWT, password hashing, sessions, audit(), RBAC helpers
+│       └── src/middleware/ authenticate, requirePermission, requireScope, rate limits
+│       └── src/routes/     /api/v1/auth/**, /api/v1/audit/**
 │       └── src/scripts/   seed.ts + its Zod schemas for data/seed/
 ├── services/
 │   └── ml/               FastAPI service: hazard/vulnerability/suitability models
 ├── packages/
 │   └── shared/           Shared TS types/constants used by web + api
-│       └── src/config/     Single-source-of-truth weight/norm JSON + loader
+│       └── src/config/     Single-source-of-truth weight/norm/permission JSON + loader
 │       └── src/schemas/    Zod schemas mirroring every Mongoose model
 ├── data/
 │   ├── raw/               Unmodified source datasets (gitignored, see data/README.md)
@@ -81,6 +89,7 @@ SIH/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── METHODOLOGY.md
+│   ├── SECURITY.md
 │   └── DATA_SOURCES.md
 ├── CLAUDE.md              (this file)
 ├── README.md
@@ -112,14 +121,41 @@ SIH/
   requirement, not just a coding style note — see `docs/METHODOLOGY.md` and
   the human-in-the-loop principle in `docs/ARCHITECTURE.md`.
 
+### Auth Conventions
+
+Full design in `docs/SECURITY.md` — this is the enforceable rule:
+
+- **Every state-changing route (`apps/api`) must be wrapped in
+  `requirePermission('resource:action')` AND `requireScope()`, in that
+  order, after `authenticate`.** `requirePermission` answers "can this
+  role ever do this"; `requireScope()` answers "which specific rows" by
+  attaching a Mongo filter fragment to `req.scopeFilter` that must be
+  merged into the query _before_ it runs — never as a post-hoc check on
+  already-fetched documents. Neither middleware alone is sufficient: a
+  route with only `requirePermission` lets any `DISTRICT_OFFICER` touch
+  any district's data; a route with only `requireScope` lets any
+  authenticated role (including `FIELD_VOLUNTEER`) attempt writes it has
+  no business making.
+- The RBAC matrix is data, not code: `packages/shared/src/config/permissions.json`,
+  same single-source-of-truth pattern as the weight configs. Add a new
+  permission there (and to the role grant lists) before wiring a route to
+  it — never hardcode a role check inline in a route handler.
+- Passwords: bcrypt cost 12 (`apps/api/src/lib/password.ts`). Never
+  return `passwordHash` from a query (`select: false` on the schema
+  field) — always go through `User.toSafeJSON()`.
+- Every officer/system action that changes state gets an audit entry via
+  `apps/api/src/lib/audit.ts`'s `audit()` — never write to `AuditLog`
+  any other way (the model actively rejects every mutation path except a
+  plain insert).
+
 ### MongoDB Collection Naming Conventions
 
 - Collection names are **plural, lowerCamelCase**: `users`, `districts`,
   `habitations`, `hazardZones`, `hazardEvents`, `assessments`,
   `relocationSites`, `recommendations`, `decisions`, `auditLogs`,
-  `scenarioRuns` — the full list of 11 collections, each with a Mongoose
-  model in `apps/api/src/models/` and a matching Zod schema in
-  `packages/shared/src/schemas/`.
+  `scenarioRuns`, `refreshTokens`, `fieldReports` — the full list of 13
+  collections, each with a Mongoose model in `apps/api/src/models/` and a
+  matching Zod schema in `packages/shared/src/schemas/`.
 - Every document has `createdAt` / `updatedAt` (Mongoose timestamps).
 - Every document that represents an officer-reviewable recommendation
   carries a `status` field with an explicit enum (e.g.
@@ -145,8 +181,14 @@ completed.
       both the Node and Python sides); idempotent seed script
       (`npm run seed` / `seed:reset`) loading ~130 synthetic-but-plausible
       documents for Wayanad and Ganjam from `data/seed/`.
-- [ ] **Step 3 — Auth & officer accounts:** JWT auth, role-based access
-      (officer/admin/viewer), user model, login flow.
+- [x] **Step 3 — Auth, RBAC, audit trail:** JWT access (15m) + rotating
+      refresh tokens (7d, hashed, reuse detection revokes the whole
+      family) via `/api/v1/auth/**`; bcrypt cost-12 passwords, account
+      lockout, IP+email rate limiting; RBAC permission matrix
+      (`packages/shared/src/config/permissions.json`) enforced by
+      `requirePermission` + `requireScope` (row-level, pre-query
+      filtering); hash-chained, append-only, tamper-evident `AuditLog`
+      with `/api/v1/audit/**`. See `docs/SECURITY.md`.
 - [ ] **Step 4 — Hazard zoning (ML):** Weighted-overlay + ML susceptibility
       pipeline in `services/ml`, producing Red/Orange/Yellow/Green zone
       polygons per `docs/METHODOLOGY.md`.
@@ -167,8 +209,11 @@ completed.
 - [ ] **Step 11 — Officer decision workbench:** Web UI where an officer
       reviews a recommendation (hazard, vulnerability, RPI, candidate
       sites, capacity) and approves/overrides with mandatory justification.
-- [ ] **Step 12 — Audit trail:** Append-only audit log of every officer
-      decision, with full before/after state, surfaced in an audit view.
+- [ ] **Step 12 — Audit trail UI:** The append-only, hash-chained
+      `AuditLog` backend and `/api/v1/audit/**` API already exist (Step 3)
+      — this step is the officer-facing audit view (filterable table,
+      chain-verification indicator) in `apps/web`, plus wiring
+      `Decision`-specific before/after snapshots once Step 11 exists.
 - [ ] **Step 13 — Explainability:** SHAP-based explanations surfaced
       alongside every ML-driven score shown to the officer.
 - [ ] **Step 14 — Deployment & demo hardening:** Production build/deploy

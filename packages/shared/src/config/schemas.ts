@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { USER_ROLES } from "../constants";
 
 const zoneClassEnum = z.enum(["Red", "Orange", "Yellow", "Green"]);
 
@@ -57,8 +58,7 @@ export const vulnerabilityWeightsSchema = z.object({
     accessibility: vulnerabilityDimensionSchema,
   }),
   copingCapacity: z.object({
-    weight: z.number().min(0).max(1),
-    mode: z.literal("REDUCING"),
+    usage: z.literal("RISK_DIVISOR_ONLY"),
     indicators: indicatorWeightsSchema,
   }),
 });
@@ -153,3 +153,23 @@ export const exclusionCriteriaSchema = z.object({
     .min(1),
 });
 export type ExclusionCriteriaConfig = z.infer<typeof exclusionCriteriaSchema>;
+
+const permissionStringSchema = z
+  .string()
+  .regex(/^[a-zA-Z]+:[a-zA-Z]+$/, "Permission strings must be 'resource:action'");
+
+const roleKeysShape = Object.fromEntries(
+  USER_ROLES.map((role) => [role, z.array(permissionStringSchema)]),
+) as Record<(typeof USER_ROLES)[number], z.ZodArray<typeof permissionStringSchema>>;
+
+export const permissionsConfigSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  permissions: z.array(permissionStringSchema).min(1),
+  roles: z.object(roleKeysShape),
+  separationOfDuties: z.object({
+    note: z.string(),
+    approverRoles: z.array(z.enum(USER_ROLES)).min(1),
+  }),
+});
+export type PermissionsConfig = z.infer<typeof permissionsConfigSchema>;
