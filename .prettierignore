@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+venv
+.venv
+*.tsbuildinfo
+data/raw
+data/processed

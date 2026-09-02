@@ -1,0 +1,37 @@
+# Data Sources
+
+Real Indian government/open datasets used (or planned to be used) by
+PunarVas. Every dataset placed under `data/raw/` should be traceable back
+to a row in this table. See `data/README.md` for provenance-recording
+conventions.
+
+| Source                                                                                                       | Provides                                                                                                                                            | Format                                                                                      | Licence                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Bhuvan (NRSC/ISRO)** — [bhuvan.nrsc.gov.in](https://bhuvan.nrsc.gov.in)                                    | Satellite imagery, land use/land cover (LULC), thematic layers (geomorphology, geology, soil), administrative boundaries                            | GeoTIFF (raster), Shapefile/WMS (vector)                                                    | Government of India Open Government Data (data.gov.in-aligned) licence; some layers require registration/approval for download |
+| **GSI Landslide Inventory** — Geological Survey of India Bhukosh / National Landslide Susceptibility Mapping | Historical landslide occurrence points/polygons, geology and lithology layers                                                                       | Shapefile / CSV (lat-long points)                                                           | Government of India; GSI data use terms (attribution required)                                                                 |
+| **IMD Rainfall Data** — India Meteorological Department                                                      | Gridded daily/sub-daily rainfall, historical extreme rainfall events (for cloudburst analysis)                                                      | NetCDF / gridded ASCII / CSV                                                                | IMD data policy — some products open, high-resolution real-time products may require request/subscription                      |
+| **CWC Flood Data** — Central Water Commission                                                                | Flood forecasting sites, historical flood extents, river gauge/discharge data                                                                       | CSV, Shapefile (flood extent polygons)                                                      | Government of India Open Government Data                                                                                       |
+| **Census of India 2011** — [censusindia.gov.in](https://censusindia.gov.in)                                  | Village/town-level demographic, socio-economic, housing, and amenities data (population, literacy, SC/ST %, housing material, household size)       | CSV / Excel (Primary Census Abstract, House-listing tables), Shapefile (village boundaries) | Government of India Open Government Data; free for research/public use                                                         |
+| **LGD (Local Government Directory)** — [lgdirectory.gov.in](https://lgdirectory.gov.in)                      | Standard habitation/village/ward codes used to uniquely identify and link habitations across datasets                                               | CSV / REST API (JSON)                                                                       | Government of India Open Government Data                                                                                       |
+| **SRTM DEM** — USGS / NASA Shuttle Radar Topography Mission                                                  | 30m global digital elevation model (slope, aspect, elevation derivatives)                                                                           | GeoTIFF                                                                                     | Public domain (NASA/USGS open data)                                                                                            |
+| **CartoDEM** — NRSC/ISRO                                                                                     | 30m/10m Indian-subcontinent DEM (higher accuracy alternative to SRTM for India)                                                                     | GeoTIFF                                                                                     | Government of India Open Government Data, via Bhuvan                                                                           |
+| **OpenStreetMap (OSM)** — [openstreetmap.org](https://www.openstreetmap.org)                                 | Road network, settlements, points of interest (schools, hospitals, water bodies) — used for accessibility and infrastructure-proximity calculations | Vector (PBF / GeoJSON via Overpass API)                                                     | Open Database License (ODbL) — attribution + share-alike required                                                              |
+
+## Notes on Use
+
+- **Coastal erosion (Ganjam pilot):** shoreline change-rate data is
+  typically derived from a time series of Bhuvan/satellite imagery rather
+  than a single downloadable dataset — this is computed, not sourced
+  directly, and the derivation method should be documented in
+  `data/processed/` once implemented (Step 4 of the Build Roadmap).
+- **Habitation identity:** LGD codes are the canonical join key across
+  Census, hazard, and site datasets in this project — every `Habitation`
+  document in MongoDB should carry its LGD code (see the MongoDB naming
+  conventions in `CLAUDE.md`).
+- **Licence compliance:** OSM's ODbL share-alike clause and GSI/IMD
+  attribution requirements apply to any derived layer published or
+  demoed publicly — retain attribution in the web UI's data/credits
+  section (added in a later build step).
+- This table will grow as later build steps (Step 4 onward) integrate
+  each source; add a row here before writing an ingestion script against
+  a new source.
