@@ -1,0 +1,50 @@
+{
+  "modelVersion": "hazard-weights-v1",
+  "hazards": {
+    "landslide": {
+      "factors": {
+        "slope": 0.2,
+        "lithology": 0.16,
+        "landCover": 0.13,
+        "antecedentRainfallIndex": 0.13,
+        "soilDepth": 0.1,
+        "distanceToDrainage": 0.09,
+        "distanceToRoadCut": 0.08,
+        "historicalIncidentDensity": 0.06,
+        "curvature": 0.03,
+        "aspect": 0.02
+      }
+    },
+    "flood": {
+      "factors": {
+        "elevation": 0.2,
+        "rainfallIntensity": 0.18,
+        "distanceToRiver": 0.15,
+        "twi": 0.13,
+        "drainageDensity": 0.11,
+        "landCover": 0.1,
+        "soilInfiltration": 0.08,
+        "historicalInundation": 0.05
+      }
+    },
+    "coastalErosion": {
+      "factors": {
+        "shorelineChangeRate": 0.3,
+        "elevation": 0.2,
+        "waveEnergy": 0.18,
+        "geomorphology": 0.15,
+        "tidalRange": 0.1,
+        "mangroveDuneBufferPresence": 0.07
+      }
+    },
+    "cloudburst": {
+      "factors": {
+        "orographicIndex": 0.3,
+        "historicalCloudburstDensity": 0.25,
+        "slope": 0.2,
+        "elevation": 0.15,
+        "drainageCapacity": 0.1
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "modelVersion": "capacity-norms-v1",
+  "water": {
+    "lpcd": 55,
+    "source": "Jal Jeevan Mission / MoHUA rural basic service level benchmark",
+    "defaultAvgHouseholdSize": 4.8,
+    "stateAvgHouseholdSize": {
+      "Kerala": 4.3,
+      "Odisha": 4.6
+    }
+  },
+  "land": {
+    "plotAreaPerHouseholdSqm": 100,
+    "infrastructureOverheadFactor": 1.5,
+    "effectiveLandPerHouseholdSqm": 150
+  },
+  "education": {
+    "rte": {
+      "primarySchoolMaxDistanceKm": 1,
+      "upperPrimarySchoolMaxDistanceKm": 3,
+      "pupilTeacherRatioPrimary": 30,
+      "pupilTeacherRatioUpperPrimary": 35,
+      "schoolAgeChildrenShareOfPopulation": 0.18
+    }
+  },
+  "health": {
+    "iphs": {
+      "subCentrePopulationNormPlains": 5000,
+      "subCentrePopulationNormHillyTribal": 3000,
+      "phcPopulationNormPlains": 30000,
+      "phcPopulationNormHillyTribal": 20000,
+      "chcPopulationNormPlains": 120000,
+      "chcPopulationNormHillyTribal": 80000
+    }
+  },
+  "access": {
+    "allWeatherRoadMaxDistanceMeters": 500,
+    "householdsPerAccessPointCapacity": 250
+  }
+}

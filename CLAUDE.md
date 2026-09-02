@@ -66,10 +66,14 @@ SIH/
 ├── apps/
 │   ├── web/            React + Vite frontend (map UI, officer workbench)
 │   └── api/             Express API (auth, CRUD, orchestrates services/ml)
+│       └── src/models/    Mongoose models (11 collections, see below)
+│       └── src/scripts/   seed.ts + its Zod schemas for data/seed/
 ├── services/
 │   └── ml/               FastAPI service: hazard/vulnerability/suitability models
 ├── packages/
 │   └── shared/           Shared TS types/constants used by web + api
+│       └── src/config/     Single-source-of-truth weight/norm JSON + loader
+│       └── src/schemas/    Zod schemas mirroring every Mongoose model
 ├── data/
 │   ├── raw/               Unmodified source datasets (gitignored, see data/README.md)
 │   ├── processed/         Derived/cleaned layers (gitignored, regenerate from raw/)
@@ -110,9 +114,12 @@ SIH/
 
 ### MongoDB Collection Naming Conventions
 
-- Collection names are **plural, lowerCamelCase**: `habitations`,
-  `hazardZones`, `vulnerabilityAssessments`, `relocationSites`,
-  `carryingCapacityAssessments`, `officerDecisions`, `auditLogs`, `users`.
+- Collection names are **plural, lowerCamelCase**: `users`, `districts`,
+  `habitations`, `hazardZones`, `hazardEvents`, `assessments`,
+  `relocationSites`, `recommendations`, `decisions`, `auditLogs`,
+  `scenarioRuns` — the full list of 11 collections, each with a Mongoose
+  model in `apps/api/src/models/` and a matching Zod schema in
+  `packages/shared/src/schemas/`.
 - Every document has `createdAt` / `updatedAt` (Mongoose timestamps).
 - Every document that represents an officer-reviewable recommendation
   carries a `status` field with an explicit enum (e.g.
@@ -131,9 +138,13 @@ completed.
 - [x] **Step 1 — Scaffold:** Monorepo structure, npm workspaces, hello-world
       apps (web/api/ml), shared package, docs (this file, ARCHITECTURE,
       METHODOLOGY, DATA_SOURCES), lint/format tooling, git init.
-- [ ] **Step 2 — Data ingestion & schemas:** MongoDB schemas (Mongoose
-      models) for habitations, hazard zones, sites; Zod schemas mirroring
-      them in `packages/shared`; seed data for Wayanad and Ganjam.
+- [x] **Step 2 — Data ingestion & schemas:** 11 Mongoose models
+      (`apps/api/src/models/`) with matching Zod schemas in
+      `packages/shared/src/schemas/`; single-source-of-truth weight/norm
+      config in `packages/shared/src/config/` (loaded and validated by
+      both the Node and Python sides); idempotent seed script
+      (`npm run seed` / `seed:reset`) loading ~130 synthetic-but-plausible
+      documents for Wayanad and Ganjam from `data/seed/`.
 - [ ] **Step 3 — Auth & officer accounts:** JWT auth, role-based access
       (officer/admin/viewer), user model, login flow.
 - [ ] **Step 4 — Hazard zoning (ML):** Weighted-overlay + ML susceptibility

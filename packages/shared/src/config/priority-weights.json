@@ -1,0 +1,13 @@
+{
+  "modelVersion": "priority-weights-v1",
+  "note": "RPI = riskWeight * normalize(Risk) + vulnerabilityWeight * VulnerabilityIndex. Weights sum to 1.0.",
+  "weights": {
+    "risk": 0.55,
+    "vulnerability": 0.45
+  },
+  "buckets": {
+    "note": "Each threshold is the MINIMUM RPI score (0-1) required to fall in that bucket. Immediate habitations auto-trigger candidate site discovery.",
+    "immediate": 0.7,
+    "shortTerm": 0.45
+  }
+}

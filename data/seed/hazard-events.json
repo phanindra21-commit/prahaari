@@ -1,0 +1,59 @@
+[
+  {
+    "districtLgdCode": "DEMO-WYD-001",
+    "hazardType": "landslide",
+    "name": "2024 Wayanad landslides (Chooralmala\u2013Mundakkai)",
+    "date": "2024-07-30T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [76.129, 11.497]
+    },
+    "deaths": 231,
+    "injured": 397,
+    "displaced": 10000,
+    "housesDamaged": 1555,
+    "economicLossInrLakh": 120000,
+    "source": "NEWS",
+    "confidence": "HIGH",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2024_Wayanad_landslides"
+  },
+  {
+    "districtLgdCode": "DEMO-GJM-001",
+    "hazardType": "coastalErosion",
+    "name": "Cyclone Phailin (2013)",
+    "date": "2013-10-12T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [84.9006, 19.2647]
+    },
+    "deaths": 45,
+    "injured": 200,
+    "displaced": 440000,
+    "housesDamaged": 300000,
+    "economicLossInrLakh": 240000,
+    "source": "IMD",
+    "confidence": "HIGH",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cyclone_Phailin"
+  },
+  {
+    "districtLgdCode": "DEMO-GJM-001",
+    "hazardType": "coastalErosion",
+    "name": "Cyclone Titli (2018)",
+    "date": "2018-10-11T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [84.97, 19.32]
+    },
+    "deaths": 77,
+    "injured": 150,
+    "displaced": 300000,
+    "housesDamaged": 50000,
+    "economicLossInrLakh": 180000,
+    "source": "IMD",
+    "confidence": "HIGH",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cyclone_Titli"
+  }
+]

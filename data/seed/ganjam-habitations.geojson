@@ -1,0 +1,1765 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.913702, 19.309533]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H001",
+        "name": "Gopalpur Sahi",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 600,
+        "households": 138,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.09,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.51,
+          "scStShare": 0.34,
+          "literacyRate": 0.62
+        },
+        "structures": {
+          "kutchaHousingShare": 0.45,
+          "avgBuildingAgeYears": 22,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.98,
+          "distanceToPhcKm": 6.61,
+          "mobileNetworkCoverage": 0.66,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.57,
+          "primaryLivelihoodDependenceShare": 0.86
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 5.41
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.941666, 19.298001]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H002",
+        "name": "Podampeta",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 220,
+        "households": 50,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.16,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.26,
+          "scStShare": 0.34,
+          "literacyRate": 0.81
+        },
+        "structures": {
+          "kutchaHousingShare": 0.52,
+          "avgBuildingAgeYears": 12,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.4,
+          "distanceToPhcKm": 2.5,
+          "mobileNetworkCoverage": 0.61,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.23,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 3.0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.953069, 19.295846]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H003",
+        "name": "Humma",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 324,
+        "households": 74,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.49,
+          "scStShare": 0.25,
+          "literacyRate": 0.67
+        },
+        "structures": {
+          "kutchaHousingShare": 0.37,
+          "avgBuildingAgeYears": 22,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.53,
+          "distanceToPhcKm": 3.3,
+          "mobileNetworkCoverage": 0.45,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 2.71,
+          "primaryLivelihoodDependenceShare": 0.78
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 1.92
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.004524, 19.267386]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H004",
+        "name": "Sunapur",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 617,
+        "households": 128,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.46,
+          "scStShare": 0.24,
+          "literacyRate": 0.76
+        },
+        "structures": {
+          "kutchaHousingShare": 0.6,
+          "avgBuildingAgeYears": 24,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.25,
+          "distanceToPhcKm": 9.8,
+          "mobileNetworkCoverage": 0.79,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 0.12,
+          "primaryLivelihoodDependenceShare": 0.86
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 2.21
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.984517, 19.351062]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H005",
+        "name": "Arjipalli",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 510,
+        "households": 115,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.43,
+          "scStShare": 0.27,
+          "literacyRate": 0.64
+        },
+        "structures": {
+          "kutchaHousingShare": 0.55,
+          "avgBuildingAgeYears": 12,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.76,
+          "distanceToPhcKm": 3.78,
+          "mobileNetworkCoverage": 0.68,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.22,
+          "primaryLivelihoodDependenceShare": 0.54
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 3.6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.95155, 19.292672]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H006",
+        "name": "Bateswar",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1085,
+        "households": 243,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.29,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.41,
+          "scStShare": 0.17,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.36,
+          "avgBuildingAgeYears": 13,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.47,
+          "distanceToPhcKm": 9.67,
+          "mobileNetworkCoverage": 0.52,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.59,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 2.2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.990459, 19.356727]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H007",
+        "name": "Aryapalli",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 276,
+        "households": 60,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.23,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.33,
+          "scStShare": 0.34,
+          "literacyRate": 0.63
+        },
+        "structures": {
+          "kutchaHousingShare": 0.41,
+          "avgBuildingAgeYears": 20,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.48,
+          "distanceToPhcKm": 1.23,
+          "mobileNetworkCoverage": 0.91,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.75,
+          "primaryLivelihoodDependenceShare": 0.59
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 4.45
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.956427, 19.32354]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H008",
+        "name": "Ramayapatna",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 188,
+        "households": 42,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.29,
+          "scStShare": 0.21,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.51,
+          "avgBuildingAgeYears": 40,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.12,
+          "distanceToPhcKm": 6.29,
+          "mobileNetworkCoverage": 0.83,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.0,
+          "primaryLivelihoodDependenceShare": 0.85
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 0.43
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.005152, 19.300812]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H009",
+        "name": "Prayagi",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 391,
+        "households": 81,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.38,
+          "scStShare": 0.19,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.31,
+          "avgBuildingAgeYears": 18,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.43,
+          "distanceToPhcKm": 9.54,
+          "mobileNetworkCoverage": 0.88,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.02,
+          "primaryLivelihoodDependenceShare": 0.77
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 3.66
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.915058, 19.357109]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H010",
+        "name": "Baghapatia",
+        "block": "Rangeilunda",
+        "panchayat": "Rangeilunda Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 999,
+        "households": 210,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.11,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.31,
+          "scStShare": 0.14,
+          "literacyRate": 0.85
+        },
+        "structures": {
+          "kutchaHousingShare": 0.4,
+          "avgBuildingAgeYears": 6,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.97,
+          "distanceToPhcKm": 8.73,
+          "mobileNetworkCoverage": 0.53,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.67,
+          "primaryLivelihoodDependenceShare": 0.84
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 3.57
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.970578, 19.359106]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H011",
+        "name": "Chandiput",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 166,
+        "households": 38,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.43,
+          "scStShare": 0.22,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.3,
+          "avgBuildingAgeYears": 38,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.47,
+          "distanceToPhcKm": 5.07,
+          "mobileNetworkCoverage": 0.57,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.21,
+          "primaryLivelihoodDependenceShare": 0.88
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 2.46
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.032334, 19.323163]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H012",
+        "name": "Sanakhemundi",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 260,
+        "households": 57,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.38,
+          "scStShare": 0.12,
+          "literacyRate": 0.68
+        },
+        "structures": {
+          "kutchaHousingShare": 0.31,
+          "avgBuildingAgeYears": 26,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.0,
+          "distanceToPhcKm": 9.95,
+          "mobileNetworkCoverage": 0.73,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 1.57,
+          "primaryLivelihoodDependenceShare": 0.68
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 7.38
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.033092, 19.378279]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H013",
+        "name": "Dhabaleswar",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1059,
+        "households": 239,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.38,
+          "scStShare": 0.21,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.53,
+          "avgBuildingAgeYears": 29,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.3,
+          "distanceToPhcKm": 7.18,
+          "mobileNetworkCoverage": 0.7,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.51,
+          "primaryLivelihoodDependenceShare": 0.54
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 9.71
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.005265, 19.367459]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H014",
+        "name": "Kantiagada",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 836,
+        "households": 191,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.42,
+          "scStShare": 0.28,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.34,
+          "avgBuildingAgeYears": 25,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.65,
+          "distanceToPhcKm": 1.93,
+          "mobileNetworkCoverage": 0.71,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 2.0,
+          "primaryLivelihoodDependenceShare": 0.59
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 6.42
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.023627, 19.328011]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H015",
+        "name": "Golabandha",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1015,
+        "households": 219,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.49,
+          "scStShare": 0.25,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 23,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.2,
+          "distanceToPhcKm": 2.62,
+          "mobileNetworkCoverage": 0.82,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.77,
+          "primaryLivelihoodDependenceShare": 0.65
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 6.68
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.024632, 19.379986]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H016",
+        "name": "Purushottampur Rural",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 243,
+        "households": 51,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.54,
+          "scStShare": 0.28,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.42,
+          "avgBuildingAgeYears": 11,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.85,
+          "distanceToPhcKm": 2.4,
+          "mobileNetworkCoverage": 0.84,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 2.05,
+          "primaryLivelihoodDependenceShare": 0.61
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 8.84
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.012204, 19.341566]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H017",
+        "name": "Sheragada",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 263,
+        "households": 59,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.35,
+          "scStShare": 0.2,
+          "literacyRate": 0.77
+        },
+        "structures": {
+          "kutchaHousingShare": 0.38,
+          "avgBuildingAgeYears": 6,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.39,
+          "distanceToPhcKm": 3.71,
+          "mobileNetworkCoverage": 0.56,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.32,
+          "primaryLivelihoodDependenceShare": 0.62
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 6.06
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.042701, 19.293773]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H018",
+        "name": "Balipadar",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 722,
+        "households": 150,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.32,
+          "scStShare": 0.1,
+          "literacyRate": 0.86
+        },
+        "structures": {
+          "kutchaHousingShare": 0.35,
+          "avgBuildingAgeYears": 26,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.45,
+          "distanceToPhcKm": 6.16,
+          "mobileNetworkCoverage": 0.82,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.94,
+          "primaryLivelihoodDependenceShare": 0.67
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 7.24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.062761, 19.310187]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H019",
+        "name": "Ranasinghpur",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1014,
+        "households": 232,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.28,
+          "scStShare": 0.29,
+          "literacyRate": 0.66
+        },
+        "structures": {
+          "kutchaHousingShare": 0.44,
+          "avgBuildingAgeYears": 16,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.22,
+          "distanceToPhcKm": 5.59,
+          "mobileNetworkCoverage": 0.51,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "FISHERIES",
+          "distanceToLivelihoodAssetKm": 2.73,
+          "primaryLivelihoodDependenceShare": 0.65
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 9.98
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.982644, 19.316627]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H020",
+        "name": "Digapahandi",
+        "block": "Chatrapur",
+        "panchayat": "Chatrapur Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 941,
+        "households": 201,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.27,
+          "scStShare": 0.32,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.36,
+          "avgBuildingAgeYears": 26,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.01,
+          "distanceToPhcKm": 2.36,
+          "mobileNetworkCoverage": 0.49,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.93,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 1.99
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.055734, 19.340617]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H021",
+        "name": "Manikapatna",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 443,
+        "households": 102,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.23,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.24,
+          "scStShare": 0.22,
+          "literacyRate": 0.76
+        },
+        "structures": {
+          "kutchaHousingShare": 0.21,
+          "avgBuildingAgeYears": 8,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.4,
+          "distanceToPhcKm": 9.18,
+          "mobileNetworkCoverage": 0.75,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.03,
+          "primaryLivelihoodDependenceShare": 0.7
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 10.51
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.050052, 19.430772]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H022",
+        "name": "Pattapur",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 811,
+        "households": 184,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.2,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.17,
+          "scStShare": 0.14,
+          "literacyRate": 0.7
+        },
+        "structures": {
+          "kutchaHousingShare": 0.31,
+          "avgBuildingAgeYears": 24,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.17,
+          "distanceToPhcKm": 4.68,
+          "mobileNetworkCoverage": 0.63,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 2.39,
+          "primaryLivelihoodDependenceShare": 0.77
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 12.95
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.060796, 19.367969]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H023",
+        "name": "Kabisuryanagar",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 767,
+        "households": 159,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.39,
+          "scStShare": 0.34,
+          "literacyRate": 0.8
+        },
+        "structures": {
+          "kutchaHousingShare": 0.23,
+          "avgBuildingAgeYears": 31,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.0,
+          "distanceToPhcKm": 6.36,
+          "mobileNetworkCoverage": 0.94,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.72,
+          "primaryLivelihoodDependenceShare": 0.77
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 12.16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.072012, 19.416318]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H024",
+        "name": "Sorada",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 245,
+        "households": 52,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.38,
+          "scStShare": 0.15,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.32,
+          "avgBuildingAgeYears": 37,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.98,
+          "distanceToPhcKm": 3.04,
+          "mobileNetworkCoverage": 0.52,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.96,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 14.92
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.088512, 19.412087]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H025",
+        "name": "Buguda",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 782,
+        "households": 179,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.11,
+          "womenHeadedHouseholdShare": 0.27,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.37,
+          "scStShare": 0.3,
+          "literacyRate": 0.65
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 34,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.58,
+          "distanceToPhcKm": 4.7,
+          "mobileNetworkCoverage": 0.8,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 2.91,
+          "primaryLivelihoodDependenceShare": 0.76
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 16.59
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.028917, 19.3584]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H026",
+        "name": "Aska Rural",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 734,
+        "households": 150,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.24,
+          "scStShare": 0.34,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.34,
+          "avgBuildingAgeYears": 14,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.07,
+          "distanceToPhcKm": 1.47,
+          "mobileNetworkCoverage": 0.7,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.71,
+          "primaryLivelihoodDependenceShare": 0.54
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 8.48
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.033506, 19.420117]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H027",
+        "name": "Bhanjanagar Outskirts",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 597,
+        "households": 137,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.19,
+          "scStShare": 0.2,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.3,
+          "avgBuildingAgeYears": 29,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.05,
+          "distanceToPhcKm": 4.48,
+          "mobileNetworkCoverage": 0.49,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.18,
+          "primaryLivelihoodDependenceShare": 0.89
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 10.88
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.01876, 19.414138]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H028",
+        "name": "Polasara",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 927,
+        "households": 196,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.09,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.36,
+          "scStShare": 0.31,
+          "literacyRate": 0.75
+        },
+        "structures": {
+          "kutchaHousingShare": 0.21,
+          "avgBuildingAgeYears": 39,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.16,
+          "distanceToPhcKm": 2.0,
+          "mobileNetworkCoverage": 0.6,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.45,
+          "primaryLivelihoodDependenceShare": 0.6
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 9.13
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.016086, 19.380711]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H029",
+        "name": "Beguniapada",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 738,
+        "households": 166,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.23,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.31,
+          "scStShare": 0.2,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 11,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.69,
+          "distanceToPhcKm": 9.77,
+          "mobileNetworkCoverage": 0.49,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.23,
+          "primaryLivelihoodDependenceShare": 0.7
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 7.94
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.030365, 19.433104]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H030",
+        "name": "Hinjilicut",
+        "block": "Ganjam",
+        "panchayat": "Ganjam Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 822,
+        "households": 176,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.21,
+          "scStShare": 0.24,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.15,
+          "avgBuildingAgeYears": 17,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.08,
+          "distanceToPhcKm": 5.18,
+          "mobileNetworkCoverage": 0.81,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 2.45,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 10.89
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.965159, 19.488698]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H031",
+        "name": "Surangi",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 677,
+        "households": 149,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.29,
+          "scStShare": 0.17,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.19,
+          "avgBuildingAgeYears": 9,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.63,
+          "distanceToPhcKm": 3.99,
+          "mobileNetworkCoverage": 0.51,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.37,
+          "primaryLivelihoodDependenceShare": 0.67
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 5.37
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.983664, 19.574464]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H032",
+        "name": "Kukudakhandi",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 966,
+        "households": 209,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.17,
+          "scStShare": 0.31,
+          "literacyRate": 0.75
+        },
+        "structures": {
+          "kutchaHousingShare": 0.22,
+          "avgBuildingAgeYears": 26,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.04,
+          "distanceToPhcKm": 1.72,
+          "mobileNetworkCoverage": 0.79,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.39,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 9.68
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.980155, 19.553976]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H033",
+        "name": "Jagannathprasad",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 595,
+        "households": 133,
+        "demographics": {
+          "shareUnder5": 0.13,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.22,
+          "scStShare": 0.19,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.09,
+          "avgBuildingAgeYears": 16,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.61,
+          "distanceToPhcKm": 2.29,
+          "mobileNetworkCoverage": 0.77,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.2,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 8.74
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.039947, 19.521215]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H034",
+        "name": "Sanakhemundi Rural",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 530,
+        "households": 116,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.29,
+          "scStShare": 0.17,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.08,
+          "avgBuildingAgeYears": 7,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.53,
+          "distanceToPhcKm": 2.67,
+          "mobileNetworkCoverage": 0.72,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.86,
+          "primaryLivelihoodDependenceShare": 0.61
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 14.3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.006188, 19.506457]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H035",
+        "name": "Dharakot",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1023,
+        "households": 235,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.3,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.12,
+          "scStShare": 0.34,
+          "literacyRate": 0.88
+        },
+        "structures": {
+          "kutchaHousingShare": 0.18,
+          "avgBuildingAgeYears": 28,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.8,
+          "distanceToPhcKm": 1.58,
+          "mobileNetworkCoverage": 0.73,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.57,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 10.26
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.995876, 19.56437]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H036",
+        "name": "Seragada",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 655,
+        "households": 152,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.15,
+          "scStShare": 0.25,
+          "literacyRate": 0.62
+        },
+        "structures": {
+          "kutchaHousingShare": 0.1,
+          "avgBuildingAgeYears": 25,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.6,
+          "distanceToPhcKm": 10.0,
+          "mobileNetworkCoverage": 0.82,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.33,
+          "primaryLivelihoodDependenceShare": 0.85
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 10.71
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.976703, 19.497533]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H037",
+        "name": "Chikiti",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 1049,
+        "households": 219,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.17,
+          "scStShare": 0.23,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.09,
+          "avgBuildingAgeYears": 13,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.0,
+          "distanceToPhcKm": 2.38,
+          "mobileNetworkCoverage": 0.54,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 2.81,
+          "primaryLivelihoodDependenceShare": 0.59
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 6.85
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.029593, 19.574493]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H038",
+        "name": "Rambha Coastal",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 790,
+        "households": 176,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.15,
+          "scStShare": 0.14,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.12,
+          "avgBuildingAgeYears": 27,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.25,
+          "distanceToPhcKm": 1.37,
+          "mobileNetworkCoverage": 0.9,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.23,
+          "primaryLivelihoodDependenceShare": 0.77
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 14.61
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.966081, 19.511466]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H039",
+        "name": "Ganjam Town Outskirts",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 792,
+        "households": 171,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.16,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.2,
+          "scStShare": 0.2,
+          "literacyRate": 0.73
+        },
+        "structures": {
+          "kutchaHousingShare": 0.16,
+          "avgBuildingAgeYears": 9,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.23,
+          "distanceToPhcKm": 4.96,
+          "mobileNetworkCoverage": 0.7,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.09,
+          "primaryLivelihoodDependenceShare": 0.56
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 6.08
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.031078, 19.55842]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-GJM-H040",
+        "name": "Khalikote Rural",
+        "block": "Khallikote",
+        "panchayat": "Khallikote Grama Panchayat",
+        "districtLgdCode": "DEMO-GJM-001",
+        "population": 258,
+        "households": 57,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.16,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.2,
+          "scStShare": 0.17,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.22,
+          "avgBuildingAgeYears": 32,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.5,
+          "distanceToPhcKm": 9.66,
+          "mobileNetworkCoverage": 0.92,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.81,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "approxDistanceToCoastKm": 14.34
+      }
+    }
+  ]
+}

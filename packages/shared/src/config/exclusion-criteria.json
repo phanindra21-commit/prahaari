@@ -1,0 +1,54 @@
+{
+  "modelVersion": "exclusion-criteria-v1",
+  "note": "Hard filters applied BEFORE any AHP suitability scoring. A candidate site failing ANY criterion is removed from consideration entirely, regardless of its score on other factors.",
+  "criteria": [
+    {
+      "id": "insideRedOrOrangeZone",
+      "description": "Site polygon intersects any Red or Orange hazard zone, of any hazard type.",
+      "rule": "INTERSECTS_ZONE_CLASS",
+      "params": { "zoneClasses": ["Red", "Orange"] }
+    },
+    {
+      "id": "insideCrzI",
+      "description": "Site intersects Coastal Regulation Zone I (ecologically sensitive area / area between High Tide Line and Low Tide Line).",
+      "rule": "INTERSECTS_LAYER",
+      "params": { "layer": "CRZ_I" }
+    },
+    {
+      "id": "protectedOrReservedForest",
+      "description": "Site intersects notified reserved/protected forest land.",
+      "rule": "INTERSECTS_LAYER",
+      "params": { "layer": "FOREST_PROTECTED" }
+    },
+    {
+      "id": "within100YearFloodplain",
+      "description": "Site intersects the 100-year (1% annual exceedance probability) river floodplain.",
+      "rule": "INTERSECTS_LAYER",
+      "params": { "layer": "FLOODPLAIN_100YR" }
+    },
+    {
+      "id": "excessiveSlope",
+      "description": "Site's mean slope exceeds 20 degrees, making it unbuildable without disproportionate earthwork.",
+      "rule": "SLOPE_EXCEEDS_DEGREES",
+      "params": { "maxDegrees": 20 }
+    },
+    {
+      "id": "activeFaultBuffer",
+      "description": "Site falls within the exclusion buffer of a known active geological fault line.",
+      "rule": "WITHIN_BUFFER",
+      "params": { "layer": "ACTIVE_FAULT", "bufferMeters": 300 }
+    },
+    {
+      "id": "waterBodyBuffer",
+      "description": "Site falls within the no-build buffer of a river, lake, or reservoir.",
+      "rule": "WITHIN_BUFFER",
+      "params": { "layer": "WATER_BODY", "bufferMeters": 50 }
+    },
+    {
+      "id": "miningLeaseArea",
+      "description": "Site intersects an active or pending mining lease area.",
+      "rule": "INTERSECTS_LAYER",
+      "params": { "layer": "MINING_LEASE" }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+[
+  {
+    "lgdCode": "DEMO-WYD-001",
+    "name": "Wayanad",
+    "state": "Kerala",
+    "boundary": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [75.85, 11.55],
+          [76.55, 11.55],
+          [76.55, 11.95],
+          [75.85, 11.95],
+          [75.85, 11.55]
+        ]
+      ]
+    },
+    "population": 817420,
+    "areaSqKm": 2131,
+    "primaryHazards": ["landslide", "flood", "cloudburst"],
+    "dmAuthorityContact": {
+      "name": "District Disaster Management Officer",
+      "designation": "DDMO, Wayanad",
+      "phone": "+91-4936-202100",
+      "email": "ddmo.wayanad@kerala.gov.in"
+    }
+  },
+  {
+    "lgdCode": "DEMO-GJM-001",
+    "name": "Ganjam",
+    "state": "Odisha",
+    "boundary": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [84.5, 18.95],
+          [85.35, 18.95],
+          [85.35, 19.95],
+          [84.5, 19.95],
+          [84.5, 18.95]
+        ]
+      ]
+    },
+    "population": 3529031,
+    "areaSqKm": 8206,
+    "primaryHazards": ["coastalErosion", "flood"],
+    "dmAuthorityContact": {
+      "name": "District Emergency Officer",
+      "designation": "DEO, Ganjam",
+      "phone": "+91-6811-263978",
+      "email": "deo.ganjam@odisha.gov.in"
+    }
+  }
+]

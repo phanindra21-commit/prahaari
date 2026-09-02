@@ -2,31 +2,38 @@
   "name": "punarvas",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "PunarVas — Human-in-the-Loop AI + GIS decision-support platform for proactive hazard zoning and relocation of vulnerable habitations in India.",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently -n web,api,ml -c blue,green,yellow \"npm:dev:web\" \"npm:dev:api\" \"npm:dev:ml\"",
+    "predev": "npm run build --workspace=@punarvas/shared",
+    "dev": "concurrently -n shared,web,api,ml -c magenta,blue,green,yellow \"npm:dev:shared\" \"npm:dev:web\" \"npm:dev:api\" \"npm:dev:ml\"",
+    "dev:shared": "npm run dev --workspace=@punarvas/shared",
     "dev:web": "npm run dev --workspace=@punarvas/web",
     "dev:api": "npm run dev --workspace=@punarvas/api",
     "dev:ml": "cd services/ml && venv\\Scripts\\python -m uvicorn app.main:app --reload --port 8000",
     "build": "npm run build --workspace=@punarvas/shared && npm run build --workspace=@punarvas/web && npm run build --workspace=@punarvas/api",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --write ."
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "setup": "node scripts/setup-env.js",
+    "seed": "npm run seed --workspace=@punarvas/api",
+    "seed:reset": "npm run seed:reset --workspace=@punarvas/api"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.13.0",
-    "@typescript-eslint/parser": "^8.13.0",
+    "@eslint/js": "^9.13.0",
     "concurrently": "^9.0.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.11.0",
     "prettier": "^3.3.3",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -1,0 +1,527 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.014027, 11.809047],
+            [76.015973, 11.809047],
+            [76.015973, 11.810953],
+            [76.014027, 11.810953],
+            [76.014027, 11.809047]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Padinjarathara Resettlement Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.015, 11.81]
+        },
+        "areaSqm": 45000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.78,
+          "waterAvailability": 0.6,
+          "landAvailability": 0.76,
+          "roadConnectivity": 0.43,
+          "distanceFromOriginHabitation": 0.64,
+          "livelihoodAccess": 0.51,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.33,
+          "slope": 0.7
+        },
+        "overallSuitabilityScore": 0.6605,
+        "carryingCapacity": {
+          "byLand": 300.0,
+          "byWater": 753.2,
+          "byEducation": 268.0,
+          "byHealth": 1.6,
+          "byAccess": 250,
+          "effectiveCapacity": 1.6,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.994106, 11.779124],
+            [75.995894, 11.779124],
+            [75.995894, 11.780876],
+            [75.994106, 11.780876],
+            [75.994106, 11.779124]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Thavinjal Community Land",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [75.995, 11.78]
+        },
+        "areaSqm": 38000,
+        "landOwnership": "COMMUNITY",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.84,
+          "waterAvailability": 0.57,
+          "landAvailability": 0.73,
+          "roadConnectivity": 0.83,
+          "distanceFromOriginHabitation": 0.68,
+          "livelihoodAccess": 0.61,
+          "landOwnershipAcquisitionEase": 0.6,
+          "existingInfrastructure": 0.33,
+          "slope": 0.73
+        },
+        "overallSuitabilityScore": 0.7089,
+        "carryingCapacity": {
+          "byLand": 253.3,
+          "byWater": 791.5,
+          "byEducation": 174.6,
+          "byHealth": 4.5,
+          "byAccess": 250,
+          "effectiveCapacity": 4.5,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.043954, 11.758976],
+            [76.046046, 11.758976],
+            [76.046046, 11.761024],
+            [76.043954, 11.761024],
+            [76.043954, 11.758976]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Panamaram Government Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.045, 11.76]
+        },
+        "areaSqm": 52000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.77,
+          "waterAvailability": 0.6,
+          "landAvailability": 0.55,
+          "roadConnectivity": 0.54,
+          "distanceFromOriginHabitation": 0.77,
+          "livelihoodAccess": 0.43,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.56,
+          "slope": 0.76
+        },
+        "overallSuitabilityScore": 0.6519,
+        "carryingCapacity": {
+          "byLand": 346.7,
+          "byWater": 1815.2,
+          "byEducation": 318.1,
+          "byHealth": 1.5,
+          "byAccess": 250,
+          "effectiveCapacity": 1.5,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.059071, 11.824091],
+            [76.060929, 11.824091],
+            [76.060929, 11.825909],
+            [76.059071, 11.825909],
+            [76.059071, 11.824091]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Noolpuzha Revenue Land",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.06, 11.825]
+        },
+        "areaSqm": 41000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.85,
+          "waterAvailability": 0.72,
+          "landAvailability": 0.71,
+          "roadConnectivity": 0.75,
+          "distanceFromOriginHabitation": 0.61,
+          "livelihoodAccess": 0.77,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.46,
+          "slope": 0.6
+        },
+        "overallSuitabilityScore": 0.7485,
+        "carryingCapacity": {
+          "byLand": 273.3,
+          "byWater": 1204.3,
+          "byEducation": 420.1,
+          "byHealth": 1.6,
+          "byAccess": 500,
+          "effectiveCapacity": 1.6,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.979129, 11.794148],
+            [75.980871, 11.794148],
+            [75.980871, 11.795852],
+            [75.979129, 11.795852],
+            [75.979129, 11.794148]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Kartikulam Plot A",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [75.98, 11.795]
+        },
+        "areaSqm": 36000,
+        "landOwnership": "PRIVATE",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.83,
+          "waterAvailability": 0.86,
+          "landAvailability": 0.79,
+          "roadConnectivity": 0.53,
+          "distanceFromOriginHabitation": 0.84,
+          "livelihoodAccess": 0.4,
+          "landOwnershipAcquisitionEase": 0.35,
+          "existingInfrastructure": 0.49,
+          "slope": 0.8
+        },
+        "overallSuitabilityScore": 0.7394,
+        "carryingCapacity": {
+          "byLand": 240.0,
+          "byWater": 1116.2,
+          "byEducation": 292.3,
+          "byHealth": 1.4,
+          "byAccess": 250,
+          "effectiveCapacity": 1.4,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.029005, 11.804026],
+            [76.030995, 11.804026],
+            [76.030995, 11.805974],
+            [76.029005, 11.805974],
+            [76.029005, 11.804026]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Mananthavady East Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.03, 11.805]
+        },
+        "areaSqm": 47000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.89,
+          "waterAvailability": 0.75,
+          "landAvailability": 0.85,
+          "roadConnectivity": 0.54,
+          "distanceFromOriginHabitation": 0.71,
+          "livelihoodAccess": 0.62,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.56,
+          "slope": 0.68
+        },
+        "overallSuitabilityScore": 0.7685,
+        "carryingCapacity": {
+          "byLand": 313.3,
+          "byWater": 3298.0,
+          "byEducation": 492.5,
+          "byHealth": 4.0,
+          "byAccess": 250,
+          "effectiveCapacity": 4.0,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.044166, 11.849184],
+            [76.045834, 11.849184],
+            [76.045834, 11.850816],
+            [76.044166, 11.850816],
+            [76.044166, 11.849184]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Thirunelly Foothill Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.045, 11.85]
+        },
+        "areaSqm": 33000,
+        "landOwnership": "COMMUNITY",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.72,
+          "waterAvailability": 0.8,
+          "landAvailability": 0.76,
+          "roadConnectivity": 0.85,
+          "distanceFromOriginHabitation": 0.77,
+          "livelihoodAccess": 0.48,
+          "landOwnershipAcquisitionEase": 0.6,
+          "existingInfrastructure": 0.47,
+          "slope": 0.77
+        },
+        "overallSuitabilityScore": 0.7362,
+        "carryingCapacity": {
+          "byLand": 220.0,
+          "byWater": 705.8,
+          "byEducation": 280.3,
+          "byHealth": 2.2,
+          "byAccess": 250,
+          "effectiveCapacity": 2.2,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.134206, 11.504222],
+            [76.135794, 11.504222],
+            [76.135794, 11.505778],
+            [76.134206, 11.505778],
+            [76.134206, 11.504222]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Chooralmala Adjacent Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.135, 11.505]
+        },
+        "areaSqm": 30000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["insideRedOrOrangeZone"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.144233, 11.489248],
+            [76.145767, 11.489248],
+            [76.145767, 11.490752],
+            [76.144233, 11.490752],
+            [76.144233, 11.489248]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Vellarimala Slope Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.145, 11.49]
+        },
+        "areaSqm": 28000,
+        "landOwnership": "PRIVATE",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["insideRedOrOrangeZone", "excessiveSlope"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.083877, 11.6289],
+            [76.086123, 11.6289],
+            [76.086123, 11.6311],
+            [76.083877, 11.6311],
+            [76.083877, 11.6289]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-WYD-001",
+        "name": "Chundale Forest Fringe Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [76.085, 11.63]
+        },
+        "areaSqm": 60000,
+        "landOwnership": "FOREST",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["protectedOrReservedForest"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    }
+  ]
+}

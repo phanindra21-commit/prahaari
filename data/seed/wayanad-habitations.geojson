@@ -1,0 +1,1765 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.086251, 11.509548]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H001",
+        "name": "Chooralmala",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 878,
+        "households": 194,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.11,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.35,
+          "scStShare": 0.46,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 20,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.5,
+          "distanceToPhcKm": 8.15,
+          "mobileNetworkCoverage": 0.68,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.18,
+          "primaryLivelihoodDependenceShare": 0.61
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.098369, 11.520293]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H002",
+        "name": "Mundakkai",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 224,
+        "households": 55,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.44,
+          "scStShare": 0.28,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.38,
+          "avgBuildingAgeYears": 32,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.75,
+          "distanceToPhcKm": 7.07,
+          "mobileNetworkCoverage": 0.85,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.23,
+          "primaryLivelihoodDependenceShare": 0.64
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.088124, 11.515411]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H003",
+        "name": "Attamala",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 223,
+        "households": 53,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.42,
+          "scStShare": 0.23,
+          "literacyRate": 0.86
+        },
+        "structures": {
+          "kutchaHousingShare": 0.32,
+          "avgBuildingAgeYears": 12,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.8,
+          "distanceToPhcKm": 7.98,
+          "mobileNetworkCoverage": 0.67,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 0.49,
+          "primaryLivelihoodDependenceShare": 0.65
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.113185, 11.471765]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H004",
+        "name": "Vellarimala",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 530,
+        "households": 127,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.41,
+          "scStShare": 0.49,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.48,
+          "avgBuildingAgeYears": 37,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.75,
+          "distanceToPhcKm": 3.91,
+          "mobileNetworkCoverage": 0.5,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.39,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.119946, 11.532804]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H005",
+        "name": "Punchirimattom",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 893,
+        "households": 222,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.18,
+          "scStShare": 0.38,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.32,
+          "avgBuildingAgeYears": 37,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.99,
+          "distanceToPhcKm": 3.77,
+          "mobileNetworkCoverage": 0.68,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 1.73,
+          "primaryLivelihoodDependenceShare": 0.55
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.153174, 11.519579]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H006",
+        "name": "Kunjome",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 859,
+        "households": 190,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.5,
+          "scStShare": 0.26,
+          "literacyRate": 0.76
+        },
+        "structures": {
+          "kutchaHousingShare": 0.35,
+          "avgBuildingAgeYears": 40,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.82,
+          "distanceToPhcKm": 3.19,
+          "mobileNetworkCoverage": 0.57,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 1.39,
+          "primaryLivelihoodDependenceShare": 0.81
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.137905, 11.534664]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H007",
+        "name": "Vazhavatta",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 365,
+        "households": 90,
+        "demographics": {
+          "shareUnder5": 0.13,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.18,
+          "scStShare": 0.33,
+          "literacyRate": 0.88
+        },
+        "structures": {
+          "kutchaHousingShare": 0.4,
+          "avgBuildingAgeYears": 16,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.0,
+          "distanceToPhcKm": 8.26,
+          "mobileNetworkCoverage": 0.92,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.74,
+          "primaryLivelihoodDependenceShare": 0.85
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.167602, 11.538793]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H008",
+        "name": "Padinjarathara",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 807,
+        "households": 184,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.29,
+          "scStShare": 0.45,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.48,
+          "avgBuildingAgeYears": 22,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.6,
+          "distanceToPhcKm": 3.42,
+          "mobileNetworkCoverage": 0.39,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.24,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.090377, 11.529367]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H009",
+        "name": "Kalpetta Rural",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 860,
+        "households": 189,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.23,
+          "scStShare": 0.27,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.32,
+          "avgBuildingAgeYears": 35,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.51,
+          "distanceToPhcKm": 5.66,
+          "mobileNetworkCoverage": 0.63,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 0.23,
+          "primaryLivelihoodDependenceShare": 0.76
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.149539, 11.457455]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H010",
+        "name": "Kottathara",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 579,
+        "households": 142,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.47,
+          "scStShare": 0.27,
+          "literacyRate": 0.9
+        },
+        "structures": {
+          "kutchaHousingShare": 0.49,
+          "avgBuildingAgeYears": 14,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.99,
+          "distanceToPhcKm": 8.17,
+          "mobileNetworkCoverage": 0.67,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 2.43,
+          "primaryLivelihoodDependenceShare": 0.87
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.127708, 11.466968]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H011",
+        "name": "Nadavayal",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 122,
+        "households": 27,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.53,
+          "scStShare": 0.22,
+          "literacyRate": 0.94
+        },
+        "structures": {
+          "kutchaHousingShare": 0.31,
+          "avgBuildingAgeYears": 43,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.3,
+          "distanceToPhcKm": 8.9,
+          "mobileNetworkCoverage": 0.44,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.62,
+          "primaryLivelihoodDependenceShare": 0.52
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.112224, 11.457486]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H012",
+        "name": "Pozhuthana",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 281,
+        "households": 70,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.11,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.49,
+          "scStShare": 0.52,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.27,
+          "avgBuildingAgeYears": 44,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.65,
+          "distanceToPhcKm": 7.37,
+          "mobileNetworkCoverage": 0.37,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.11,
+          "primaryLivelihoodDependenceShare": 0.73
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.107469, 11.480473]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H013",
+        "name": "Achooranam",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 807,
+        "households": 184,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.27,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.4,
+          "scStShare": 0.29,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.45,
+          "avgBuildingAgeYears": 14,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.91,
+          "distanceToPhcKm": 6.91,
+          "mobileNetworkCoverage": 0.65,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 2.34,
+          "primaryLivelihoodDependenceShare": 0.85
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.098197, 11.485257]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H014",
+        "name": "Kunnathukolli",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 661,
+        "households": 165,
+        "demographics": {
+          "shareUnder5": 0.13,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.08,
+          "bplShare": 0.2,
+          "scStShare": 0.41,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.5,
+          "avgBuildingAgeYears": 14,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.67,
+          "distanceToPhcKm": 7.09,
+          "mobileNetworkCoverage": 0.51,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 0.61,
+          "primaryLivelihoodDependenceShare": 0.64
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.106601, 11.497487]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H015",
+        "name": "Thariyode",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 165,
+        "households": 41,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.37,
+          "scStShare": 0.42,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.52,
+          "avgBuildingAgeYears": 8,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.73,
+          "distanceToPhcKm": 1.83,
+          "mobileNetworkCoverage": 0.88,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.41,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.122681, 11.501727]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H016",
+        "name": "Meenmutty",
+        "block": "Meppadi",
+        "panchayat": "Meppadi Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 486,
+        "households": 118,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.09,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.07,
+          "bplShare": 0.31,
+          "scStShare": 0.53,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.26,
+          "avgBuildingAgeYears": 17,
+          "predominantFoundationType": "NONE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.14,
+          "distanceToPhcKm": 10.51,
+          "mobileNetworkCoverage": 0.94,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 2.22,
+          "primaryLivelihoodDependenceShare": 0.51
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "HIGH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.062054, 11.635415]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H017",
+        "name": "Chundale",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 926,
+        "households": 209,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.08,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.52,
+          "scStShare": 0.16,
+          "literacyRate": 0.77
+        },
+        "structures": {
+          "kutchaHousingShare": 0.28,
+          "avgBuildingAgeYears": 22,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.78,
+          "distanceToPhcKm": 1.26,
+          "mobileNetworkCoverage": 0.47,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 0.77,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.070847, 11.596603]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H018",
+        "name": "Muppainad",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 238,
+        "households": 53,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.39,
+          "scStShare": 0.18,
+          "literacyRate": 0.77
+        },
+        "structures": {
+          "kutchaHousingShare": 0.29,
+          "avgBuildingAgeYears": 28,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.08,
+          "distanceToPhcKm": 7.67,
+          "mobileNetworkCoverage": 0.66,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 2.26,
+          "primaryLivelihoodDependenceShare": 0.58
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.025152, 11.628791]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H019",
+        "name": "Vengapally",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 874,
+        "households": 199,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.09,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.28,
+          "scStShare": 0.28,
+          "literacyRate": 0.9
+        },
+        "structures": {
+          "kutchaHousingShare": 0.34,
+          "avgBuildingAgeYears": 27,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.25,
+          "distanceToPhcKm": 8.34,
+          "mobileNetworkCoverage": 0.55,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 1.43,
+          "primaryLivelihoodDependenceShare": 0.58
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.106252, 11.625959]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H020",
+        "name": "Poothadi",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 431,
+        "households": 103,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.33,
+          "scStShare": 0.24,
+          "literacyRate": 0.74
+        },
+        "structures": {
+          "kutchaHousingShare": 0.27,
+          "avgBuildingAgeYears": 38,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.61,
+          "distanceToPhcKm": 8.25,
+          "mobileNetworkCoverage": 0.52,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 0.32,
+          "primaryLivelihoodDependenceShare": 0.88
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.045218, 11.625552]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H021",
+        "name": "Thavinjal",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 745,
+        "households": 165,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.43,
+          "scStShare": 0.16,
+          "literacyRate": 0.81
+        },
+        "structures": {
+          "kutchaHousingShare": 0.19,
+          "avgBuildingAgeYears": 23,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.87,
+          "distanceToPhcKm": 8.22,
+          "mobileNetworkCoverage": 0.35,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.97,
+          "primaryLivelihoodDependenceShare": 0.59
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.075167, 11.606809]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H022",
+        "name": "Edavaka",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 803,
+        "households": 186,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.48,
+          "scStShare": 0.13,
+          "literacyRate": 0.91
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 35,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.13,
+          "distanceToPhcKm": 10.87,
+          "mobileNetworkCoverage": 0.8,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.18,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.071917, 11.633923]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H023",
+        "name": "Kartikulam",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 360,
+        "households": 86,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.43,
+          "scStShare": 0.12,
+          "literacyRate": 0.86
+        },
+        "structures": {
+          "kutchaHousingShare": 0.28,
+          "avgBuildingAgeYears": 12,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.54,
+          "distanceToPhcKm": 5.48,
+          "mobileNetworkCoverage": 0.68,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.25,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.077567, 11.646435]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H024",
+        "name": "Thirunelly",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 608,
+        "households": 152,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.25,
+          "disabledPersonsShare": 0.08,
+          "bplShare": 0.32,
+          "scStShare": 0.29,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.29,
+          "avgBuildingAgeYears": 42,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.11,
+          "distanceToPhcKm": 6.37,
+          "mobileNetworkCoverage": 0.51,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.17,
+          "primaryLivelihoodDependenceShare": 0.63
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.100646, 11.630176]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H025",
+        "name": "Panamaram",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 726,
+        "households": 167,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.17,
+          "scStShare": 0.23,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.33,
+          "avgBuildingAgeYears": 21,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.45,
+          "distanceToPhcKm": 4.6,
+          "mobileNetworkCoverage": 0.81,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.77,
+          "primaryLivelihoodDependenceShare": 0.88
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.032372, 11.587704]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H026",
+        "name": "Kaniyambetta",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 349,
+        "households": 79,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.08,
+          "bplShare": 0.23,
+          "scStShare": 0.35,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.15,
+          "avgBuildingAgeYears": 17,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.26,
+          "distanceToPhcKm": 2.39,
+          "mobileNetworkCoverage": 0.75,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.22,
+          "primaryLivelihoodDependenceShare": 0.6
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.079652, 11.580101]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H027",
+        "name": "Padickal",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 230,
+        "households": 53,
+        "demographics": {
+          "shareUnder5": 0.13,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.53,
+          "scStShare": 0.3,
+          "literacyRate": 0.73
+        },
+        "structures": {
+          "kutchaHousingShare": 0.3,
+          "avgBuildingAgeYears": 45,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.11,
+          "distanceToPhcKm": 2.12,
+          "mobileNetworkCoverage": 0.81,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.01,
+          "primaryLivelihoodDependenceShare": 0.73
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.063554, 11.596248]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H028",
+        "name": "Ambalavayal",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 621,
+        "households": 153,
+        "demographics": {
+          "shareUnder5": 0.14,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.25,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.32,
+          "scStShare": 0.19,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.22,
+          "avgBuildingAgeYears": 25,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.17,
+          "distanceToPhcKm": 6.11,
+          "mobileNetworkCoverage": 0.85,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.87,
+          "primaryLivelihoodDependenceShare": 0.6
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.065572, 11.590104]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H029",
+        "name": "Sultan Bathery Rural",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 149,
+        "households": 35,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.16,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.26,
+          "scStShare": 0.27,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.3,
+          "avgBuildingAgeYears": 25,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.34,
+          "distanceToPhcKm": 6.68,
+          "mobileNetworkCoverage": 0.46,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.83,
+          "primaryLivelihoodDependenceShare": 0.7
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.083131, 11.627155]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H030",
+        "name": "Noolpuzha",
+        "block": "Vythiri",
+        "panchayat": "Vythiri Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 534,
+        "households": 121,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.15,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.32,
+          "scStShare": 0.12,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.25,
+          "avgBuildingAgeYears": 29,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 2.94,
+          "distanceToPhcKm": 8.73,
+          "mobileNetworkCoverage": 0.51,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "PLANTATION",
+          "distanceToLivelihoodAssetKm": 0.65,
+          "primaryLivelihoodDependenceShare": 0.79
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "MED"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.009228, 11.76176]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H031",
+        "name": "Vythiri Town",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 403,
+        "households": 91,
+        "demographics": {
+          "shareUnder5": 0.14,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.23,
+          "scStShare": 0.08,
+          "literacyRate": 0.74
+        },
+        "structures": {
+          "kutchaHousingShare": 0.16,
+          "avgBuildingAgeYears": 19,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.61,
+          "distanceToPhcKm": 1.16,
+          "mobileNetworkCoverage": 0.67,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 0.21,
+          "primaryLivelihoodDependenceShare": 0.52
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.972365, 11.813768]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H032",
+        "name": "Lakkidi",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 411,
+        "households": 96,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.11,
+          "disabledPersonsShare": 0.08,
+          "bplShare": 0.34,
+          "scStShare": 0.18,
+          "literacyRate": 0.89
+        },
+        "structures": {
+          "kutchaHousingShare": 0.18,
+          "avgBuildingAgeYears": 33,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.13,
+          "distanceToPhcKm": 1.81,
+          "mobileNetworkCoverage": 0.73,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.46,
+          "primaryLivelihoodDependenceShare": 0.82
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.983337, 11.758666]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H033",
+        "name": "Vaduvanchal",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 351,
+        "households": 79,
+        "demographics": {
+          "shareUnder5": 0.09,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.32,
+          "scStShare": 0.14,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.13,
+          "avgBuildingAgeYears": 11,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.01,
+          "distanceToPhcKm": 11.42,
+          "mobileNetworkCoverage": 0.47,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.74,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.967756, 11.766643]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H034",
+        "name": "Kottapadi",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 153,
+        "households": 37,
+        "demographics": {
+          "shareUnder5": 0.12,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.06,
+          "bplShare": 0.52,
+          "scStShare": 0.14,
+          "literacyRate": 0.88
+        },
+        "structures": {
+          "kutchaHousingShare": 0.05,
+          "avgBuildingAgeYears": 45,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.07,
+          "distanceToPhcKm": 5.68,
+          "mobileNetworkCoverage": 0.68,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 2.28,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.032337, 11.756367]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H035",
+        "name": "Kambalakkad",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 247,
+        "households": 58,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.15,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.33,
+          "scStShare": 0.19,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.14,
+          "avgBuildingAgeYears": 35,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.7,
+          "distanceToPhcKm": 7.64,
+          "mobileNetworkCoverage": 0.37,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 2.41,
+          "primaryLivelihoodDependenceShare": 0.83
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.962867, 11.803841]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H036",
+        "name": "Cherambadi Road",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 601,
+        "households": 139,
+        "demographics": {
+          "shareUnder5": 0.1,
+          "shareOver60": 0.11,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.48,
+          "scStShare": 0.14,
+          "literacyRate": 0.93
+        },
+        "structures": {
+          "kutchaHousingShare": 0.16,
+          "avgBuildingAgeYears": 38,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.7,
+          "distanceToPhcKm": 5.49,
+          "mobileNetworkCoverage": 0.54,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.16,
+          "primaryLivelihoodDependenceShare": 0.63
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.046067, 11.77694]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H037",
+        "name": "Kenichira",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 378,
+        "households": 90,
+        "demographics": {
+          "shareUnder5": 0.14,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.08,
+          "bplShare": 0.41,
+          "scStShare": 0.12,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.17,
+          "avgBuildingAgeYears": 34,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.24,
+          "distanceToPhcKm": 3.06,
+          "mobileNetworkCoverage": 0.57,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 1.6,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.972791, 11.775035]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H038",
+        "name": "Pulpally Rural",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 765,
+        "households": 175,
+        "demographics": {
+          "shareUnder5": 0.08,
+          "shareOver60": 0.1,
+          "womenHeadedHouseholdShare": 0.2,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.19,
+          "scStShare": 0.12,
+          "literacyRate": 0.94
+        },
+        "structures": {
+          "kutchaHousingShare": 0.09,
+          "avgBuildingAgeYears": 15,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.8,
+          "distanceToPhcKm": 11.42,
+          "mobileNetworkCoverage": 0.74,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.3,
+          "primaryLivelihoodDependenceShare": 0.79
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.998394, 11.814487]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H039",
+        "name": "Mullankolly",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 512,
+        "households": 124,
+        "demographics": {
+          "shareUnder5": 0.11,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.02,
+          "bplShare": 0.46,
+          "scStShare": 0.12,
+          "literacyRate": 0.9
+        },
+        "structures": {
+          "kutchaHousingShare": 0.12,
+          "avgBuildingAgeYears": 29,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.1,
+          "distanceToPhcKm": 10.03,
+          "mobileNetworkCoverage": 0.52,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.11,
+          "primaryLivelihoodDependenceShare": 0.73
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.001189, 11.828873]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-WYD-H040",
+        "name": "Thondernad",
+        "block": "Mananthavady",
+        "panchayat": "Mananthavady Grama Panchayat",
+        "districtLgdCode": "DEMO-WYD-001",
+        "population": 586,
+        "households": 129,
+        "demographics": {
+          "shareUnder5": 0.13,
+          "shareOver60": 0.2,
+          "womenHeadedHouseholdShare": 0.14,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.49,
+          "scStShare": 0.16,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.12,
+          "avgBuildingAgeYears": 28,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.87,
+          "distanceToPhcKm": 8.76,
+          "mobileNetworkCoverage": 0.84,
+          "evacuationRouteCount": 3
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 2.47,
+          "primaryLivelihoodDependenceShare": 0.82
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "terrainTier": "LOW"
+      }
+    }
+  ]
+}

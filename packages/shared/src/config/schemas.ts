@@ -1,0 +1,155 @@
+import { z } from "zod";
+
+const zoneClassEnum = z.enum(["Red", "Orange", "Yellow", "Green"]);
+
+const factorWeightsSchema = z.record(z.string(), z.number().min(0).max(1));
+
+export const hazardWeightsSchema = z.object({
+  modelVersion: z.string(),
+  hazards: z.object({
+    landslide: z.object({ factors: factorWeightsSchema }),
+    flood: z.object({ factors: factorWeightsSchema }),
+    coastalErosion: z.object({ factors: factorWeightsSchema }),
+    cloudburst: z.object({ factors: factorWeightsSchema }),
+  }),
+});
+export type HazardWeightsConfig = z.infer<typeof hazardWeightsSchema>;
+
+const hazardThresholdSchema = z.object({
+  red: z.number().min(0).max(1),
+  orange: z.number().min(0).max(1),
+  yellow: z.number().min(0).max(1),
+});
+
+export const zoneThresholdsSchema = z.object({
+  modelVersion: z.string(),
+  classes: z.array(zoneClassEnum),
+  note: z.string(),
+  perHazard: z.object({
+    landslide: hazardThresholdSchema,
+    flood: hazardThresholdSchema,
+    coastalErosion: hazardThresholdSchema,
+    cloudburst: hazardThresholdSchema,
+  }),
+  multiHazardAggregation: z.object({
+    rule: z.string(),
+    description: z.string(),
+    orangeCountEscalationTrigger: z.number().int().positive(),
+    escalatesTo: zoneClassEnum,
+  }),
+});
+export type ZoneThresholdsConfig = z.infer<typeof zoneThresholdsSchema>;
+
+const indicatorWeightsSchema = z.record(z.string(), z.number().min(0).max(1));
+
+const vulnerabilityDimensionSchema = z.object({
+  weight: z.number().min(0).max(1),
+  indicators: indicatorWeightsSchema,
+});
+
+export const vulnerabilityWeightsSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  dimensions: z.object({
+    demographic: vulnerabilityDimensionSchema,
+    socioeconomic: vulnerabilityDimensionSchema,
+    structural: vulnerabilityDimensionSchema,
+    accessibility: vulnerabilityDimensionSchema,
+  }),
+  copingCapacity: z.object({
+    weight: z.number().min(0).max(1),
+    mode: z.literal("REDUCING"),
+    indicators: indicatorWeightsSchema,
+  }),
+});
+export type VulnerabilityWeightsConfig = z.infer<typeof vulnerabilityWeightsSchema>;
+
+export const priorityWeightsSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  weights: z.object({
+    risk: z.number().min(0).max(1),
+    vulnerability: z.number().min(0).max(1),
+  }),
+  buckets: z.object({
+    note: z.string(),
+    immediate: z.number().min(0).max(1),
+    shortTerm: z.number().min(0).max(1),
+  }),
+});
+export type PriorityWeightsConfig = z.infer<typeof priorityWeightsSchema>;
+
+export const suitabilityAhpSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  criteria: z.array(z.string()).min(2),
+  pairwiseMatrix: z.array(z.array(z.number().positive())),
+  weights: z.record(z.string(), z.number().min(0).max(1)),
+  lambdaMax: z.number().positive(),
+  consistencyIndex: z.number(),
+  randomIndex: z.number().positive(),
+  consistencyRatio: z.number(),
+});
+export type SuitabilityAhpConfig = z.infer<typeof suitabilityAhpSchema>;
+
+export const capacityNormsSchema = z.object({
+  modelVersion: z.string(),
+  water: z.object({
+    lpcd: z.number().positive(),
+    source: z.string(),
+    defaultAvgHouseholdSize: z.number().positive(),
+    stateAvgHouseholdSize: z.record(z.string(), z.number().positive()),
+  }),
+  land: z.object({
+    plotAreaPerHouseholdSqm: z.number().positive(),
+    infrastructureOverheadFactor: z.number().positive(),
+    effectiveLandPerHouseholdSqm: z.number().positive(),
+  }),
+  education: z.object({
+    rte: z.object({
+      primarySchoolMaxDistanceKm: z.number().positive(),
+      upperPrimarySchoolMaxDistanceKm: z.number().positive(),
+      pupilTeacherRatioPrimary: z.number().positive(),
+      pupilTeacherRatioUpperPrimary: z.number().positive(),
+      schoolAgeChildrenShareOfPopulation: z.number().min(0).max(1),
+    }),
+  }),
+  health: z.object({
+    iphs: z.object({
+      subCentrePopulationNormPlains: z.number().positive(),
+      subCentrePopulationNormHillyTribal: z.number().positive(),
+      phcPopulationNormPlains: z.number().positive(),
+      phcPopulationNormHillyTribal: z.number().positive(),
+      chcPopulationNormPlains: z.number().positive(),
+      chcPopulationNormHillyTribal: z.number().positive(),
+    }),
+  }),
+  access: z.object({
+    allWeatherRoadMaxDistanceMeters: z.number().positive(),
+    householdsPerAccessPointCapacity: z.number().positive(),
+  }),
+});
+export type CapacityNormsConfig = z.infer<typeof capacityNormsSchema>;
+
+export const exclusionCriterionRuleSchema = z.enum([
+  "INTERSECTS_ZONE_CLASS",
+  "INTERSECTS_LAYER",
+  "SLOPE_EXCEEDS_DEGREES",
+  "WITHIN_BUFFER",
+]);
+
+export const exclusionCriteriaSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  criteria: z
+    .array(
+      z.object({
+        id: z.string(),
+        description: z.string(),
+        rule: exclusionCriterionRuleSchema,
+        params: z.record(z.string(), z.unknown()),
+      }),
+    )
+    .min(1),
+});
+export type ExclusionCriteriaConfig = z.infer<typeof exclusionCriteriaSchema>;

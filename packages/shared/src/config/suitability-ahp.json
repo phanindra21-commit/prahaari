@@ -1,0 +1,41 @@
+{
+  "modelVersion": "suitability-ahp-v1",
+  "note": "Pairwise comparison matrix uses Saaty's 1-9 scale; matrix[i][j] is the importance of criteria[i] relative to criteria[j]. Weights derived via the row geometric-mean method. Random Index (RI) for n=9 is 1.45 per Saaty (1980). consistencyRatio = CI / RI and MUST be < 0.10 for the weight set to be considered valid — the loader asserts this at load time.",
+  "criteria": [
+    "hazardSafety",
+    "waterAvailability",
+    "landAvailability",
+    "roadConnectivity",
+    "distanceFromOriginHabitation",
+    "livelihoodAccess",
+    "landOwnershipAcquisitionEase",
+    "existingInfrastructure",
+    "slope"
+  ],
+  "pairwiseMatrix": [
+    [1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+    [0.6667, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    [0.5, 0.6667, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0],
+    [0.3333, 0.5, 0.6667, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0],
+    [0.25, 0.3333, 0.5, 0.6667, 1.0, 1.5, 2.0, 3.0, 4.0],
+    [0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0, 1.5, 2.0, 3.0],
+    [0.1667, 0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0, 1.5, 2.0],
+    [0.1429, 0.1667, 0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0, 1.5],
+    [0.125, 0.1429, 0.1667, 0.2, 0.25, 0.3333, 0.5, 0.6667, 1.0]
+  ],
+  "weights": {
+    "hazardSafety": 0.278244,
+    "waterAvailability": 0.211114,
+    "landAvailability": 0.15746,
+    "roadConnectivity": 0.114207,
+    "distanceFromOriginHabitation": 0.081872,
+    "livelihoodAccess": 0.058692,
+    "landOwnershipAcquisitionEase": 0.04257,
+    "existingInfrastructure": 0.031751,
+    "slope": 0.02409
+  },
+  "lambdaMax": 9.071003,
+  "consistencyIndex": 0.008875,
+  "randomIndex": 1.45,
+  "consistencyRatio": 0.006121
+}

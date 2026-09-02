@@ -1,0 +1,526 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [85.008882, 19.543947],
+            [85.011118, 19.543947],
+            [85.011118, 19.546053],
+            [85.008882, 19.546053],
+            [85.008882, 19.543947]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Khallikote Inland Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [85.01, 19.545]
+        },
+        "areaSqm": 55000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.88,
+          "waterAvailability": 0.69,
+          "landAvailability": 0.87,
+          "roadConnectivity": 0.62,
+          "distanceFromOriginHabitation": 0.47,
+          "livelihoodAccess": 0.53,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.43,
+          "slope": 0.55
+        },
+        "overallSuitabilityScore": 0.7331,
+        "carryingCapacity": {
+          "byLand": 366.7,
+          "byWater": 1869.1,
+          "byEducation": 298.4,
+          "byHealth": 3.5,
+          "byAccess": 500,
+          "effectiveCapacity": 3.5,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.968956, 19.559016],
+            [84.971044, 19.559016],
+            [84.971044, 19.560984],
+            [84.968956, 19.560984],
+            [84.968956, 19.559016]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Dharakot Revenue Land",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.97, 19.56]
+        },
+        "areaSqm": 48000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.87,
+          "waterAvailability": 0.68,
+          "landAvailability": 0.59,
+          "roadConnectivity": 0.44,
+          "distanceFromOriginHabitation": 0.47,
+          "livelihoodAccess": 0.65,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.31,
+          "slope": 0.83
+        },
+        "overallSuitabilityScore": 0.6736,
+        "carryingCapacity": {
+          "byLand": 320.0,
+          "byWater": 1133.4,
+          "byEducation": 188.2,
+          "byHealth": 1.3,
+          "byAccess": 750,
+          "effectiveCapacity": 1.3,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.59883, 19.8989],
+            [84.60117, 19.8989],
+            [84.60117, 19.9011],
+            [84.59883, 19.9011],
+            [84.59883, 19.8989]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Bhanjanagar Outskirts Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.6, 19.9]
+        },
+        "areaSqm": 60000,
+        "landOwnership": "COMMUNITY",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.79,
+          "waterAvailability": 0.75,
+          "landAvailability": 0.88,
+          "roadConnectivity": 0.71,
+          "distanceFromOriginHabitation": 0.63,
+          "livelihoodAccess": 0.63,
+          "landOwnershipAcquisitionEase": 0.6,
+          "existingInfrastructure": 0.6,
+          "slope": 0.52
+        },
+        "overallSuitabilityScore": 0.7435,
+        "carryingCapacity": {
+          "byLand": 400.0,
+          "byWater": 3259.5,
+          "byEducation": 392.7,
+          "byHealth": 4.1,
+          "byAccess": 750,
+          "effectiveCapacity": 4.1,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.659023, 19.60908],
+            [84.660977, 19.60908],
+            [84.660977, 19.61092],
+            [84.659023, 19.61092],
+            [84.659023, 19.60908]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Aska Government Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.66, 19.61]
+        },
+        "areaSqm": 42000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.8,
+          "waterAvailability": 0.69,
+          "landAvailability": 0.54,
+          "roadConnectivity": 0.69,
+          "distanceFromOriginHabitation": 0.43,
+          "livelihoodAccess": 0.38,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.39,
+          "slope": 0.56
+        },
+        "overallSuitabilityScore": 0.6538,
+        "carryingCapacity": {
+          "byLand": 280.0,
+          "byWater": 1600.9,
+          "byEducation": 94.1,
+          "byHealth": 0.7,
+          "byAccess": 250,
+          "effectiveCapacity": 0.7,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.789057, 19.769113],
+            [84.790943, 19.769113],
+            [84.790943, 19.770887],
+            [84.789057, 19.770887],
+            [84.789057, 19.769113]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Buguda Revenue Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.79, 19.77]
+        },
+        "areaSqm": 39000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.83,
+          "waterAvailability": 0.88,
+          "landAvailability": 0.75,
+          "roadConnectivity": 0.43,
+          "distanceFromOriginHabitation": 0.49,
+          "livelihoodAccess": 0.52,
+          "landOwnershipAcquisitionEase": 0.9,
+          "existingInfrastructure": 0.59,
+          "slope": 0.88
+        },
+        "overallSuitabilityScore": 0.7328,
+        "carryingCapacity": {
+          "byLand": 260.0,
+          "byWater": 2378.3,
+          "byEducation": 267.2,
+          "byHealth": 1.2,
+          "byAccess": 500,
+          "effectiveCapacity": 1.2,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.408922, 19.758986],
+            [84.411078, 19.758986],
+            [84.411078, 19.761014],
+            [84.408922, 19.761014],
+            [84.408922, 19.758986]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Sorada Inland Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.41, 19.76]
+        },
+        "areaSqm": 51000,
+        "landOwnership": "PRIVATE",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.95,
+          "waterAvailability": 0.71,
+          "landAvailability": 0.69,
+          "roadConnectivity": 0.44,
+          "distanceFromOriginHabitation": 0.45,
+          "livelihoodAccess": 0.5,
+          "landOwnershipAcquisitionEase": 0.35,
+          "existingInfrastructure": 0.42,
+          "slope": 0.83
+        },
+        "overallSuitabilityScore": 0.6875,
+        "carryingCapacity": {
+          "byLand": 340.0,
+          "byWater": 1071.5,
+          "byEducation": 81.9,
+          "byHealth": 4.4,
+          "byAccess": 750,
+          "effectiveCapacity": 4.4,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.419, 19.634058],
+            [84.421, 19.634058],
+            [84.421, 19.635942],
+            [84.419, 19.635942],
+            [84.419, 19.634058]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Sheragada Plot",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.42, 19.635]
+        },
+        "areaSqm": 44000,
+        "landOwnership": "COMMUNITY",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": [],
+        "suitabilitySubScores": {
+          "hazardSafety": 0.79,
+          "waterAvailability": 0.79,
+          "landAvailability": 0.87,
+          "roadConnectivity": 0.74,
+          "distanceFromOriginHabitation": 0.53,
+          "livelihoodAccess": 0.64,
+          "landOwnershipAcquisitionEase": 0.6,
+          "existingInfrastructure": 0.34,
+          "slope": 0.84
+        },
+        "overallSuitabilityScore": 0.7456,
+        "carryingCapacity": {
+          "byLand": 293.3,
+          "byWater": 2129.6,
+          "byEducation": 445.4,
+          "byHealth": 2.1,
+          "byAccess": 250,
+          "effectiveCapacity": 2.1,
+          "bindingConstraint": "HEALTH"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.894149, 19.254197],
+            [84.895851, 19.254197],
+            [84.895851, 19.255803],
+            [84.894149, 19.255803],
+            [84.894149, 19.254197]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Podampeta Beachfront Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.895, 19.255]
+        },
+        "areaSqm": 32000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["insideCrzI"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [84.90919, 19.269235],
+            [84.91081, 19.269235],
+            [84.91081, 19.270765],
+            [84.90919, 19.270765],
+            [84.90919, 19.269235]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Sunapur Coastal Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [84.91, 19.27]
+        },
+        "areaSqm": 29000,
+        "landOwnership": "PRIVATE",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "protectedOrReservedForest",
+          "within100YearFloodplain",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "waterBodyBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["insideCrzI", "insideRedOrOrangeZone"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [85.044109, 19.36916],
+            [85.045891, 19.36916],
+            [85.045891, 19.37084],
+            [85.044109, 19.37084],
+            [85.044109, 19.36916]
+          ]
+        ]
+      },
+      "properties": {
+        "districtLgdCode": "DEMO-GJM-001",
+        "name": "Rushikulya Mouth Plot (FAILS)",
+        "centroid": {
+          "type": "Point",
+          "coordinates": [85.045, 19.37]
+        },
+        "areaSqm": 35000,
+        "landOwnership": "GOVT",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "exclusionsPassed": [
+          "insideRedOrOrangeZone",
+          "insideCrzI",
+          "protectedOrReservedForest",
+          "excessiveSlope",
+          "activeFaultBuffer",
+          "miningLeaseArea"
+        ],
+        "exclusionsFailed": ["waterBodyBuffer", "within100YearFloodplain"],
+        "overallSuitabilityScore": null,
+        "carryingCapacity": null,
+        "suitabilitySubScores": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+import type { ZodSchema } from "zod";
+import hazardWeightsJson from "./hazard-weights.json";
+import zoneThresholdsJson from "./zone-thresholds.json";
+import vulnerabilityWeightsJson from "./vulnerability-weights.json";
+import priorityWeightsJson from "./priority-weights.json";
+import suitabilityAhpJson from "./suitability-ahp.json";
+import capacityNormsJson from "./capacity-norms.json";
+import exclusionCriteriaJson from "./exclusion-criteria.json";
+import {
+  hazardWeightsSchema,
+  zoneThresholdsSchema,
+  vulnerabilityWeightsSchema,
+  priorityWeightsSchema,
+  suitabilityAhpSchema,
+  capacityNormsSchema,
+  exclusionCriteriaSchema,
+  type HazardWeightsConfig,
+  type ZoneThresholdsConfig,
+  type VulnerabilityWeightsConfig,
+  type PriorityWeightsConfig,
+  type SuitabilityAhpConfig,
+  type CapacityNormsConfig,
+  type ExclusionCriteriaConfig,
+} from "./schemas";
+
+const WEIGHT_SUM_TOLERANCE = 1e-6;
+
+function parseConfig<T>(schema: ZodSchema<T>, data: unknown, fileName: string): T {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    throw new Error(`[shared/config] Failed to validate ${fileName}: ${result.error.toString()}`);
+  }
+  return result.data;
+}
+
+function assertSumsToOne(weights: Record<string, number>, label: string): void {
+  const sum = Object.values(weights).reduce((total, weight) => total + weight, 0);
+  if (Math.abs(sum - 1) > WEIGHT_SUM_TOLERANCE) {
+    throw new Error(`[shared/config] ${label} must sum to 1.0, but summed to ${sum}`);
+  }
+}
+
+function loadHazardWeights(): HazardWeightsConfig {
+  const config = parseConfig(hazardWeightsSchema, hazardWeightsJson, "hazard-weights.json");
+  for (const [hazard, hazardConfig] of Object.entries(config.hazards)) {
+    assertSumsToOne(hazardConfig.factors, `hazard-weights.json hazards.${hazard}.factors`);
+  }
+  return config;
+}
+
+function loadZoneThresholds(): ZoneThresholdsConfig {
+  return parseConfig(zoneThresholdsSchema, zoneThresholdsJson, "zone-thresholds.json");
+}
+
+function loadVulnerabilityWeights(): VulnerabilityWeightsConfig {
+  const config = parseConfig(
+    vulnerabilityWeightsSchema,
+    vulnerabilityWeightsJson,
+    "vulnerability-weights.json",
+  );
+
+  assertSumsToOne(
+    {
+      demographic: config.dimensions.demographic.weight,
+      socioeconomic: config.dimensions.socioeconomic.weight,
+      structural: config.dimensions.structural.weight,
+      accessibility: config.dimensions.accessibility.weight,
+    },
+    "vulnerability-weights.json dimensions.*.weight",
+  );
+
+  for (const [name, dimension] of Object.entries(config.dimensions)) {
+    assertSumsToOne(
+      dimension.indicators,
+      `vulnerability-weights.json dimensions.${name}.indicators`,
+    );
+  }
+
+  assertSumsToOne(
+    config.copingCapacity.indicators,
+    "vulnerability-weights.json copingCapacity.indicators",
+  );
+
+  return config;
+}
+
+function loadPriorityWeights(): PriorityWeightsConfig {
+  const config = parseConfig(priorityWeightsSchema, priorityWeightsJson, "priority-weights.json");
+  assertSumsToOne(config.weights, "priority-weights.json weights");
+  return config;
+}
+
+function loadSuitabilityAhp(): SuitabilityAhpConfig {
+  const config = parseConfig(suitabilityAhpSchema, suitabilityAhpJson, "suitability-ahp.json");
+  assertSumsToOne(config.weights, "suitability-ahp.json weights");
+  if (config.consistencyRatio >= 0.1) {
+    throw new Error(
+      `[shared/config] suitability-ahp.json consistencyRatio (${config.consistencyRatio}) must be < 0.10`,
+    );
+  }
+  return config;
+}
+
+function loadCapacityNorms(): CapacityNormsConfig {
+  return parseConfig(capacityNormsSchema, capacityNormsJson, "capacity-norms.json");
+}
+
+function loadExclusionCriteria(): ExclusionCriteriaConfig {
+  return parseConfig(exclusionCriteriaSchema, exclusionCriteriaJson, "exclusion-criteria.json");
+}
+
+/** Validated at module-load time; importing this module throws if any config file is invalid. */
+export const hazardWeights: HazardWeightsConfig = loadHazardWeights();
+export const zoneThresholds: ZoneThresholdsConfig = loadZoneThresholds();
+export const vulnerabilityWeights: VulnerabilityWeightsConfig = loadVulnerabilityWeights();
+export const priorityWeights: PriorityWeightsConfig = loadPriorityWeights();
+export const suitabilityAhp: SuitabilityAhpConfig = loadSuitabilityAhp();
+export const capacityNorms: CapacityNormsConfig = loadCapacityNorms();
+export const exclusionCriteria: ExclusionCriteriaConfig = loadExclusionCriteria();

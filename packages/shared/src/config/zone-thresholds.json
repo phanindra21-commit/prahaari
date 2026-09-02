@@ -1,0 +1,17 @@
+{
+  "modelVersion": "zone-thresholds-v1",
+  "classes": ["Red", "Orange", "Yellow", "Green"],
+  "note": "Each threshold is the MINIMUM susceptibility score (0-1) required to fall in that class. A score >= red -> Red; else >= orange -> Orange; else >= yellow -> Yellow; else Green.",
+  "perHazard": {
+    "landslide": { "red": 0.7, "orange": 0.5, "yellow": 0.25 },
+    "flood": { "red": 0.75, "orange": 0.55, "yellow": 0.3 },
+    "coastalErosion": { "red": 0.7, "orange": 0.5, "yellow": 0.25 },
+    "cloudburst": { "red": 0.75, "orange": 0.55, "yellow": 0.3 }
+  },
+  "multiHazardAggregation": {
+    "rule": "WORST_CLASS_THEN_ESCALATE",
+    "description": "A habitation's overall zone class is the worst (most severe) class across all hazards it is exposed to. If two or more hazards independently classify as Orange, the overall class escalates to Red, since compounding moderate-to-high hazards materially increase combined risk beyond any single hazard's rating.",
+    "orangeCountEscalationTrigger": 2,
+    "escalatesTo": "Red"
+  }
+}
