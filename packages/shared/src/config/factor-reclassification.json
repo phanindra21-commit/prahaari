@@ -1,0 +1,43 @@
+{
+  "modelVersion": "factor-reclassification-v1",
+  "note": "Reclassifies each raw causative-factor value to a 1-5 susceptibility rating (METHODOLOGY §1.1). breakpoints are ascending ranges of the RAW value, each mapped to a table rating that itself ascends with the raw value (max: null = +infinity, covers the top bucket). For a DIRECT factor the table rating IS the susceptibility rating. For an INVERSE factor (raw value ascending means SAFER — e.g. distance from a hazard driver, or a protective buffer), the susceptibility rating is 6 minus the table rating, applied uniformly by services/ml/app/engine/reclassify.py — never hardcoded per factor.",
+  "hazards": {
+    "landslide": {
+      "slope": { "direction": "DIRECT", "unit": "degrees", "breakpoints": [{ "max": 10, "rating": 1 }, { "max": 20, "rating": 2 }, { "max": 30, "rating": 3 }, { "max": 40, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "lithology": { "direction": "DIRECT", "unit": "erodibilityIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "landCover": { "direction": "INVERSE", "unit": "forestCoverIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "antecedentRainfallIndex": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "soilDepth": { "direction": "DIRECT", "unit": "meters", "breakpoints": [{ "max": 0.5, "rating": 1 }, { "max": 1.5, "rating": 2 }, { "max": 3, "rating": 3 }, { "max": 5, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "distanceToDrainage": { "direction": "INVERSE", "unit": "km", "breakpoints": [{ "max": 0.1, "rating": 1 }, { "max": 0.3, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 1.0, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "distanceToRoadCut": { "direction": "INVERSE", "unit": "km", "breakpoints": [{ "max": 0.05, "rating": 1 }, { "max": 0.15, "rating": 2 }, { "max": 0.3, "rating": 3 }, { "max": 0.5, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "historicalIncidentDensity": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "curvature": { "direction": "DIRECT", "unit": "concavityIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "aspect": { "direction": "DIRECT", "unit": "swExposureIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] }
+    },
+    "flood": {
+      "elevation": { "direction": "INVERSE", "unit": "meters", "breakpoints": [{ "max": 5, "rating": 1 }, { "max": 20, "rating": 2 }, { "max": 50, "rating": 3 }, { "max": 100, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "rainfallIntensity": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "distanceToRiver": { "direction": "INVERSE", "unit": "km", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.5, "rating": 2 }, { "max": 1.0, "rating": 3 }, { "max": 2.0, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "twi": { "direction": "DIRECT", "unit": "topographicWetnessIndex", "breakpoints": [{ "max": 4, "rating": 1 }, { "max": 8, "rating": 2 }, { "max": 12, "rating": 3 }, { "max": 16, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "drainageDensity": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "landCover": { "direction": "DIRECT", "unit": "imperviousnessIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "soilInfiltration": { "direction": "INVERSE", "unit": "mmPerHour", "breakpoints": [{ "max": 5, "rating": 1 }, { "max": 15, "rating": 2 }, { "max": 30, "rating": 3 }, { "max": 50, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "historicalInundation": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] }
+    },
+    "coastalErosion": {
+      "shorelineChangeRate": { "direction": "DIRECT", "unit": "metersPerYear", "breakpoints": [{ "max": 0.5, "rating": 1 }, { "max": 1.0, "rating": 2 }, { "max": 2.0, "rating": 3 }, { "max": 3.5, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "elevation": { "direction": "INVERSE", "unit": "meters", "breakpoints": [{ "max": 2, "rating": 1 }, { "max": 5, "rating": 2 }, { "max": 10, "rating": 3 }, { "max": 20, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "waveEnergy": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "geomorphology": { "direction": "DIRECT", "unit": "erodibilityIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "tidalRange": { "direction": "INVERSE", "unit": "meters", "breakpoints": [{ "max": 1, "rating": 1 }, { "max": 2, "rating": 2 }, { "max": 4, "rating": 3 }, { "max": 6, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "mangroveDuneBufferPresence": { "direction": "INVERSE", "unit": "bufferQualityIndex0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] }
+    },
+    "cloudburst": {
+      "orographicIndex": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "historicalCloudburstDensity": { "direction": "DIRECT", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "slope": { "direction": "DIRECT", "unit": "degrees", "breakpoints": [{ "max": 10, "rating": 1 }, { "max": 20, "rating": 2 }, { "max": 30, "rating": 3 }, { "max": 40, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "elevation": { "direction": "DIRECT", "unit": "meters", "breakpoints": [{ "max": 400, "rating": 1 }, { "max": 800, "rating": 2 }, { "max": 1200, "rating": 3 }, { "max": 1800, "rating": 4 }, { "max": null, "rating": 5 }] },
+      "drainageCapacity": { "direction": "INVERSE", "unit": "index0to1", "breakpoints": [{ "max": 0.2, "rating": 1 }, { "max": 0.4, "rating": 2 }, { "max": 0.6, "rating": 3 }, { "max": 0.8, "rating": 4 }, { "max": null, "rating": 5 }] }
+    }
+  }
+}

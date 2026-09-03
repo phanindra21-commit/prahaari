@@ -1,0 +1,5 @@
+{
+  "modelVersion": "blend-config-v1",
+  "alpha": 0.6,
+  "note": "blendedScore = alpha * overlayScore + (1 - alpha) * mlScore. Weighted toward the interpretable weighted-overlay (0.6) because the ML training labels are SYNTHETIC_DEMO for this prototype (services/ml/app/engine/labels.py) — shift alpha toward the ML score once real GSI landslide inventory / CWC flood extent labels are available. See docs/METHODOLOGY.md §1.2."
+}

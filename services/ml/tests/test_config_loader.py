@@ -54,3 +54,21 @@ def test_capacity_norms_water_lpcd_matches_jal_jeevan_mission_norm():
 
 def test_exclusion_criteria_loaded():
     assert len(cfg.EXCLUSION_CRITERIA["criteria"]) > 0
+
+
+def test_factor_reclassification_covers_every_hazard_weight_factor():
+    for hazard, hazard_config in cfg.HAZARD_WEIGHTS["hazards"].items():
+        reclass_hazard = cfg.FACTOR_RECLASSIFICATION["hazards"][hazard]
+        assert sorted(reclass_hazard.keys()) == sorted(hazard_config["factors"].keys())
+
+
+def test_factor_reclassification_directions_are_declared():
+    for hazard_config in cfg.FACTOR_RECLASSIFICATION["hazards"].values():
+        for factor in hazard_config.values():
+            assert factor["direction"] in ("DIRECT", "INVERSE")
+            assert [bp["rating"] for bp in factor["breakpoints"]] == [1, 2, 3, 4, 5]
+            assert factor["breakpoints"][-1]["max"] is None
+
+
+def test_blend_config_alpha_in_range():
+    assert 0.0 <= cfg.BLEND_CONFIG["alpha"] <= 1.0

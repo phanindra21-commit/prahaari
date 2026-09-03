@@ -88,6 +88,57 @@ def load_exclusion_criteria() -> dict[str, Any]:
     return _load_json("exclusion-criteria.json")
 
 
+def load_factor_reclassification() -> dict[str, Any]:
+    config = _load_json("factor-reclassification.json")
+    for hazard, hazard_factors in HAZARD_WEIGHTS["hazards"].items():
+        reclass_hazard = config["hazards"].get(hazard)
+        if reclass_hazard is None:
+            raise ValueError(
+                f'[ml/config] factor-reclassification.json is missing hazard "{hazard}"'
+            )
+        weight_keys = sorted(hazard_factors["factors"].keys())
+        reclass_keys = sorted(reclass_hazard.keys())
+        if weight_keys != reclass_keys:
+            raise ValueError(
+                f"[ml/config] factor-reclassification.json hazards.{hazard} factor keys "
+                f"{reclass_keys} do not match hazard-weights.json keys {weight_keys}"
+            )
+        for factor_name, entry in reclass_hazard.items():
+            max_values = [bp["max"] for bp in entry["breakpoints"]]
+            for i in range(len(max_values) - 1):
+                current, nxt = max_values[i], max_values[i + 1]
+                if current is None:
+                    raise ValueError(
+                        f"[ml/config] factor-reclassification.json hazards.{hazard}.{factor_name}: "
+                        "only the last breakpoint may have max: null"
+                    )
+                if nxt is not None and nxt <= current:
+                    raise ValueError(
+                        f"[ml/config] factor-reclassification.json hazards.{hazard}.{factor_name}: "
+                        "breakpoints must have strictly ascending max values"
+                    )
+            if max_values[-1] is not None:
+                raise ValueError(
+                    f"[ml/config] factor-reclassification.json hazards.{hazard}.{factor_name}: "
+                    "the last breakpoint must have max: null"
+                )
+            ratings = [bp["rating"] for bp in entry["breakpoints"]]
+            if ratings != [1, 2, 3, 4, 5]:
+                raise ValueError(
+                    f"[ml/config] factor-reclassification.json hazards.{hazard}.{factor_name}: "
+                    "breakpoint ratings must be exactly [1,2,3,4,5] in order"
+                )
+    return config
+
+
+def load_blend_config() -> dict[str, Any]:
+    config = _load_json("blend-config.json")
+    alpha = config["alpha"]
+    if not (0.0 <= alpha <= 1.0):
+        raise ValueError(f"[ml/config] blend-config.json alpha ({alpha}) must be in [0, 1]")
+    return config
+
+
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
@@ -95,3 +146,5 @@ PRIORITY_WEIGHTS = load_priority_weights()
 SUITABILITY_AHP = load_suitability_ahp()
 CAPACITY_NORMS = load_capacity_norms()
 EXCLUSION_CRITERIA = load_exclusion_criteria()
+FACTOR_RECLASSIFICATION = load_factor_reclassification()
+BLEND_CONFIG = load_blend_config()

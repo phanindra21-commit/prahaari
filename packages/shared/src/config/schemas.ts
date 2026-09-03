@@ -154,6 +154,33 @@ export const exclusionCriteriaSchema = z.object({
 });
 export type ExclusionCriteriaConfig = z.infer<typeof exclusionCriteriaSchema>;
 
+const factorDirectionSchema = z.enum(["DIRECT", "INVERSE"]);
+
+const factorBreakpointSchema = z.object({
+  max: z.number().nullable(),
+  rating: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+});
+
+const factorReclassificationEntrySchema = z.object({
+  direction: factorDirectionSchema,
+  unit: z.string().min(1),
+  breakpoints: z.array(factorBreakpointSchema).length(5),
+});
+
+export const factorReclassificationSchema = z.object({
+  modelVersion: z.string().min(1),
+  note: z.string(),
+  hazards: z.record(z.string(), z.record(z.string(), factorReclassificationEntrySchema)),
+});
+export type FactorReclassificationConfig = z.infer<typeof factorReclassificationSchema>;
+
+export const blendConfigSchema = z.object({
+  modelVersion: z.string().min(1),
+  alpha: z.number().min(0).max(1),
+  note: z.string(),
+});
+export type BlendConfig = z.infer<typeof blendConfigSchema>;
+
 const permissionStringSchema = z
   .string()
   .regex(/^[a-zA-Z]+:[a-zA-Z]+$/, "Permission strings must be 'resource:action'");

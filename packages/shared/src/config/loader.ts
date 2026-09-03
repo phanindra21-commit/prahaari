@@ -1,6 +1,8 @@
 import type { ZodSchema } from "zod";
 import hazardWeightsJson from "./hazard-weights.json";
 import zoneThresholdsJson from "./zone-thresholds.json";
+import factorReclassificationJson from "./factor-reclassification.json";
+import blendConfigJson from "./blend-config.json";
 import vulnerabilityWeightsJson from "./vulnerability-weights.json";
 import priorityWeightsJson from "./priority-weights.json";
 import suitabilityAhpJson from "./suitability-ahp.json";
@@ -15,6 +17,8 @@ import {
   suitabilityAhpSchema,
   capacityNormsSchema,
   exclusionCriteriaSchema,
+  factorReclassificationSchema,
+  blendConfigSchema,
   permissionsConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
@@ -23,6 +27,8 @@ import {
   type SuitabilityAhpConfig,
   type CapacityNormsConfig,
   type ExclusionCriteriaConfig,
+  type FactorReclassificationConfig,
+  type BlendConfig,
   type PermissionsConfig,
 } from "./schemas";
 
@@ -112,6 +118,62 @@ function loadExclusionCriteria(): ExclusionCriteriaConfig {
   return parseConfig(exclusionCriteriaSchema, exclusionCriteriaJson, "exclusion-criteria.json");
 }
 
+function loadFactorReclassification(): FactorReclassificationConfig {
+  const config = parseConfig(
+    factorReclassificationSchema,
+    factorReclassificationJson,
+    "factor-reclassification.json",
+  );
+  for (const [hazard, hazardConfig] of Object.entries(hazardWeights.hazards)) {
+    const reclassHazard = config.hazards[hazard];
+    if (!reclassHazard) {
+      throw new Error(
+        `[shared/config] factor-reclassification.json is missing hazard "${hazard}" present in hazard-weights.json`,
+      );
+    }
+    const weightFactors = Object.keys(hazardConfig.factors).sort();
+    const reclassFactors = Object.keys(reclassHazard).sort();
+    if (weightFactors.join(",") !== reclassFactors.join(",")) {
+      throw new Error(
+        `[shared/config] factor-reclassification.json hazards.${hazard} factor keys [${reclassFactors.join(", ")}] do not match hazard-weights.json hazards.${hazard}.factors keys [${weightFactors.join(", ")}]`,
+      );
+    }
+    for (const [factorName, entry] of Object.entries(reclassHazard)) {
+      const maxValues = entry.breakpoints.map((b) => b.max);
+      for (let i = 0; i < maxValues.length - 1; i += 1) {
+        const current = maxValues[i] ?? null;
+        const next = maxValues[i + 1] ?? null;
+        if (current === null) {
+          throw new Error(
+            `[shared/config] factor-reclassification.json hazards.${hazard}.${factorName}: only the last breakpoint may have max: null`,
+          );
+        }
+        if (next !== null && next <= current) {
+          throw new Error(
+            `[shared/config] factor-reclassification.json hazards.${hazard}.${factorName}: breakpoints must have strictly ascending max values`,
+          );
+        }
+      }
+      if (maxValues[maxValues.length - 1] !== null) {
+        throw new Error(
+          `[shared/config] factor-reclassification.json hazards.${hazard}.${factorName}: the last breakpoint must have max: null`,
+        );
+      }
+      const ratings = entry.breakpoints.map((b) => b.rating);
+      if (ratings.join(",") !== "1,2,3,4,5") {
+        throw new Error(
+          `[shared/config] factor-reclassification.json hazards.${hazard}.${factorName}: breakpoint ratings must be exactly [1,2,3,4,5] in order`,
+        );
+      }
+    }
+  }
+  return config;
+}
+
+function loadBlendConfig(): BlendConfig {
+  return parseConfig(blendConfigSchema, blendConfigJson, "blend-config.json");
+}
+
 function loadPermissions(): PermissionsConfig {
   const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
 
@@ -149,4 +211,6 @@ export const priorityWeights: PriorityWeightsConfig = loadPriorityWeights();
 export const suitabilityAhp: SuitabilityAhpConfig = loadSuitabilityAhp();
 export const capacityNorms: CapacityNormsConfig = loadCapacityNorms();
 export const exclusionCriteria: ExclusionCriteriaConfig = loadExclusionCriteria();
+export const factorReclassification: FactorReclassificationConfig = loadFactorReclassification();
+export const blendConfig: BlendConfig = loadBlendConfig();
 export const permissionsConfig: PermissionsConfig = loadPermissions();
