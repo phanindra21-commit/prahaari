@@ -21,6 +21,7 @@ export const hazardZoneSchema = z
     districtId: objectIdSchema,
     hazardType: hazardTypeSchema,
     geometry: geoPolygonalSchema,
+    simplifiedGeometry: geoPolygonalSchema.optional(),
     zoneClass: zoneClassSchema,
     hazardScore: z.number().min(0).max(1),
     factorContributions: z.record(z.string(), z.number()),

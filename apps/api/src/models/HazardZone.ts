@@ -24,7 +24,10 @@ import { geoPolygonalSchema } from "./geoSchemas";
 export interface HazardZoneDoc extends Document {
   districtId: Types.ObjectId;
   hazardType: HazardType;
+  /** Full-resolution dissolved boundary — authoritative for audit/analysis/intersection tests. */
   geometry: GeoPolygonal;
+  /** Simplified (shapely.simplify, ~50m tolerance) boundary for map rendering. Optional: seed-authored demo zones (data/seed/*-hazard-zones.geojson) are already simple hand-drawn shapes and never populate this. */
+  simplifiedGeometry?: GeoPolygonal;
   zoneClass: ZoneClass;
   hazardScore: number;
   factorContributions: Map<string, number>;
@@ -44,6 +47,7 @@ const hazardZoneSchema = new Schema<HazardZoneDoc>(
     districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     hazardType: { type: String, enum: HAZARD_TYPES, required: true },
     geometry: { type: geoPolygonalSchema, required: true },
+    simplifiedGeometry: { type: geoPolygonalSchema },
     zoneClass: { type: String, enum: ZONE_CLASSES, required: true },
     hazardScore: { type: Number, required: true, min: 0, max: 1 },
     factorContributions: { type: Map, of: Number, required: true, default: () => new Map() },
