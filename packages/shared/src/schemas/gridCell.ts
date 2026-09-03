@@ -6,6 +6,7 @@ import {
   hazardTypeSchema,
   zoneClassSchema,
   dataProvenanceSchema,
+  explanationEntrySchema,
   timestampsSchema,
 } from "./common";
 
@@ -24,6 +25,10 @@ export type GridCellFactors = z.infer<typeof gridCellFactorsSchema>;
 export const gridCellHazardScoresSchema = z.record(hazardTypeSchema, hazardScoreEntrySchema);
 export type GridCellHazardScores = z.infer<typeof gridCellHazardScoresSchema>;
 
+/** hazardType -> top-N signed SHAP factor contributions for that cell's most recent zoning run (services/ml/app/engine/explain.py). */
+export const gridCellExplanationsSchema = z.record(hazardTypeSchema, z.array(explanationEntrySchema));
+export type GridCellExplanations = z.infer<typeof gridCellExplanationsSchema>;
+
 export const gridCellSchema = z
   .object({
     _id: objectIdSchema,
@@ -34,6 +39,7 @@ export const gridCellSchema = z
     boundary: geoPolygonalSchema,
     factors: gridCellFactorsSchema,
     hazardScores: gridCellHazardScoresSchema,
+    explanations: gridCellExplanationsSchema.optional(),
     modelVersion: z.string().min(1),
     computedAt: z.date(),
     dataProvenance: dataProvenanceSchema,

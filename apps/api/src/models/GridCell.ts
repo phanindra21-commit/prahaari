@@ -1,5 +1,5 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { ZONE_CLASSES, DATA_PROVENANCE_VALUES } from "@punarvas/shared";
+import { ZONE_CLASSES, DATA_PROVENANCE_VALUES, EXPLANATION_DIRECTIONS } from "@punarvas/shared";
 import type { ZoneClass, DataProvenance, GeoPoint, GeoPolygonal } from "@punarvas/shared";
 import { geoPointSchema, geoPolygonalSchema } from "./geoSchemas";
 
@@ -8,6 +8,12 @@ export interface HazardScoreEntry {
   mlScore: number;
   blendedScore: number;
   zoneClass: ZoneClass;
+}
+
+export interface FactorContribution {
+  factor: string;
+  contribution: number;
+  direction: "INCREASES_RISK" | "DECREASES_RISK";
 }
 
 /**
@@ -25,6 +31,8 @@ export interface GridCellDoc extends Document {
   boundary: GeoPolygonal;
   factors: Record<string, Record<string, number>>;
   hazardScores: Map<string, HazardScoreEntry>;
+  /** hazardType -> top-N signed SHAP factor contributions from the most recent zoning run. */
+  explanations: Map<string, FactorContribution[]>;
   modelVersion: string;
   computedAt: Date;
   dataProvenance: DataProvenance;
@@ -42,6 +50,15 @@ const hazardScoreEntrySchema = new Schema<HazardScoreEntry>(
   { _id: false },
 );
 
+const factorContributionSchema = new Schema<FactorContribution>(
+  {
+    factor: { type: String, required: true },
+    contribution: { type: Number, required: true },
+    direction: { type: String, enum: EXPLANATION_DIRECTIONS, required: true },
+  },
+  { _id: false },
+);
+
 const gridCellSchema = new Schema<GridCellDoc>(
   {
     h3Index: { type: String, required: true, unique: true },
@@ -53,6 +70,12 @@ const gridCellSchema = new Schema<GridCellDoc>(
     hazardScores: {
       type: Map,
       of: hazardScoreEntrySchema,
+      required: true,
+      default: () => new Map(),
+    },
+    explanations: {
+      type: Map,
+      of: [factorContributionSchema],
       required: true,
       default: () => new Map(),
     },

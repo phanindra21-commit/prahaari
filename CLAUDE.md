@@ -71,13 +71,21 @@ SIH/
 ├── apps/
 │   ├── web/            React + Vite frontend (map UI, officer workbench)
 │   └── api/             Express API (auth, CRUD, orchestrates services/ml)
-│       └── src/models/    Mongoose models (13 collections, see below)
-│       └── src/lib/        JWT, password hashing, sessions, audit(), RBAC helpers
+│       └── src/models/    Mongoose models (16 collections, see below)
+│       └── src/lib/        JWT, password hashing, sessions, audit(), RBAC helpers,
+│                            mlServiceClient (timeout+retry+Zod), zoneVersioning
+│       └── src/lib/jobs/   In-process job runner (zoningJob.ts — no queue)
 │       └── src/middleware/ authenticate, requirePermission, requireScope, rate limits
-│       └── src/routes/     /api/v1/auth/**, /api/v1/audit/**
-│       └── src/scripts/   seed.ts + its Zod schemas for data/seed/
+│       └── src/routes/     /api/v1/auth/**, /api/v1/audit/**, /api/v1/zoning/**,
+│                            /api/v1/zones**, /api/v1/grid**
+│       └── src/scripts/   seed.ts, generateGrid.ts, ingestFactors.ts + Zod schemas
 ├── services/
 │   └── ml/               FastAPI service: hazard/vulnerability/suitability models
+│       └── app/engine/     reclassify, overlay, labels, train, blend, zones, explain,
+│                            pipeline (the request-driven scoring core)
+│       └── app/routes/     /zoning/run
+│       └── scripts/        derive_factors.py, run_scoring_pipeline.py,
+│                            run_zoning_pipeline.py (offline dev/demo runners)
 ├── packages/
 │   └── shared/           Shared TS types/constants used by web + api
 │       └── src/config/     Single-source-of-truth weight/norm/permission JSON + loader
@@ -89,6 +97,7 @@ SIH/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── METHODOLOGY.md
+│   ├── ZONING_PIPELINE.md
 │   ├── SECURITY.md
 │   └── DATA_SOURCES.md
 ├── CLAUDE.md              (this file)
@@ -153,9 +162,10 @@ Full design in `docs/SECURITY.md` — this is the enforceable rule:
 - Collection names are **plural, lowerCamelCase**: `users`, `districts`,
   `habitations`, `hazardZones`, `hazardEvents`, `assessments`,
   `relocationSites`, `recommendations`, `decisions`, `auditLogs`,
-  `scenarioRuns`, `refreshTokens`, `fieldReports` — the full list of 13
-  collections, each with a Mongoose model in `apps/api/src/models/` and a
-  matching Zod schema in `packages/shared/src/schemas/`.
+  `scenarioRuns`, `refreshTokens`, `fieldReports`, `gridCells`,
+  `modelRuns`, `jobs` — the full list of 16 collections, each with a
+  Mongoose model in `apps/api/src/models/` and a matching Zod schema in
+  `packages/shared/src/schemas/`.
 - Every document has `createdAt` / `updatedAt` (Mongoose timestamps).
 - Every document that represents an officer-reviewable recommendation
   carries a `status` field with an explicit enum (e.g.
@@ -189,11 +199,19 @@ completed.
       `requirePermission` + `requireScope` (row-level, pre-query
       filtering); hash-chained, append-only, tamper-evident `AuditLog`
       with `/api/v1/audit/**`. See `docs/SECURITY.md`.
-- [ ] **Step 4 — Hazard zoning (ML):** Weighted-overlay + ML susceptibility
-      pipeline in `services/ml`, producing Red/Orange/Yellow/Green zone
-      polygons per `docs/METHODOLOGY.md`.
-- [ ] **Step 5 — Hazard zoning (API + web):** API endpoints to serve zone
-      layers; MapLibre rendering of hazard zones on the web map.
+- [x] **Step 4 — Hazard zoning (ML + API):** H3 resolution-8 grid
+      (`GridCell`) filled per district; SYNTHETIC_DEMO but
+      spatially-coherent causative factors (`derive_factors.py`);
+      weighted-overlay + XGBoost ML susceptibility engine
+      (`services/ml/app/engine/`) trained on noised synthetic labels
+      (spatial block split, never random) and blended (`alpha=0.6`);
+      zone classification + dissolve + versioning (`HazardZone`, never
+      mutated); SHAP top-factor explanations; live `/api/v1/zoning/run`
+      job + `/api/v1/zones**` + `/api/v1/grid**` endpoints behind
+      `requirePermission`+`requireScope`, audited on start and finish.
+      See `docs/ZONING_PIPELINE.md`.
+- [ ] **Step 5 — Hazard zoning (web):** MapLibre rendering of hazard zones
+      on the web map, consuming Step 4's `/api/v1/zones` and `/api/v1/grid`.
 - [ ] **Step 6 — Vulnerability assessment (ML):** Vulnerability index model
       (demographic, socio-economic, structural, accessibility, coping
       capacity components).

@@ -1,8 +1,8 @@
 """PunarVas ML service — FastAPI entrypoint.
 
-Step 1 scaffold: only a health check endpoint. Hazard susceptibility,
-vulnerability scoring, and site-suitability models are added in later
-build steps (see CLAUDE.md Build Roadmap).
+Hazard zoning (weighted-overlay + ML susceptibility, Step 4) is live at
+/zoning/run. Vulnerability scoring and site-suitability models are added
+in later build steps (see CLAUDE.md Build Roadmap).
 """
 
 from datetime import datetime, timezone
@@ -10,11 +10,15 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from app.routes.zoning import router as zoning_router
+
 app = FastAPI(
     title="PunarVas ML Service",
     description="Hazard susceptibility, vulnerability, and site-suitability models for PunarVas.",
     version="0.1.0",
 )
+
+app.include_router(zoning_router)
 
 
 class HealthCheckResponse(BaseModel):

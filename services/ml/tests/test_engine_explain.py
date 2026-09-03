@@ -1,7 +1,7 @@
 import numpy as np
 import xgboost as xgb
 
-from app.engine.explain import get_explainer, top_contributions
+from app.engine.explain import get_explainer, top_contributions, top_contributions_batch
 
 
 def _tiny_model() -> tuple[xgb.XGBClassifier, list[str]]:
@@ -48,3 +48,15 @@ def test_top_contributions_respects_top_n():
     x_row = np.array([0.5, 0.5, 0.5])
     contributions = top_contributions(model, "test-v4", x_row, feature_list, top_n=2)
     assert len(contributions) == 2
+
+
+def test_top_contributions_batch_matches_single_row_calls():
+    model, feature_list = _tiny_model()
+    x = np.array([[0.9, 0.1, 0.1], [0.1, 0.9, 0.1], [0.5, 0.5, 0.5]])
+
+    batch = top_contributions_batch(model, "test-v5", x, feature_list)
+    singles = [top_contributions(model, "test-v5", row, feature_list) for row in x]
+
+    assert len(batch) == len(x)
+    for batch_row, single_row in zip(batch, singles):
+        assert batch_row == single_row

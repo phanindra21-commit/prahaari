@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { GeoPolygon } from "@punarvas/shared";
 import { District } from "../models/District";
 import { HazardZone } from "../models/HazardZone";
 import { writeZoneVersion, getActiveZones, type ZoneVersionInput } from "./zoneVersioning";
@@ -20,8 +21,8 @@ async function seedDistrict(lgdCode: string): Promise<import("mongoose").Types.O
   return district._id;
 }
 
-const SQUARE = {
-  type: "Polygon" as const,
+const SQUARE: GeoPolygon = {
+  type: "Polygon",
   coordinates: [[[76.0, 11.6], [76.02, 11.6], [76.02, 11.62], [76.0, 11.62], [76.0, 11.6]]],
 };
 

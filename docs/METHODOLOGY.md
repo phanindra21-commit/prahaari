@@ -104,10 +104,14 @@ fit/validate against in Step 4:
 - **Flood:** elevation and rainfall intensity dominate (the two most
   direct physical drivers of inundation depth and onset), followed by
   proximity to the river/drainage network; historical inundation is
-  weighted lowest here specifically because it is used as the ML model's
-  _label_, not an input feature, in the blended approach (Section 1.2) —
-  its overlay weight is kept low to avoid double-counting the same
-  signal.
+  weighted lowest here as a lagging, largely-redundant indicator — it
+  correlates heavily with the higher-weighted physical drivers above it
+  rather than adding much independent signal, so a low residual weight
+  avoids over-crediting a repeat of what elevation, rainfall, and
+  drainage proximity already capture. (Historical inundation is an
+  ordinary overlay/ML input feature like every other factor here — see
+  Section 1.2 for what the ML model's training labels are actually
+  derived from, which is not this factor.)
 - **Coastal erosion:** shoreline change rate is weighted highest because
   it is the direct empirical measurement of the process being modelled
   (a multi-year satellite-derived retreat/advance rate), following
@@ -125,13 +129,35 @@ fit/validate against in Step 4:
 ### 1.2 ML Susceptibility Model
 
 In parallel with (or as a refinement of) the weighted overlay, a
-supervised model (XGBoost, per `CLAUDE.md` tech stack) is trained on
-historical hazard inventory points (e.g. GSI landslide inventory, CWC
-flood extents — see `docs/DATA_SOURCES.md`) as positive labels, with the
-same causative factor layers as features, to produce a continuous
-susceptibility probability `P_ml in [0, 1]` per raster cell. SHAP values
-are computed per prediction to explain which factors drove a given
-cell's score, for display to the officer.
+supervised model (XGBoost, per `CLAUDE.md` tech stack) is trained per
+hazard to produce a continuous susceptibility probability `P_ml in [0, 1]`
+per grid cell, using the same causative factor layers as features. SHAP
+values are computed per prediction (batched once per training run, not
+rebuilt per cell) to explain which factors drove a given cell's score, for
+display to the officer. Implementation: `services/ml/app/engine/{labels,
+train, explain}.py`; full pipeline walkthrough:
+`docs/ZONING_PIPELINE.md`.
+
+**Labels are SYNTHETIC_DEMO, not yet a real historical hazard inventory.**
+No GSI landslide inventory or CWC flood-extent dataset is wired in for
+Wayanad/Ganjam as of Step 4. Training labels are instead a smooth logistic
+function of each cell's own weighted-overlay score, boosted near a real
+recorded hazard event (`data/seed/hazard-events.json`) where one exists,
+then independently label-noised (12%) so the model has genuine
+uncertainty to learn from rather than a deterministic restatement of its
+own input features — see `docs/ZONING_PIPELINE.md`'s note on why that
+noise step exists and is tested for. `labels.py::load_real_inventory()`
+is the seam a real GSI/CWC dataset plugs into once available; nothing else
+in the pipeline needs to change when it is.
+
+**Train/test split is spatial, not random.** Because the causative-factor
+layers are (by construction, whether synthetic today or a real DEM/
+lithology/land-cover raster later) spatially smooth, a random row-wise
+split would put near-duplicate neighboring cells on both sides of
+train/test and inflate every reported metric via spatial autocorrelation
+leakage. The split is instead a checkerboard over each cell's H3 PARENT
+cell (a coarser resolution than the scoring grid), so no contiguous block
+of terrain straddles both sets.
 
 The final susceptibility score blends both methods:
 
@@ -139,12 +165,16 @@ The final susceptibility score blends both methods:
 Susceptibility = alpha * normalize(LSI) + (1 - alpha) * P_ml
 ```
 
-**TODO:** `alpha` (blend weight between weighted-overlay and ML score,
-0–1) — TODO, to be tuned once historical inventory data is available for
-model validation in the pilot districts. This remains a genuine TODO
-(unlike Sections 1.1–5, it has no defensible literature default) because
-it depends on how much labelled training data the ML pipeline actually
-has for Wayanad/Ganjam once Step 4 begins — deferred, not skipped.
+**`alpha = 0.6`** (`packages/shared/src/config/blend-config.json`),
+weighted toward the interpretable weighted-overlay rather than a 50/50
+split, specifically *because* the ML model's training labels are
+SYNTHETIC_DEMO — the overlay's factor weights (Section 1.1) carry a
+literature-defensible justification the current labels do not. This is a
+considered default, not a placeholder: shift `alpha` toward the ML score
+once a real GSI/CWC inventory replaces the synthetic labels above and the
+model's metrics can be validated against genuine positives, at which point
+the blend weight should track how much more the ML score is actually
+adding over the overlay alone.
 
 ### 1.3 Zone Classes and Thresholds
 
