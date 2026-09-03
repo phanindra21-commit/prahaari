@@ -174,10 +174,20 @@ export const factorReclassificationSchema = z.object({
 });
 export type FactorReclassificationConfig = z.infer<typeof factorReclassificationSchema>;
 
-export const blendConfigSchema = z.object({
-  modelVersion: z.string().min(1),
+const blendHazardEntrySchema = z.object({
   alpha: z.number().min(0).max(1),
   note: z.string(),
+});
+
+export const blendConfigSchema = z.object({
+  modelVersion: z.string().min(1),
+  note: z.string(),
+  hazards: z.object({
+    landslide: blendHazardEntrySchema,
+    flood: blendHazardEntrySchema,
+    coastalErosion: blendHazardEntrySchema,
+    cloudburst: blendHazardEntrySchema,
+  }),
 });
 export type BlendConfig = z.infer<typeof blendConfigSchema>;
 

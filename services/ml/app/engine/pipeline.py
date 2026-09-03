@@ -104,19 +104,12 @@ def score_cells(
     overlay_scores = np.array([overlay_score(c.factors, hazard) for c in cells])
     features = np.array([[c.factors[f] for f in feature_list] for c in cells])
 
-    labels, label_source = generate_labels(lons_arr, lats_arr, overlay_scores, event_points)
+    labels, label_source = generate_labels(lons_arr, lats_arr, [c.factors for c in cells], hazard, event_points)
 
-    labelled_mask = labels != -1
-    labelled_h3 = [h3_indexes[i] for i in range(len(h3_indexes)) if labelled_mask[i]]
-    trained = train_hazard_model(
-        features[labelled_mask],
-        feature_list,
-        labels[labelled_mask],
-        labelled_h3,
-    )
+    trained = train_hazard_model(features, feature_list, labels, h3_indexes)
 
     ml_scores = trained.model.predict_proba(features)[:, 1]
-    blended = np.array([blended_score(o, m) for o, m in zip(overlay_scores, ml_scores)])
+    blended = np.array([blended_score(o, m, hazard) for o, m in zip(overlay_scores, ml_scores)])
 
     # Cache key scoped to this trained model object only (a fresh model is
     # trained on every score_cells() call, so there is no cross-run reuse to
@@ -135,7 +128,7 @@ def score_cells(
         feature_list=feature_list,
         trained=trained,
         label_source=label_source,
-        labelled_count=int(labelled_mask.sum()),
+        labelled_count=len(h3_indexes),
         top_factors=top_factors,
     )
 

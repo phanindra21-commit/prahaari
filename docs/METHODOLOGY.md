@@ -140,15 +140,37 @@ train, explain}.py`; full pipeline walkthrough:
 
 **Labels are SYNTHETIC_DEMO, not yet a real historical hazard inventory.**
 No GSI landslide inventory or CWC flood-extent dataset is wired in for
-Wayanad/Ganjam as of Step 4. Training labels are instead a smooth logistic
-function of each cell's own weighted-overlay score, boosted near a real
-recorded hazard event (`data/seed/hazard-events.json`) where one exists,
-then independently label-noised (12%) so the model has genuine
-uncertainty to learn from rather than a deterministic restatement of its
-own input features — see `docs/ZONING_PIPELINE.md`'s note on why that
-noise step exists and is tested for. `labels.py::load_real_inventory()`
-is the seam a real GSI/CWC dataset plugs into once available; nothing else
-in the pipeline needs to change when it is.
+Wayanad/Ganjam as of Step 5. Training labels are instead drawn from a
+hazard-specific, physically-motivated LATENT process built from the same
+raw causative factors as the model's features but combined nonlinearly
+and with different emphasis than the overlay's linear weighted sum —
+landslide's, for example, is an infinite-slope stability proxy (driving
+shear stress from gravity vs. resisting shear strength from soil
+cohesion, degraded by rainfall-driven pore pressure), not a function of
+the overlay score. The latent value is converted to a probability via a
+logistic link calibrated to a rare-event base rate (~13% positive before
+any boost — hazard events are uncommon, not a coin flip), boosted near a
+real recorded hazard event (`data/seed/hazard-events.json`) where one
+exists, sampled stochastically, then independently label-noised (~4.5%).
+
+An earlier version of this label process went through two failure modes,
+both worth recording so they aren't repeated: first, labels derived from
+a hard quantile cutoff on the model's own overlay-score input made
+"training" a deterministic lookup table (AUC-ROC ~1.000 on every hazard);
+the fix that followed over-corrected with too much noise on too weak a
+signal, landing every hazard at/near chance (AUC-ROC 0.50-0.64). The
+current design's physically-motivated-but-noised-and-imbalanced labels
+land in a realistic band instead — landslide 0.734, flood 0.847,
+coastalErosion 0.737, cloudburst 0.787 against the real Wayanad/Ganjam
+grid (`services/ml/scripts/run_scoring_pipeline.py`) — genuinely
+learnable, genuinely uncertain, neither trivial nor unusable. Both
+failure modes are guarded by regression tests
+(`services/ml/tests/test_engine_labels_blend_train.py`) asserting labels
+aren't a deterministic function of their inputs AND that a trained
+model's AUC-ROC lands in `[0.65, 0.92]` for every hazard.
+`labels.py::load_real_inventory()` is the seam a real GSI/CWC dataset
+plugs into once available; nothing else in the pipeline needs to change
+when it is.
 
 **Train/test split is spatial, not random.** Because the causative-factor
 layers are (by construction, whether synthetic today or a real DEM/
@@ -165,16 +187,21 @@ The final susceptibility score blends both methods:
 Susceptibility = alpha * normalize(LSI) + (1 - alpha) * P_ml
 ```
 
-**`alpha = 0.6`** (`packages/shared/src/config/blend-config.json`),
-weighted toward the interpretable weighted-overlay rather than a 50/50
-split, specifically *because* the ML model's training labels are
-SYNTHETIC_DEMO — the overlay's factor weights (Section 1.1) carry a
-literature-defensible justification the current labels do not. This is a
-considered default, not a placeholder: shift `alpha` toward the ML score
-once a real GSI/CWC inventory replaces the synthetic labels above and the
-model's metrics can be validated against genuine positives, at which point
-the blend weight should track how much more the ML score is actually
-adding over the overlay alone.
+**`alpha` is set PER HAZARD** (`packages/shared/src/config/blend-config.json`
+— `hazards.<hazardType>.alpha`, not a single global value), so a hazard
+whose ML model underperforms can be weighted back toward the interpretable
+overlay without dragging every other hazard's blend down with it. As of
+Step 5, **every hazard's alpha is 0.6**, weighted toward the overlay
+rather than a 50/50 split, specifically *because* training labels are
+still SYNTHETIC_DEMO — the overlay's factor weights (Section 1.1) carry a
+literature-defensible justification the current labels do not — not
+because any hazard's model underperforms: all four clear a 0.70 AUC-ROC
+floor (0.734-0.847, see above). Had one fallen short, that hazard's alpha
+alone would move toward the overlay, with the reason recorded in
+`blend-config.json`'s per-hazard `note` field. This is a considered
+default, not a placeholder: shift alpha toward the ML score, hazard by
+hazard, once a real GSI/CWC inventory replaces the synthetic labels above
+and each model's metrics can be validated against genuine positives.
 
 ### 1.3 Zone Classes and Thresholds
 

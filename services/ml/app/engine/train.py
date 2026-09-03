@@ -15,7 +15,7 @@ from dataclasses import dataclass
 import h3
 import numpy as np
 import xgboost as xgb
-from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, roc_auc_score
 
 
 @dataclass
@@ -24,6 +24,8 @@ class TrainedModel:
     feature_list: list[str]
     metrics: dict[str, float]
     training_sample_count: int
+    # [[TN, FP], [FN, TP]] on the held-out spatial test split.
+    confusion_matrix: list[list[int]]
 
 
 def spatial_block_split(h3_indexes: list[str], parent_resolution: int = 5) -> np.ndarray:
@@ -71,8 +73,16 @@ def train_hazard_model(
     if len(np.unique(y_train)) < 2 or len(np.unique(y_test)) < 2:
         raise ValueError(
             "spatial block split produced a train or test split with only one class present — "
-            "widen the positive/negative quantiles in labels.py or use a finer parent_resolution"
+            "adjust labels.py's target_base_rate or use a finer parent_resolution"
         )
+
+    # Hazard events are rare by design now (labels.py's target_base_rate ~
+    # 10-20%) — scale_pos_weight keeps the model from just always predicting
+    # the majority class, which would otherwise crater recall/F1 on the
+    # minority (positive) class while AUC-ROC looked fine.
+    positive_count = int(np.sum(y_train == 1))
+    negative_count = int(np.sum(y_train == 0))
+    scale_pos_weight = negative_count / max(positive_count, 1)
 
     model = xgb.XGBClassifier(
         max_depth=4,
@@ -81,6 +91,7 @@ def train_hazard_model(
         subsample=0.8,
         colsample_bytree=0.8,
         eval_metric="logloss",
+        scale_pos_weight=scale_pos_weight,
         random_state=seed,
     )
     model.fit(x_train, y_train)
@@ -95,10 +106,12 @@ def train_hazard_model(
         "f1": float(f1_score(y_test, y_pred, zero_division=0)),
         "calibrationError": float(expected_calibration_error(y_test, y_prob)),
     }
+    cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
 
     return TrainedModel(
         model=model,
         feature_list=feature_list,
         metrics=metrics,
         training_sample_count=int(len(x_train)),
+        confusion_matrix=cm.tolist(),
     )

@@ -55,6 +55,20 @@ coordinates are jittered around real block-centre anchors within each
 district's actual approximate bounding box; they are illustrative
 placements, not surveyed locations.
 
+**District boundaries** (`districts.json`) are hand-drawn irregular
+polygons approximating each district's real footprint — not sourced from
+an official LGD/Survey of India shapefile — sized to land within ~25% of
+the district's real area (`areaSqKm`) and, critically, to actually contain
+every seeded habitation. An earlier version of Wayanad's boundary was a
+simple bounding rectangle that started at 11.55°N and excluded the
+district's own southern tip — Meppadi taluk, where Chooralmala and
+Mundakkai (real coordinates, ~11.51°N/11.52°N) actually sit — silently
+dropping 16 of Wayanad's 40 habitations from the H3 grid and every
+downstream hazard/vulnerability score. `apps/api/src/scripts/
+validateSeedGeometry.ts` (run automatically by `npm run seed`) fails the
+seed run loudly if any habitation ever again falls outside its district's
+boundary, rather than letting that kind of mismatch resurface silently.
+
 Relocation-site candidates that are meant to fail hard exclusion criteria
 (see `docs/METHODOLOGY.md` Section 4.1) are placed near/inside a Red
 hazard-zone band or a coastal buffer and have `exclusionsFailed`

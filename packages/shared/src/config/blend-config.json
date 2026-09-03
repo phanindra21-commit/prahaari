@@ -1,5 +1,22 @@
 {
-  "modelVersion": "blend-config-v1",
-  "alpha": 0.6,
-  "note": "blendedScore = alpha * overlayScore + (1 - alpha) * mlScore. Weighted toward the interpretable weighted-overlay (0.6) because the ML training labels are SYNTHETIC_DEMO for this prototype (services/ml/app/engine/labels.py) — shift alpha toward the ML score once real GSI landslide inventory / CWC flood extent labels are available. See docs/METHODOLOGY.md §1.2."
+  "modelVersion": "blend-config-v2",
+  "note": "blendedScore = alpha * overlayScore + (1 - alpha) * mlScore, alpha set PER HAZARD (not a single global value) so a hazard whose ML model's AUC-ROC underperforms can be weighted back toward the interpretable overlay without dragging every other hazard down with it — see services/ml/app/engine/train.py and docs/METHODOLOGY.md §1.2. As of Step 5, every hazard's ML model clears the 0.70 AUC-ROC floor (landslide 0.734, flood 0.847, coastalErosion 0.737, cloudburst 0.787 against the real Wayanad/Ganjam grid — see docs/ZONING_PIPELINE.md), so alpha is 0.6 everywhere: still weighted toward the overlay because training labels remain SYNTHETIC_DEMO, not because any model underperforms.",
+  "hazards": {
+    "landslide": {
+      "alpha": 0.6,
+      "note": "AUC-ROC 0.734 — clears the 0.70 floor; alpha stays at the SYNTHETIC_DEMO-label default."
+    },
+    "flood": {
+      "alpha": 0.6,
+      "note": "AUC-ROC 0.847 — clears the 0.70 floor; alpha stays at the SYNTHETIC_DEMO-label default."
+    },
+    "coastalErosion": {
+      "alpha": 0.6,
+      "note": "AUC-ROC 0.737 — clears the 0.70 floor; alpha stays at the SYNTHETIC_DEMO-label default."
+    },
+    "cloudburst": {
+      "alpha": 0.6,
+      "note": "AUC-ROC 0.787 — clears the 0.70 floor; alpha stays at the SYNTHETIC_DEMO-label default."
+    }
+  }
 }

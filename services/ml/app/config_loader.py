@@ -133,9 +133,12 @@ def load_factor_reclassification() -> dict[str, Any]:
 
 def load_blend_config() -> dict[str, Any]:
     config = _load_json("blend-config.json")
-    alpha = config["alpha"]
-    if not (0.0 <= alpha <= 1.0):
-        raise ValueError(f"[ml/config] blend-config.json alpha ({alpha}) must be in [0, 1]")
+    for hazard, hazard_config in config["hazards"].items():
+        alpha = hazard_config["alpha"]
+        if not (0.0 <= alpha <= 1.0):
+            raise ValueError(
+                f"[ml/config] blend-config.json hazards.{hazard}.alpha ({alpha}) must be in [0, 1]"
+            )
     return config
 
 

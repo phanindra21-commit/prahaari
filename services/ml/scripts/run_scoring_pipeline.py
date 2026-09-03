@@ -38,6 +38,24 @@ def main() -> None:
             f"ml range=[{result.ml_scores.min():.3f}, {result.ml_scores.max():.3f}]  "
             f"blended range=[{result.blended_scores.min():.3f}, {result.blended_scores.max():.3f}]"
         )
+        cm = result.trained.confusion_matrix
+        tn, fp = cm[0]
+        fn, tp = cm[1]
+        print(
+            f"[run_scoring_pipeline]   confusion matrix (test split)  "
+            f"TN={tn:4d} FP={fp:4d} / FN={fn:4d} TP={tp:4d}  "
+            f"(positive rate in test split: {(fn + tp) / (tn + fp + fn + tp):.1%})"
+        )
+        if m["aucRoc"] > 0.90:
+            print(
+                f"[run_scoring_pipeline]   WARNING: AUC-ROC {m['aucRoc']:.3f} is suspiciously high for "
+                "SYNTHETIC_DEMO labels — treat as a leakage smell, not a result to celebrate."
+            )
+        elif m["aucRoc"] < 0.65:
+            print(
+                f"[run_scoring_pipeline]   WARNING: AUC-ROC {m['aucRoc']:.3f} is at/near chance — the "
+                "label process is not carrying learnable signal."
+            )
 
 
 if __name__ == "__main__":

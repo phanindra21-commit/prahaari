@@ -70,5 +70,6 @@ def test_factor_reclassification_directions_are_declared():
             assert factor["breakpoints"][-1]["max"] is None
 
 
-def test_blend_config_alpha_in_range():
-    assert 0.0 <= cfg.BLEND_CONFIG["alpha"] <= 1.0
+def test_blend_config_alpha_in_range_per_hazard():
+    for hazard in ("landslide", "flood", "coastalErosion", "cloudburst"):
+        assert 0.0 <= cfg.BLEND_CONFIG["hazards"][hazard]["alpha"] <= 1.0

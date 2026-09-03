@@ -22,6 +22,9 @@ import {
   HazardEvent,
   RelocationSite,
   User,
+  GridCell,
+  ModelRun,
+  Job,
   type DistrictDoc,
   type DmAuthorityContact,
   type HabitationDoc,
@@ -38,6 +41,7 @@ import {
   seedRelocationSiteCollectionSchema,
   seedUserSchema,
 } from "./seedSchemas";
+import { assertHabitationsWithinDistricts } from "./validateSeedGeometry";
 
 const SEED_DIR = join(__dirname, "..", "..", "..", "..", "data", "seed");
 const isReset = process.argv.includes("--reset");
@@ -85,6 +89,15 @@ async function resetCollections(): Promise<void> {
     HazardEvent.deleteMany({}),
     RelocationSite.deleteMany({}),
     User.deleteMany({}),
+    // GridCell/ModelRun/Job are derived from District (generateGrid.ts,
+    // the zoning pipeline) rather than seeded from data/seed/ directly,
+    // but --reset re-inserts District docs with fresh ObjectIds, so
+    // leaving these behind would orphan them against a districtId that
+    // no longer exists. Regenerate with `npm run generate-grid` after a
+    // --reset.
+    GridCell.deleteMany({}),
+    ModelRun.deleteMany({}),
+    Job.deleteMany({}),
   ]);
 }
 
@@ -398,7 +411,36 @@ function printUserCredentials(credentials: SeededCredential[]): void {
   console.table(credentials);
 }
 
+/**
+ * Pure filesystem validation, no MongoDB — runs before any database write
+ * so a bad fixture (e.g. a district boundary that doesn't actually contain
+ * one of its own habitations) is caught before it's ever persisted. See
+ * data/seed/README.md's "How the geometry was generated" section for why
+ * this exists.
+ */
+function validateGeometry(): void {
+  const districts = z.array(seedDistrictSchema).parse(readSeedFile("districts.json"));
+  const habitationFiles = ["wayanad-habitations.geojson", "ganjam-habitations.geojson"];
+
+  const habitations = habitationFiles.flatMap((file) => {
+    const collection = seedHabitationCollectionSchema.parse(readSeedFile(file));
+    return collection.features.map((feature) => ({
+      lgdHabitationCode: feature.properties.lgdHabitationCode,
+      name: feature.properties.name,
+      districtLgdCode: feature.properties.districtLgdCode,
+      coordinates: feature.geometry.coordinates,
+    }));
+  });
+
+  assertHabitationsWithinDistricts(districts, habitations);
+  console.log(
+    `[seed] Geometry check passed: all ${habitations.length} seeded habitations fall inside their district's boundary.`,
+  );
+}
+
 async function main(): Promise<void> {
+  validateGeometry();
+
   await connectDb(env.MONGODB_URI);
   console.log(`[seed] Connected to ${env.MONGODB_URI}`);
 

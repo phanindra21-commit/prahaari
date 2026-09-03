@@ -82,42 +82,61 @@ label generation are supplied in the `POST /zoning/run` request body by
    `overlayScore`. Unit-tested against a hand-computed example.
 
 4. **Training labels** (`services/ml/app/engine/labels.py`). SYNTHETIC_DEMO:
-   a cell's positive probability is a smooth logistic function of its own
-   `overlayScore`, boosted near a real recorded hazard event
-   (`data/seed/hazard-events.json` → `apps/api`'s `HazardEvent` collection,
-   passed to the ML service as `eventPoints`), then every label is
-   independently flipped with 12% probability. That noise step is load
-   bearing: an earlier version derived labels from a hard quantile cutoff
-   on the same `overlayScore` used as the model's input features, which
-   made "training" a deterministic lookup table (AUC-ROC == 1.000 on every
-   hazard). A regression test (`test_engine_labels_blend_train.py`) guards
-   against reintroducing that. **To swap in real data:**
-   `labels.py::load_real_inventory(hazard)` is the seam — replace its
-   `return None` with a loader for a real GSI landslide inventory or CWC
-   flood-extent shapefile once one exists for Wayanad/Ganjam, and route its
-   points into `generate_labels()`'s `event_points` (or replace the
-   logistic/quantile scheme entirely with real positive/negative labels —
-   `generate_labels()`'s signature is the only contract callers depend on).
+   each hazard gets its own physically-motivated LATENT process built from
+   the same raw causative factors as the model's features but combined
+   nonlinearly, with different emphasis than the overlay's linear weighted
+   sum — landslide's is an infinite-slope stability proxy (driving shear
+   stress from gravity vs. resisting shear strength from soil cohesion,
+   degraded by rainfall-driven pore pressure). The latent value becomes a
+   probability via a logistic link calibrated to a rare-event base rate
+   (~13% positive before boosting), boosted near a real recorded hazard
+   event (`data/seed/hazard-events.json` → `apps/api`'s `HazardEvent`
+   collection, passed to the ML service as `eventPoints`), sampled
+   stochastically, then independently label-noised (~4.5%). Two failure
+   modes are guarded against by regression tests
+   (`test_engine_labels_blend_train.py`): an earlier version derived labels
+   from a hard quantile cutoff on the model's own overlay-score input,
+   making "training" a deterministic lookup table (AUC-ROC == 1.000 on
+   every hazard); the fix that followed over-corrected with too much noise
+   on too weak a signal, landing every hazard at/near chance (AUC-ROC
+   0.50-0.64). **To swap in real data:** `labels.py::load_real_inventory(hazard)`
+   is the seam — replace its `return None` with a loader for a real GSI
+   landslide inventory or CWC flood-extent shapefile once one exists for
+   Wayanad/Ganjam, and route its points into `generate_labels()`'s
+   `event_points` (or replace the latent-process scheme entirely with real
+   positive/negative labels — `generate_labels()`'s signature is the only
+   contract callers depend on).
 
 5. **ML susceptibility model** (`services/ml/app/engine/train.py`). One
    XGBoost binary classifier per hazard (pooled across every district that
-   lists it as a primary hazard — flood spans both Wayanad and Ganjam).
-   Split **by H3 parent cell** (`spatial_block_split`, resolution 5,
-   checkerboard on parent rank parity), never a random row-wise split:
-   adjacent grid cells share nearly all of their causative-factor signal by
-   construction (stage 2's smoothness), so a random split would put
-   near-duplicate neighboring cells on both sides of train/test and
-   inflate every reported metric through spatial autocorrelation leakage.
-   Reports AUC-ROC, precision, recall, F1, and expected calibration error.
-   With synthetic, noised labels, metrics land around AUC-ROC 0.50-0.64 —
-   realistic for the label quality, not the >0.95 a leaked or tautological
-   setup would produce.
+   lists it as a primary hazard — flood spans both Wayanad and Ganjam),
+   with `scale_pos_weight` set from the training split's actual class
+   balance so the rare-event positive class isn't swamped. Split **by H3
+   parent cell** (`spatial_block_split`, resolution 5, checkerboard on
+   parent rank parity), never a random row-wise split: adjacent grid cells
+   share nearly all of their causative-factor signal by construction
+   (stage 2's smoothness), so a random split would put near-duplicate
+   neighboring cells on both sides of train/test and inflate every
+   reported metric through spatial autocorrelation leakage. Reports
+   AUC-ROC, precision, recall, F1, expected calibration error, and a
+   confusion matrix on the held-out spatial test split. Against the real
+   Wayanad/Ganjam grid, metrics land at landslide 0.734, flood 0.847,
+   coastalErosion 0.737, cloudburst 0.787 AUC-ROC
+   (`services/ml/scripts/run_scoring_pipeline.py`) — realistic for
+   genuinely-informative-but-noisy labels, neither the >0.95 a leaked or
+   tautological setup would produce nor the ~0.5-0.64 an over-noised one
+   does.
 
 6. **Blend** (`services/ml/app/engine/blend.py`). `blendedScore = alpha *
-   overlayScore + (1 - alpha) * mlScore`, `alpha = 0.6`
-   (`packages/shared/src/config/blend-config.json`) — weighted toward the
-   interpretable overlay while training labels are SYNTHETIC_DEMO; revisit
-   once labels come from stage 4's real-inventory seam.
+   overlayScore + (1 - alpha) * mlScore`, `alpha` set **per hazard**
+   (`packages/shared/src/config/blend-config.json`'s `hazards.<hazardType>.alpha`,
+   not one global value) so a hazard whose model underperforms can be
+   weighted back toward the overlay without affecting the others. Every
+   hazard's alpha is 0.6 as of Step 5 — all four clear a 0.70 AUC-ROC
+   floor, so the interpretable-overlay weighting reflects that training
+   labels are still SYNTHETIC_DEMO, not that any model underperforms.
+   Revisit per hazard once that hazard's labels come from stage 4's
+   real-inventory seam.
 
 7. **Zone classification + dissolve** (`services/ml/app/engine/zones.py`).
    `blendedScore` is classified per `zone-thresholds.json`'s per-hazard
@@ -152,17 +171,24 @@ label generation are supplied in the `POST /zoning/run` request body by
     to Red if two or more hazards are independently Orange. Both rules are
     unit-tested.
 
-## Known limitation surfaced by this pipeline (not fixed here)
+## A limitation this pipeline surfaced, since fixed (Step 5)
 
-Running the full pipeline against the Step 2 seed data shows that 16 of
-Wayanad's 40 seeded habitations — including Chooralmala and Mundakkai
-themselves, the real 2024 landslide site — fall **outside** Wayanad's own
-seed district boundary polygon (`data/seed/districts.json`), so they get
+Step 4's pipeline run showed that 16 of Wayanad's 40 seeded habitations —
+including Chooralmala and Mundakkai themselves, the real 2024 landslide
+site — fell **outside** Wayanad's own seed district boundary polygon
+(`data/seed/districts.json`: a bounding rectangle starting at 11.55°N,
+north of Meppadi taluk where those habitations actually sit), so they had
 no H3 grid coverage and no hazard-zone assessment for any of Wayanad's
-three hazards. `services/ml/scripts/run_zoning_pipeline.py` surfaces this
-explicitly in its printed output rather than silently scoring those
-habitations as Green. Fixing it means correcting the district boundary
-polygon in `data/seed/districts.json` (Step 2 data), out of Step 4's scope.
+three hazards. Step 5 replaced the boundary with a hand-drawn irregular
+polygon that actually contains every seeded habitation (see
+`data/seed/README.md`'s "How the geometry was generated") and added a
+permanent guard —
+`apps/api/src/scripts/validateSeedGeometry.ts`, run automatically by
+`npm run seed` — that fails the seed run loudly if this ever regresses.
+Chooralmala and Mundakkai now score landslide `blendedScore` 0.744 and
+0.777 respectively (both Red-zone, ≥ the 0.70 threshold) against the
+current grid/model — see `docs/METHODOLOGY.md` §1.3 and
+`services/ml/scripts/run_zoning_pipeline.py`'s output.
 
 ## Running it locally
 
