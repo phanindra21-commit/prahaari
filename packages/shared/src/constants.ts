@@ -57,6 +57,10 @@ export const FIELD_REPORT_OBSERVATION_TYPES = [
 
 export const FIELD_REPORT_VERIFICATION_STATUSES = ["PENDING", "VERIFIED", "REJECTED"] as const;
 
+export const JOB_STATUSES = ["PENDING", "RUNNING", "SUCCEEDED", "FAILED"] as const;
+
+export const JOB_TYPES = ["ZONING_RUN"] as const;
+
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },
   { name: "Ganjam", state: "Odisha", primaryHazard: "coastalErosion" },

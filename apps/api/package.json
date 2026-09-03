@@ -12,7 +12,9 @@
     "lint": "eslint src",
     "test": "vitest run",
     "seed": "ts-node --transpile-only src/scripts/seed.ts",
-    "seed:reset": "ts-node --transpile-only src/scripts/seed.ts --reset"
+    "seed:reset": "ts-node --transpile-only src/scripts/seed.ts --reset",
+    "generate-grid": "ts-node --transpile-only src/scripts/generateGrid.ts",
+    "ingest-factors": "ts-node --transpile-only src/scripts/ingestFactors.ts"
   },
   "dependencies": {
     "@punarvas/shared": "^0.1.0",
@@ -22,6 +24,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
+    "h3-js": "^4.5.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1",

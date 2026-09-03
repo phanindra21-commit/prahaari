@@ -11,3 +11,6 @@ export * from "./AuditLog";
 export * from "./ScenarioRun";
 export * from "./RefreshToken";
 export * from "./FieldReport";
+export * from "./GridCell";
+export * from "./ModelRun";
+export * from "./Job";

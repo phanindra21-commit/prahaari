@@ -13,3 +13,6 @@ export * from "./scenarioRun";
 export * from "./auth";
 export * from "./fieldReport";
 export * from "./refreshToken";
+export * from "./gridCell";
+export * from "./modelRun";
+export * from "./job";
