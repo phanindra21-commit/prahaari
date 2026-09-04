@@ -39,6 +39,11 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 
+# Persistent dev MongoDB dbpath (Step 9 Part 3A — see apps/api/src/scripts/devMongo.ts).
+# Real on-disk database files; never committed, never a "raw dataset."
+data/db/*
+!data/db/.gitkeep
+
 # Coverage
 coverage/
 
