@@ -12,7 +12,7 @@ export function LoginPage(): JSX.Element {
   const [submitting, setSubmitting] = useState(false);
 
   if (status === "authenticated") {
-    return <Navigate to="/map" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   async function handleSubmit(e: FormEvent): Promise<void> {

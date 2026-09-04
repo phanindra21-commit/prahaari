@@ -47,11 +47,15 @@ test.describe("authenticated (requires the dev backend stack running)", () => {
     "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
   );
 
-  test("logging in loads the map with real hazard/habitation content", async ({ page }) => {
+  test("logging in loads the dashboard, and the map link loads real hazard/habitation content", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Email").fill("superadmin@punarvas.gov.in");
     await page.getByLabel("Password").fill("PunarVas@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
+
+    // The dashboard is the landing page (Step 9 Part 1) — the map is one click away.
+    await expect(page).toHaveURL(/\/dashboard/);
+    await page.getByRole("link", { name: "Map" }).click();
 
     await expect(page).toHaveURL(/\/map/);
     // MapLibre renders its view into a <canvas> inside the container div.

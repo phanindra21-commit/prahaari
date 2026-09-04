@@ -161,3 +161,10 @@ export function useDeleteScenario() {
     },
   });
 }
+
+export function useDashboardSummary(districtId: string | undefined) {
+  return useQuery({
+    queryKey: ["dashboard-summary", districtId],
+    queryFn: () => api.getDashboardSummary(districtId),
+  });
+}

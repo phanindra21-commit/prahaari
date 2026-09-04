@@ -588,4 +588,60 @@ export function deleteScenario(id: string): Promise<{ deleted: boolean }> {
   return apiRequest(`/scenarios/${id}`, { method: "DELETE" });
 }
 
+// --- Step 9 Part 1: dashboard summary ---
+
+export interface DashboardCapacityShortfall {
+  needsRelocation: number;
+  hasViableSite: number;
+  noViableSite: number;
+  populationWithNoSite: number;
+}
+
+export interface DashboardNeedsAttentionItem {
+  habitationId: string;
+  habitationName: string;
+  relocationPriorityIndex: number;
+  priorityBucket: RelocationPriorityBucket;
+  governingHazard: HazardType;
+  population: number;
+  hasMatchedSite: boolean | null;
+  recommendationId: string | null;
+}
+
+export interface DashboardRecentDecision {
+  decisionId: string;
+  action: string;
+  officerName: string;
+  justification: string;
+  decidedAt: string;
+  recommendationId: string;
+}
+
+export interface DashboardDistrict {
+  districtId: string;
+  districtName: string;
+  state: string;
+  habitationsAssessed: number;
+  redCount: number;
+  orangeCount: number;
+  bucketCounts: Record<RelocationPriorityBucket, number>;
+  immediatePopulation: number;
+  immediateHouseholds: number;
+  pendingDecisions: number | null;
+  capacityShortfall: DashboardCapacityShortfall | null;
+  hazardDistribution: Array<{ hazardType: HazardType; count: number }> | null;
+  bindingConstraintDistribution: Array<{ bindingConstraint: BindingConstraint; count: number }> | null;
+  needsAttention: DashboardNeedsAttentionItem[] | null;
+  recentDecisions: DashboardRecentDecision[] | null;
+}
+
+export interface DashboardSummaryResponse {
+  districts: DashboardDistrict[];
+  aggregate: Omit<DashboardDistrict, "districtId" | "districtName" | "state"> | null;
+}
+
+export function getDashboardSummary(districtId?: string): Promise<DashboardSummaryResponse> {
+  return apiRequest("/dashboard/summary", { query: { districtId } });
+}
+
 export type { UserRole };

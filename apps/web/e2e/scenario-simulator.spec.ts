@@ -18,6 +18,8 @@ test.describe("scenario simulator (requires the dev backend stack running)", () 
     await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
     await page.getByLabel("Password").fill("PunarVas@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
+    await expect(page).toHaveURL(/\/dashboard/);
+    await page.getByRole("link", { name: "Map" }).click();
     await expect(page).toHaveURL(/\/map/);
     await expect(page.locator(".maplibregl-canvas").first()).toBeVisible({ timeout: 15_000 });
 

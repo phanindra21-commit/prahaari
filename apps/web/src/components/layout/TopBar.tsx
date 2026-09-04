@@ -51,6 +51,9 @@ export function TopBar(): JSX.Element {
         )}
 
         <nav className="flex h-12 items-center gap-1">
+          <NavLink to="/dashboard" className={navLinkClass}>
+            Dashboard
+          </NavLink>
           <NavLink to="/map" className={navLinkClass}>
             Map
           </NavLink>

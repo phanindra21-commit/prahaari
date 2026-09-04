@@ -24,7 +24,7 @@ test.describe("officer decision workbench (requires the dev backend stack runnin
     await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
     await page.getByLabel("Password").fill("PunarVas@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/map/);
+    await expect(page).toHaveURL(/\/dashboard/);
 
     await page.getByRole("link", { name: "Review queue" }).click();
     await expect(page).toHaveURL(/\/recommendations$/);
