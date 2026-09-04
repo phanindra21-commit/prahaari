@@ -18,6 +18,7 @@ export const decisionSchema = z
   .object({
     _id: objectIdSchema,
     recommendationId: objectIdSchema,
+    districtId: objectIdSchema,
     officerId: objectIdSchema,
     action: decisionActionSchema,
     justification: justificationSchema,

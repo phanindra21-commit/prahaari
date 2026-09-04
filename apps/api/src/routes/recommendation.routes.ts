@@ -6,6 +6,9 @@ import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
 import { Recommendation } from "../models/Recommendation";
+import { Decision } from "../models/Decision";
+import { AuditLog } from "../models/AuditLog";
+import { verifyAuditChain } from "../lib/audit";
 
 export const recommendationRouter = Router();
 
@@ -48,6 +51,7 @@ recommendationRouter.get(
       const recommendations = await Recommendation.find(filter)
         .populate("habitationId")
         .populate("candidateSites.relocationSiteId")
+        .populate("selectedSiteId")
         .sort({ generatedAt: -1 });
 
       const bucketRank: Record<string, number> = { Immediate: 0, ShortTerm: 1, MediumTerm: 2 };
@@ -73,12 +77,64 @@ recommendationRouter.get(
       }
       const recommendation = await Recommendation.findOne({ _id: id, ...req.scopeFilter })
         .populate("habitationId")
-        .populate("candidateSites.relocationSiteId");
+        .populate("candidateSites.relocationSiteId")
+        .populate("selectedSiteId");
       if (!recommendation) {
         res.status(404).json({ error: "Recommendation not found or out of scope" });
         return;
       }
       res.status(200).json(recommendation);
+    })().catch(next);
+  },
+);
+
+/**
+ * GET /api/v1/recommendations/:id/audit-trail — the decision(s) made on
+ * this recommendation plus their specific hash-chained AuditLog entries,
+ * and the same integrity check `/audit/verify-chain` exposes (pass/fail
+ * + first broken link, no entry content) — see docs/SECURITY.md §6.4 for
+ * why this is a narrower, purpose-built alternative to granting
+ * DISTRICT_OFFICER the broad `auditLog:read` permission.
+ */
+recommendationRouter.get(
+  "/recommendations/:id/audit-trail",
+  authenticate,
+  requirePermission(RECOMMENDATION_READ),
+  requireScope(),
+  (req, res, next) => {
+    void (async () => {
+      const id = req.params.id;
+      if (!id || !Types.ObjectId.isValid(id)) {
+        res.status(400).json({ error: "Invalid recommendation id" });
+        return;
+      }
+      const recommendation = await Recommendation.findOne({ _id: id, ...req.scopeFilter });
+      if (!recommendation) {
+        res.status(404).json({ error: "Recommendation not found or out of scope" });
+        return;
+      }
+
+      const decisions = await Decision.find({ recommendationId: recommendation._id })
+        .populate("officerId", "name email role")
+        .sort({ decidedAt: -1 });
+
+      const auditEntries =
+        decisions.length > 0
+          ? await AuditLog.find({
+              entityType: "decision",
+              entityId: { $in: decisions.map((d) => d._id) },
+            })
+              .sort({ seq: 1 })
+              .lean()
+          : [];
+
+      const chain = await verifyAuditChain();
+
+      res.status(200).json({
+        decisions,
+        auditEntries,
+        chainVerification: chain,
+      });
     })().catch(next);
   },
 );

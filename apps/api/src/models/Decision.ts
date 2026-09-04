@@ -18,6 +18,9 @@ export interface OverriddenField {
  */
 export interface DecisionDoc extends Document {
   recommendationId: Types.ObjectId;
+  /** Denormalized from Recommendation at decision time — same
+   * requireScope()-without-a-$lookup reasoning as Recommendation.districtId. */
+  districtId: Types.ObjectId;
   officerId: Types.ObjectId;
   action: DecisionAction;
   justification: string;
@@ -40,6 +43,7 @@ const overriddenFieldSchema = new Schema<OverriddenField>(
 const decisionSchema = new Schema<DecisionDoc>(
   {
     recommendationId: { type: Schema.Types.ObjectId, ref: "Recommendation", required: true },
+    districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     officerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     action: { type: String, enum: DECISION_ACTIONS, required: true },
     justification: { type: String, required: true, minlength: 30, trim: true },
@@ -52,5 +56,6 @@ const decisionSchema = new Schema<DecisionDoc>(
 
 decisionSchema.index({ recommendationId: 1 });
 decisionSchema.index({ officerId: 1, decidedAt: -1 });
+decisionSchema.index({ districtId: 1, decidedAt: -1 });
 
 export const Decision = model<DecisionDoc>("Decision", decisionSchema, "decisions");

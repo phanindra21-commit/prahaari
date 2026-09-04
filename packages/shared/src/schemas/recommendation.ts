@@ -27,6 +27,7 @@ export const recommendationSchema = z
     habitationId: objectIdSchema,
     districtId: objectIdSchema,
     candidateSites: z.array(rankedCandidateSiteSchema).min(1),
+    selectedSiteId: objectIdSchema.nullable(),
     priorityBucket: priorityBucketSchema,
     estimatedHouseholdsToMove: z.number().int().nonnegative(),
     phasing: z.array(phasingPlanEntrySchema),

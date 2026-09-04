@@ -27,6 +27,13 @@ export interface RecommendationDoc extends Document {
   habitationId: Types.ObjectId;
   districtId: Types.ObjectId;
   candidateSites: RankedCandidateSite[];
+  /** The officer's chosen site — defaults to candidateSites[0] (the
+   * system's top-ranked site) at generation time; a MODIFY decision can
+   * repoint it at any other ranked candidate. Null only if a district's
+   * site-scoring produced zero ranked candidates for this habitation
+   * (should not happen once Recommendation exists, but kept nullable for
+   * defense-in-depth). */
+  selectedSiteId: Types.ObjectId | null;
   priorityBucket: RelocationPriorityBucket;
   estimatedHouseholdsToMove: number;
   phasing: PhasingPlanEntry[];
@@ -61,6 +68,7 @@ const recommendationSchema = new Schema<RecommendationDoc>(
     habitationId: { type: Schema.Types.ObjectId, ref: "Habitation", required: true },
     districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     candidateSites: { type: [rankedCandidateSiteSchema], required: true },
+    selectedSiteId: { type: Schema.Types.ObjectId, ref: "RelocationSite", default: null },
     priorityBucket: { type: String, enum: PRIORITY_BUCKETS, required: true },
     estimatedHouseholdsToMove: { type: Number, required: true, min: 0 },
     phasing: { type: [phasingPlanEntrySchema], required: true, default: [] },

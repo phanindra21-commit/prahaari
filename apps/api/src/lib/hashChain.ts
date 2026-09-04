@@ -1,8 +1,20 @@
 import { createHash } from "node:crypto";
 
-/** Deterministic JSON: object keys sorted recursively, arrays keep order, Dates as ISO strings. */
+/**
+ * Deterministic JSON: object keys sorted recursively, arrays keep order,
+ * Dates as ISO strings.
+ *
+ * `before`/`after` audit payloads sometimes carry live Mongoose documents
+ * or DocumentArrays (e.g. a Recommendation's `phasing` subdocument array)
+ * rather than plain objects — their internal proxies/getters recurse far
+ * deeper than any real document depth and blow the call stack in
+ * `sortKeysDeep`. Round-tripping through JSON first invokes each
+ * Mongoose object's own `toJSON()`, producing a plain, finite value tree
+ * before the (Mongoose-unaware) recursive sort runs over it.
+ */
 export function canonicalize(value: unknown): string {
-  return JSON.stringify(sortKeysDeep(value));
+  const plain = value === undefined ? null : (JSON.parse(JSON.stringify(value)) as unknown);
+  return JSON.stringify(sortKeysDeep(plain));
 }
 
 function sortKeysDeep(value: unknown): unknown {

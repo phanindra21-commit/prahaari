@@ -278,7 +278,18 @@ hook), and asserts `verifyAuditChain()` catches exactly that entry.
 `GET /api/v1/audit` — paginated (`page`, `pageSize`, max 100/page),
 filterable by `actor`, `entityType`, `action`, `severity`, and a
 `from`/`to` date range. `SUPER_ADMIN` and `STATE_ADMIN` only
-(`auditLog:read`).
+(`auditLog:read`) — this listing has no per-district scope filter
+(`AuditLog` is polymorphic across entity types, many of which, like
+user management, have no district concept), so it is deliberately not
+opened to `DISTRICT_OFFICER`.
+
+For the officer decision workbench's audit trail view (Step 7 Commit 3),
+`GET /api/v1/recommendations/:id/audit-trail` (`recommendation:read`,
+already `DISTRICT_OFFICER`-scoped) exists instead: it resolves this one
+recommendation's `Decision` documents (already scope-checked) to their
+specific `AuditLog` entries, plus the same `verifyAuditChain()` result
+`/audit/verify-chain` returns — a pass/fail-and-broken-link summary with
+no entry content, safe to expose without the broader permission.
 
 ---
 

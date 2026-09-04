@@ -210,6 +210,7 @@ export async function scoreDistrictSites(districtId: Types.ObjectId): Promise<Si
         rank: r.rank,
         suitabilityScore: r.suitabilityScore,
       })),
+      selectedSiteId: new Types.ObjectId(topRankedSite.siteId),
       priorityBucket: assessment.priorityBucket,
       estimatedHouseholdsToMove: habitation.households,
       phasing:
