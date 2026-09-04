@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import type { RelocationPriorityBucket, ZoneClass } from "@punarvas/shared";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { RecommendationStatus, RelocationPriorityBucket, ZoneClass } from "@punarvas/shared";
 import * as api from "../lib/api";
 
 export function useDistricts() {
@@ -62,5 +62,74 @@ export function useRelocationSites(districtId: string | undefined) {
     queryKey: ["relocation-sites", districtId],
     queryFn: () => api.listRelocationSites(districtId!),
     enabled: !!districtId,
+  });
+}
+
+export function useSites(districtId: string | undefined, excluded?: boolean) {
+  return useQuery({
+    queryKey: ["sites", districtId, excluded],
+    queryFn: () => api.listSites(districtId!, excluded),
+    enabled: !!districtId,
+  });
+}
+
+export function useSite(id: string | undefined) {
+  return useQuery({
+    queryKey: ["site", id],
+    queryFn: () => api.getSite(id!),
+    enabled: !!id,
+  });
+}
+
+export function useRecommendations(params: {
+  districtId?: string;
+  priorityBucket?: RelocationPriorityBucket;
+  status?: RecommendationStatus;
+}) {
+  return useQuery({
+    queryKey: ["recommendations", params],
+    queryFn: () => api.listRecommendations(params),
+    enabled: !!params.districtId,
+  });
+}
+
+export function useRecommendation(id: string | undefined) {
+  return useQuery({
+    queryKey: ["recommendation", id],
+    queryFn: () => api.getRecommendation(id!),
+    enabled: !!id,
+  });
+}
+
+export function useRecommendationAuditTrail(id: string | undefined) {
+  return useQuery({
+    queryKey: ["recommendation-audit-trail", id],
+    queryFn: () => api.getRecommendationAuditTrail(id!),
+    enabled: !!id,
+  });
+}
+
+/** Submits a decision (approve/modify/reject/defer) and invalidates every
+ * query whose data the decision changes: the queue list, this
+ * recommendation's own detail + audit trail, and (Commit 3F) the map's
+ * habitation layer, which reads recommendation status to ring decided
+ * habitations. */
+export function useCreateDecision() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.createDecision,
+    onSuccess: (data) => {
+      void queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+      void queryClient.invalidateQueries({ queryKey: ["recommendation", data.recommendation._id] });
+      void queryClient.invalidateQueries({ queryKey: ["recommendation-audit-trail", data.recommendation._id] });
+    },
+  });
+}
+
+export function useDecisions(recommendationId: string | undefined) {
+  return useQuery({
+    queryKey: ["decisions", recommendationId],
+    queryFn: () => api.listDecisions(recommendationId),
+    enabled: !!recommendationId,
   });
 }

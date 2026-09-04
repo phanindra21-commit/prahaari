@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { HazardType } from "@punarvas/shared";
+import type { HazardType, RecommendationStatus } from "@punarvas/shared";
 import { useDistrictStore } from "../stores/districtStore";
-import { useDistricts, useZones, useHabitationsGeoJSON, useRelocationSites } from "../hooks/useApi";
+import {
+  useDistricts,
+  useZones,
+  useHabitationsGeoJSON,
+  useRelocationSites,
+  useRecommendations,
+} from "../hooks/useApi";
 import { MapView } from "../components/map/MapView";
 import { LayerPanel } from "../components/map/LayerPanel";
 import { ZoneLegend } from "../components/map/ZoneLegend";
@@ -16,6 +22,17 @@ export function MapPage(): JSX.Element {
   const { data: zonesData } = useZones(selectedDistrictId ?? undefined);
   const { data: habitationsData } = useHabitationsGeoJSON(selectedDistrictId ?? undefined);
   const { data: sitesData } = useRelocationSites(selectedDistrictId ?? "");
+  const { data: recommendationsData } = useRecommendations({ districtId: selectedDistrictId ?? undefined });
+
+  const recommendationStatusByHabitationId = useMemo(() => {
+    const map: Record<string, RecommendationStatus> = {};
+    for (const rec of recommendationsData?.items ?? []) {
+      if (rec.status !== "PENDING_REVIEW") {
+        map[rec.habitationId._id] = rec.status;
+      }
+    }
+    return map;
+  }, [recommendationsData]);
 
   const availableHazards = useMemo(() => district?.primaryHazards ?? [], [district]);
   const [visibleHazards, setVisibleHazards] = useState<Set<HazardType>>(new Set());
@@ -56,6 +73,7 @@ export function MapPage(): JSX.Element {
         showSites={showSites}
         selectedHabitationId={selectedHabitationId}
         onHabitationClick={selectHabitation}
+        recommendationStatusByHabitationId={recommendationStatusByHabitationId}
       />
 
       <div className="pointer-events-none absolute inset-0 flex justify-between p-3">
@@ -69,7 +87,7 @@ export function MapPage(): JSX.Element {
             showSites={showSites}
             onToggleSites={() => setShowSites((v) => !v)}
           />
-          <ZoneLegend />
+          <ZoneLegend showDecisionRing={Object.keys(recommendationStatusByHabitationId).length > 0} />
         </div>
 
         {selectedHabitationId && (

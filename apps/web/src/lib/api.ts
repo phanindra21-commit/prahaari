@@ -6,6 +6,8 @@ import type {
   GeoPoint,
   GeoPolygonal,
   UserRole,
+  RecommendationStatus,
+  DecisionAction,
 } from "@punarvas/shared";
 import { apiRequest } from "./apiClient";
 
@@ -294,6 +296,209 @@ export interface RelocationSite {
 
 export function listRelocationSites(districtId: string): Promise<{ items: RelocationSite[] }> {
   return apiRequest("/relocation-sites", { query: { districtId } });
+}
+
+// --- Step 7 Commit 2/3: scored relocation sites, recommendations, decisions ---
+
+export type BindingConstraint = "LAND" | "WATER" | "EDUCATION" | "HEALTH" | "ACCESS";
+
+export interface CarryingCapacity {
+  byLand: number;
+  byWater: number;
+  byEducation: number;
+  byHealth: number;
+  byAccess: number;
+  effectiveCapacity: number;
+  bindingConstraint: BindingConstraint;
+}
+
+export interface RelocationSiteRawAttributes {
+  slopeDegrees: number;
+  inCrzI: boolean;
+  inProtectedForest: boolean;
+  inFloodplain100yr: boolean;
+  distanceToActiveFaultM: number;
+  distanceToWaterBodyM: number;
+  inMiningLease: boolean;
+  distanceToAllWeatherRoadM: number;
+  availableWaterSupplyLpd: number;
+  nearbySchoolSpareCapacitySeats: number;
+  nearbyHealthFacilitySpareCapacityPopulation: number;
+  existingInfrastructureIndex: number;
+}
+
+/** Full scoring detail for a candidate relocation site — GET /sites, /sites/:id
+ * (METHODOLOGY §4/§5), distinct from the lighter `RelocationSite` above (which
+ * backs the district-wide map's raw site markers). `overallSuitabilityScore`
+ * and `carryingCapacity` are null for a site that failed an exclusion. */
+export interface RelocationSiteDetail {
+  _id: string;
+  districtId: string;
+  name: string;
+  geometry: GeoPolygonal;
+  centroid: GeoPoint;
+  areaSqm: number;
+  landOwnership: string;
+  rawAttributes: RelocationSiteRawAttributes;
+  exclusionsPassed: string[];
+  exclusionsFailed: string[];
+  suitabilitySubScores: Record<string, number>;
+  overallSuitabilityScore: number | null;
+  carryingCapacity: CarryingCapacity | null;
+  scoredAt: string | null;
+  modelVersion: string | null;
+  dataProvenance: string;
+}
+
+export function listSites(districtId: string, excluded?: boolean): Promise<{ items: RelocationSiteDetail[] }> {
+  return apiRequest("/sites", { query: { districtId, excluded: excluded === undefined ? undefined : String(excluded) } });
+}
+
+export function getSite(id: string): Promise<RelocationSiteDetail> {
+  return apiRequest(`/sites/${id}`);
+}
+
+/** The habitation as embedded (Mongoose `.populate()`, not the /habitations
+ * route's own hand-shaped response) in a Recommendation — raw field names
+ * (`_id`, not `id`), a subset typed here to what the workbench UI reads. */
+export interface RecommendationHabitationRef {
+  _id: string;
+  name: string;
+  panchayat: string;
+  block: string;
+  districtId: string;
+  centroid: GeoPoint;
+  population: number;
+  households: number;
+}
+
+export interface PhasingPlanEntry {
+  phase: number;
+  householdCount: number;
+  targetDate: string;
+}
+
+export interface RankedCandidateSiteDetail {
+  relocationSiteId: RelocationSiteDetail;
+  rank: number;
+  suitabilityScore: number;
+}
+
+export interface RecommendationItem {
+  _id: string;
+  habitationId: RecommendationHabitationRef;
+  districtId: string;
+  candidateSites: RankedCandidateSiteDetail[];
+  selectedSiteId: RelocationSiteDetail | null;
+  priorityBucket: RelocationPriorityBucket;
+  estimatedHouseholdsToMove: number;
+  phasing: PhasingPlanEntry[];
+  rationale: string;
+  modelVersion: string;
+  status: RecommendationStatus;
+  generatedAt: string;
+}
+
+export function listRecommendations(params: {
+  districtId?: string;
+  priorityBucket?: RelocationPriorityBucket;
+  status?: RecommendationStatus;
+}): Promise<{ items: RecommendationItem[] }> {
+  return apiRequest("/recommendations", { query: params });
+}
+
+export function getRecommendation(id: string): Promise<RecommendationItem> {
+  return apiRequest(`/recommendations/${id}`);
+}
+
+export interface OverriddenFieldRecord {
+  field: string;
+  fromValue: unknown;
+  toValue: unknown;
+}
+
+export interface DecisionOfficerRef {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+}
+
+export interface DecisionRecord {
+  _id: string;
+  recommendationId: string;
+  districtId: string;
+  officerId: DecisionOfficerRef;
+  action: DecisionAction;
+  justification: string;
+  overriddenFields: OverriddenFieldRecord[];
+  decidedAt: string;
+  ipAddress: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuditEntryRecord {
+  _id: string;
+  seq: number;
+  actorId: string | null;
+  actorLabel: string;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  before: unknown;
+  after: unknown;
+  requestId: string;
+  severity: string;
+  timestamp: string;
+  prevHash: string;
+  entryHash: string;
+}
+
+export interface ChainVerification {
+  valid: boolean;
+  entriesChecked: number;
+  brokenAtSeq: number | null;
+  reason: string | null;
+}
+
+export interface AuditTrailResponse {
+  decisions: DecisionRecord[];
+  auditEntries: AuditEntryRecord[];
+  chainVerification: ChainVerification;
+}
+
+export function getRecommendationAuditTrail(id: string): Promise<AuditTrailResponse> {
+  return apiRequest(`/recommendations/${id}/audit-trail`);
+}
+
+export interface CreateDecisionOverride {
+  field: "selectedSiteId" | "estimatedHouseholdsToMove" | "phasing";
+  fromValue: unknown;
+  toValue: unknown;
+}
+
+export interface CreateDecisionRequest {
+  recommendationId: string;
+  action: DecisionAction;
+  justification: string;
+  overriddenFields?: CreateDecisionOverride[];
+}
+
+/** POST /decisions returns the just-created Decision unpopulated (`officerId`
+ * is a bare id string) — only GET /decisions and the audit-trail route
+ * populate it to a DecisionOfficerRef. */
+export interface CreateDecisionResponse {
+  decision: Omit<DecisionRecord, "officerId"> & { officerId: string };
+  recommendation: RecommendationItem;
+}
+
+export function createDecision(body: CreateDecisionRequest): Promise<CreateDecisionResponse> {
+  return apiRequest("/decisions", { method: "POST", body });
+}
+
+export function listDecisions(recommendationId?: string): Promise<{ items: DecisionRecord[] }> {
+  return apiRequest("/decisions", { query: { recommendationId } });
 }
 
 export type { UserRole };

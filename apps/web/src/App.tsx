@@ -3,6 +3,8 @@ import { LoginPage } from "./routes/LoginPage";
 import { ProtectedLayout } from "./routes/ProtectedLayout";
 import { MapPage } from "./routes/MapPage";
 import { PrioritiesPage } from "./routes/PrioritiesPage";
+import { ReviewQueuePage } from "./routes/ReviewQueuePage";
+import { RecommendationDetailPage } from "./routes/RecommendationDetailPage";
 
 export function App(): JSX.Element {
   return (
@@ -12,6 +14,8 @@ export function App(): JSX.Element {
         <Route element={<ProtectedLayout />}>
           <Route path="/map" element={<MapPage />} />
           <Route path="/priorities" element={<PrioritiesPage />} />
+          <Route path="/recommendations" element={<ReviewQueuePage />} />
+          <Route path="/recommendations/:id" element={<RecommendationDetailPage />} />
           <Route path="/" element={<Navigate to="/map" replace />} />
         </Route>
         <Route path="*" element={<Navigate to="/map" replace />} />

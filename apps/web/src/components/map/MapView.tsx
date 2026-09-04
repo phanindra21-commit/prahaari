@@ -1,9 +1,21 @@
 import { useEffect, useRef } from "react";
 import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { HazardType } from "@punarvas/shared";
+import type { HazardType, RecommendationStatus } from "@punarvas/shared";
 import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite } from "../../lib/api";
 import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR } from "./mapStyle";
+
+/** Step 7 Commit 3F: ring color for a habitation with a recorded decision
+ * (a Recommendation whose status moved off PENDING_REVIEW) — independent
+ * of the priority-bucket fill color, so a decided habitation's fill still
+ * shows its hazard priority while the ring shows what an officer did about it. */
+export const DECISION_RING_COLORS: Record<RecommendationStatus, string> = {
+  PENDING_REVIEW: "#0A0E13",
+  APPROVED: "#4C9F73",
+  MODIFIED: "#CE8A3E",
+  REJECTED: "#C6483C",
+  DEFERRED: "#C9B454",
+};
 
 const ZONE_SEVERITY: Record<string, number> = { Green: 0, Yellow: 1, Orange: 2, Red: 3 };
 
@@ -19,6 +31,9 @@ interface MapViewProps {
   showSites: boolean;
   selectedHabitationId: string | null;
   onHabitationClick: (habitationId: string) => void;
+  /** habitationId -> decided Recommendation.status (PENDING_REVIEW entries
+   * omitted — only a recorded decision gets a ring). */
+  recommendationStatusByHabitationId?: Record<string, RecommendationStatus>;
 }
 
 function zonesToFeatureCollection(zones: ZonePolygon[], visibleHazards: Set<HazardType>): GeoJSON.FeatureCollection {
@@ -43,6 +58,7 @@ export function MapView({
   showSites,
   selectedHabitationId,
   onHabitationClick,
+  recommendationStatusByHabitationId,
 }: MapViewProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -251,13 +267,14 @@ export function MapView({
           population: f.properties.population,
           priorityBucket: f.properties.assessment?.priorityBucket ?? null,
           zoneClass: f.properties.assessment?.overallZoneClass ?? null,
+          decisionStatus: recommendationStatusByHabitationId?.[f.properties.id] ?? null,
         },
       }));
       source.setData({ type: "FeatureCollection", features });
     };
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);
-  }, [habitations, showHabitations]);
+  }, [habitations, showHabitations, recommendationStatusByHabitationId]);
 
   // Relocation sites.
   useEffect(() => {
@@ -281,23 +298,40 @@ export function MapView({
     else map.once("load", apply);
   }, [relocationSites, showSites]);
 
-  // Selected habitation highlight.
+  // Selected habitation highlight, layered with the Step 7 Commit 3F
+  // decision-status ring (evaluated per-feature from `decisionStatus`, so
+  // this expression stays live as habitation data refetches after a
+  // decision — it does not need to be reapplied on that data change).
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-    if (!map.getLayer("habitations-layer")) return;
-    map.setPaintProperty("habitations-layer", "circle-stroke-width", [
-      "case",
-      ["==", ["get", "id"], selectedHabitationId ?? ""],
-      3,
-      1,
-    ]);
-    map.setPaintProperty("habitations-layer", "circle-stroke-color", [
-      "case",
-      ["==", ["get", "id"], selectedHabitationId ?? ""],
-      "#45C9BF",
-      "#0A0E13",
-    ]);
+    if (!map) return;
+    const apply = (): void => {
+      if (!map.getLayer("habitations-layer")) return;
+      map.setPaintProperty("habitations-layer", "circle-stroke-width", [
+        "case",
+        ["==", ["get", "id"], selectedHabitationId ?? ""],
+        3,
+        ["!=", ["get", "decisionStatus"], null],
+        2.5,
+        1,
+      ]);
+      map.setPaintProperty("habitations-layer", "circle-stroke-color", [
+        "case",
+        ["==", ["get", "id"], selectedHabitationId ?? ""],
+        "#45C9BF",
+        ["==", ["get", "decisionStatus"], "APPROVED"],
+        DECISION_RING_COLORS.APPROVED,
+        ["==", ["get", "decisionStatus"], "MODIFIED"],
+        DECISION_RING_COLORS.MODIFIED,
+        ["==", ["get", "decisionStatus"], "REJECTED"],
+        DECISION_RING_COLORS.REJECTED,
+        ["==", ["get", "decisionStatus"], "DEFERRED"],
+        DECISION_RING_COLORS.DEFERRED,
+        "#0A0E13",
+      ]);
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once("load", apply);
   }, [selectedHabitationId]);
 
   return <div ref={containerRef} className="h-full w-full" />;

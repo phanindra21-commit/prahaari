@@ -59,6 +59,11 @@ export function TopBar(): JSX.Element {
               Priority worklist
             </NavLink>
           )}
+          {user && hasPermission(user.role, "recommendation:read") && (
+            <NavLink to="/recommendations" className={navLinkClass}>
+              Review queue
+            </NavLink>
+          )}
         </nav>
       </div>
 

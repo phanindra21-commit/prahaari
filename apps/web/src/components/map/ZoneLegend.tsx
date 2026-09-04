@@ -12,7 +12,16 @@ const BUCKET_ROWS: Array<{ label: string; color: string }> = [
   { label: "Not bucketed (Yellow/Green)", color: "#5C6B78" },
 ];
 
-export function ZoneLegend(): JSX.Element {
+/** Step 7 Commit 3F: ring color around a habitation dot once it has a
+ * recorded decision — see MapView.tsx's DECISION_RING_COLORS. */
+const DECISION_ROWS: Array<{ label: string; color: string }> = [
+  { label: "Approved", color: "#4C9F73" },
+  { label: "Modified", color: "#CE8A3E" },
+  { label: "Rejected", color: "#C6483C" },
+  { label: "Deferred", color: "#C9B454" },
+];
+
+export function ZoneLegend({ showDecisionRing = false }: { showDecisionRing?: boolean }): JSX.Element {
   return (
     <div className="w-56 rounded border border-ink-600 bg-ink-800/95 p-3 text-xs shadow-panel backdrop-blur-sm">
       <p className="mb-1.5 text-mist-400">Zone class</p>
@@ -30,6 +39,21 @@ export function ZoneLegend(): JSX.Element {
           {row.label}
         </div>
       ))}
+
+      {showDecisionRing && (
+        <>
+          <p className="mb-1.5 mt-3 text-mist-400">Decision ring (Step 7 review queue)</p>
+          {DECISION_ROWS.map((row) => (
+            <div key={row.label} className="flex items-center gap-2 py-0.5 text-mist-200">
+              <span
+                className="h-2.5 w-2.5 rounded-full border-2 bg-transparent"
+                style={{ borderColor: row.color }}
+              />
+              {row.label}
+            </div>
+          ))}
+        </>
+      )}
       <p className="mt-2 text-mist-400">Habitation size = population</p>
     </div>
   );
