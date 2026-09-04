@@ -685,7 +685,10 @@ Based on **Indian Public Health Standards (IPHS)** facility population
 norms:
 
 ```
-C_health = NearbyHealthFacilitySpareCapacity / (IPHS_PopulationNorm / AvgHouseholdSize)
+C_health = min(
+    NearbyHealthFacilitySpareCapacity / AvgHouseholdSize,
+    IPHS_PopulationNorm / AvgHouseholdSize
+)
 ```
 
 | Facility                      | Plains norm              | Hilly/tribal/difficult-area norm |
@@ -696,6 +699,27 @@ C_health = NearbyHealthFacilitySpareCapacity / (IPHS_PopulationNorm / AvgHouseho
 
 Wayanad sites use the hilly/tribal norm; Ganjam sites use the plains
 norm, per IPHS guidelines' area classification.
+
+**Corrected during Step 7 Commit 2.** This formula originally read
+`SpareCapacity / (IPHS_PopulationNorm / AvgHouseholdSize)` — dividing by
+a households-*per-facility* figure instead of a population-*per-
+household* rate, unlike `C_water`'s and `C_education`'s own "spare
+capacity / per-household rate" pattern just above. As literally
+implemented that drove every seeded candidate site's health capacity to
+0.28-0.39 households (Wayanad and Ganjam alike) — `CarryingCapacity`
+effectively zero everywhere, so no habitation could ever be matched to
+any site. That is a units bug, not a genuine finding about site
+viability (see `services/ml/app/engine/capacity.py`'s docstring for the
+full derivation). The corrected formula's first term mirrors `C_water`/
+`C_education` directly; the second term is a real physical ceiling — one
+facility cannot absorb more newly-relocated population than its own
+tier-specific design norm allows — which is where the hilly-tribal-vs-
+plains distinction legitimately re-enters: Wayanad's smaller 20,000-
+population PHC norm caps out at *fewer* households per facility than
+Ganjam's 30,000-population norm, the opposite ordering the buggy formula
+produced. For every seeded site the spare-capacity term stays well under
+this ceiling, so in practice the correction is a defensive cap, not a
+second degenerate divisor.
 
 ### 5.5 Access Constraint (`C_access`)
 

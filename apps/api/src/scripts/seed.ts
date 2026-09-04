@@ -324,13 +324,18 @@ async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId
               centroid: feature.properties.centroid,
               areaSqm: feature.properties.areaSqm,
               landOwnership: feature.properties.landOwnership,
-              exclusionsPassed: feature.properties.exclusionsPassed,
-              exclusionsFailed: feature.properties.exclusionsFailed,
-              suitabilitySubScores: new Map(
-                Object.entries(feature.properties.suitabilitySubScores),
-              ),
-              overallSuitabilityScore: feature.properties.overallSuitabilityScore,
-              carryingCapacity: feature.properties.carryingCapacity,
+              rawAttributes: feature.properties.rawAttributes,
+              // exclusions/suitability/capacity are computed live by the
+              // pipeline's site-scoring stage, not seeded — a freshly
+              // seeded site starts unscored, same convention as GridCell's
+              // "PENDING_SCORE" before a zoning run.
+              exclusionsPassed: [],
+              exclusionsFailed: [],
+              suitabilitySubScores: new Map(),
+              overallSuitabilityScore: null,
+              carryingCapacity: null,
+              scoredAt: null,
+              modelVersion: null,
               dataProvenance: feature.properties.dataProvenance,
             },
           },

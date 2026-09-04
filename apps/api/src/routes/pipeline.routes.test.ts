@@ -7,6 +7,8 @@ import { District } from "../models/District";
 import { GridCell } from "../models/GridCell";
 import { Habitation } from "../models/Habitation";
 import { Assessment } from "../models/Assessment";
+import { RelocationSite } from "../models/RelocationSite";
+import { Recommendation } from "../models/Recommendation";
 import { User } from "../models/User";
 import { hashPassword } from "../lib/password";
 import { signAccessToken } from "../lib/tokens";
@@ -118,6 +120,44 @@ function startMockMlServer(): void {
       return;
     }
 
+    if (req.url === "/sites/run") {
+      void readJsonBody<{
+        sites: Array<{ siteId: string }>;
+        habitations: Array<{ habitationId: string; households: number }>;
+      }>(req).then((body) => {
+        const sites = body.sites.map((s) => ({
+          siteId: s.siteId,
+          exclusions: { passed: ["insideRedOrOrangeZone"], failed: [], excluded: false },
+          suitabilitySubScores: { hazardSafety: 0.9 },
+          overallSuitabilityScore: 0.8,
+          carryingCapacity: {
+            byLand: 300,
+            byWater: 200,
+            byEducation: 150,
+            byHealth: 400,
+            byAccess: 250,
+            effectiveCapacity: 150,
+            bindingConstraint: "EDUCATION",
+          },
+        }));
+        const firstSiteId = body.sites[0]?.siteId ?? null;
+        const matches = body.habitations.map((h) => ({
+          habitationId: h.habitationId,
+          rankedSites: body.sites.map((s, i) => ({
+            siteId: s.siteId,
+            rank: i + 1,
+            suitabilityScore: 0.8,
+            subScores: { hazardSafety: 0.9 },
+          })),
+          allocatedSiteId: firstSiteId,
+          allocatedHouseholds: h.households,
+        }));
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ sites, matches }));
+      });
+      return;
+    }
+
     res.writeHead(404).end();
   });
   mlServer.listen(58231, "127.0.0.1");
@@ -131,11 +171,11 @@ afterAll(async () => {
   await new Promise<void>((resolve) => mlServer.close(() => resolve()));
 });
 
-async function seedDistrict(lgdCode: string, primaryHazards: string[] = ["landslide"]) {
+async function seedDistrict(lgdCode: string, primaryHazards: string[] = ["landslide"], state = "Testland") {
   return District.create({
     lgdCode,
     name: "Test District",
-    state: "Testland",
+    state,
     boundary: {
       type: "Polygon",
       coordinates: [[[76.0, 11.6], [76.2, 11.6], [76.2, 11.8], [76.0, 11.8], [76.0, 11.6]]],
@@ -197,6 +237,35 @@ async function seedHabitations(districtId: Types.ObjectId, count = 2) {
   }
 }
 
+async function seedRelocationSite(districtId: Types.ObjectId) {
+  return RelocationSite.create({
+    districtId,
+    name: "Test Candidate Site",
+    geometry: {
+      type: "Polygon",
+      coordinates: [[[76.08, 11.68], [76.09, 11.68], [76.09, 11.69], [76.08, 11.69], [76.08, 11.68]]],
+    },
+    centroid: { type: "Point", coordinates: [76.085, 11.685] },
+    areaSqm: 50000,
+    landOwnership: "GOVT",
+    rawAttributes: {
+      slopeDegrees: 5,
+      inCrzI: false,
+      inProtectedForest: false,
+      inFloodplain100yr: false,
+      distanceToActiveFaultM: 5000,
+      distanceToWaterBodyM: 300,
+      inMiningLease: false,
+      distanceToAllWeatherRoadM: 200,
+      availableWaterSupplyLpd: 45000,
+      nearbySchoolSpareCapacitySeats: 120,
+      nearbyHealthFacilitySpareCapacityPopulation: 1800,
+      existingInfrastructureIndex: 0.5,
+    },
+    dataProvenance: "SYNTHETIC_DEMO",
+  });
+}
+
 async function tokenForRole(
   role: "SUPER_ADMIN" | "DISTRICT_OFFICER" | "FIELD_VOLUNTEER" | "ANALYST",
   districtId?: Types.ObjectId,
@@ -227,10 +296,11 @@ async function waitForJobCompletion(jobId: string, token: string): Promise<{ sta
 }
 
 describe("pipeline route integration", () => {
-  it("runs the full pipeline (zones -> assessments) and persists versioned Assessment docs", async () => {
-    const district = await seedDistrict("PIPELINE-RT-001");
+  it("runs the full pipeline (zones -> assessments -> sites) and persists versioned Assessment + scored RelocationSite + Recommendation docs", async () => {
+    const district = await seedDistrict("PIPELINE-RT-001", ["landslide"], "Kerala");
     await seedGridCells(district._id as Types.ObjectId, 3);
     await seedHabitations(district._id as Types.ObjectId, 2);
+    await seedRelocationSite(district._id as Types.ObjectId);
     const token = await tokenForRole("SUPER_ADMIN");
 
     const runRes = await request(app)
@@ -252,6 +322,26 @@ describe("pipeline route integration", () => {
     expect(bucketed[0]!.priorityBucket).toBe("Immediate");
     expect(bucketed[0]!.explanation.length).toBeGreaterThan(0);
     expect(bucketed[0]!.validTo).toBeNull();
+
+    const sites = await RelocationSite.find({ districtId: district._id as Types.ObjectId });
+    expect(sites).toHaveLength(1);
+    expect(sites[0]!.overallSuitabilityScore).toBe(0.8);
+    expect(sites[0]!.carryingCapacity?.bindingConstraint).toBe("EDUCATION");
+    expect(sites[0]!.scoredAt).not.toBeNull();
+    expect(sites[0]!.exclusionsFailed).toHaveLength(0);
+
+    const recommendations = await Recommendation.find({ districtId: district._id as Types.ObjectId });
+    expect(recommendations).toHaveLength(1);
+    expect(recommendations[0]!.status).toBe("PENDING_REVIEW");
+    expect(recommendations[0]!.priorityBucket).toBe("Immediate");
+    expect(recommendations[0]!.candidateSites).toHaveLength(1);
+    expect(recommendations[0]!.candidateSites[0]!.relocationSiteId.toString()).toBe(sites[0]!._id.toString());
+    expect(recommendations[0]!.phasing).toHaveLength(1);
+    expect(recommendations[0]!.phasing[0]!.householdCount).toBe(100);
+
+    const job = finished as { result?: { sites?: { skipped: boolean; matchedHabitationCount: number } } };
+    expect(job.result?.sites?.skipped).toBe(false);
+    expect(job.result?.sites?.matchedHabitationCount).toBe(1);
   });
 
   it("rejects POST /pipeline/run for a role without pipeline:run", async () => {

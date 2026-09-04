@@ -25,6 +25,7 @@ export const recommendationSchema = z
   .object({
     _id: objectIdSchema,
     habitationId: objectIdSchema,
+    districtId: objectIdSchema,
     candidateSites: z.array(rankedCandidateSiteSchema).min(1),
     priorityBucket: priorityBucketSchema,
     estimatedHouseholdsToMove: z.number().int().nonnegative(),

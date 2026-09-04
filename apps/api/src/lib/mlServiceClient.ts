@@ -5,8 +5,17 @@ import {
   hazardTypeSchema,
   zoneClassSchema,
   priorityBucketSchema,
+  bindingConstraintSchema,
 } from "@punarvas/shared";
-import type { HazardType, GeoPolygonal, ZoneClass } from "@punarvas/shared";
+import type {
+  HazardType,
+  GeoPolygonal,
+  ZoneClass,
+  LandOwnershipType,
+  TerrainTier,
+  RelocationSiteRawAttributes,
+  RelocationPriorityBucket,
+} from "@punarvas/shared";
 import { env } from "./env";
 
 const cellScoreSchema = z.object({
@@ -125,6 +134,72 @@ export interface AssessmentRunHazardEventInput {
   date: string;
 }
 
+const exclusionsOutSchema = z.object({
+  passed: z.array(z.string()),
+  failed: z.array(z.string()),
+  excluded: z.boolean(),
+});
+
+const capacityOutSchema = z.object({
+  byLand: z.number().nonnegative(),
+  byWater: z.number().nonnegative(),
+  byEducation: z.number().nonnegative(),
+  byHealth: z.number().nonnegative(),
+  byAccess: z.number().nonnegative(),
+  effectiveCapacity: z.number().nonnegative(),
+  bindingConstraint: bindingConstraintSchema,
+});
+
+const siteOutSchema = z.object({
+  siteId: z.string().min(1),
+  exclusions: exclusionsOutSchema,
+  suitabilitySubScores: z.record(z.string(), z.number()).nullable(),
+  overallSuitabilityScore: z.number().min(0).max(1).nullable(),
+  carryingCapacity: capacityOutSchema.nullable(),
+});
+export type MlSiteScoringResult = z.infer<typeof siteOutSchema>;
+
+const rankedSiteOutSchema = z.object({
+  siteId: z.string().min(1),
+  rank: z.number().int().positive(),
+  suitabilityScore: z.number().min(0).max(1),
+  subScores: z.record(z.string(), z.number()),
+});
+
+const matchOutSchema = z.object({
+  habitationId: z.string().min(1),
+  rankedSites: z.array(rankedSiteOutSchema),
+  allocatedSiteId: z.string().nullable(),
+  allocatedHouseholds: z.number().int().nonnegative(),
+});
+export type MlSiteMatch = z.infer<typeof matchOutSchema>;
+
+const siteScoringRunResponseSchema = z.object({
+  sites: z.array(siteOutSchema),
+  matches: z.array(matchOutSchema),
+});
+export type SiteScoringRunResponse = z.infer<typeof siteScoringRunResponseSchema>;
+
+export interface SiteScoringRunSiteInput {
+  siteId: string;
+  geometry: GeoPolygonal;
+  lon: number;
+  lat: number;
+  areaSqm: number;
+  landOwnership: LandOwnershipType;
+  rawAttributes: RelocationSiteRawAttributes;
+}
+
+export interface SiteScoringRunHabitationInput {
+  habitationId: string;
+  lon: number;
+  lat: number;
+  distanceToLivelihoodAssetKm: number;
+  households: number;
+  priorityBucket: RelocationPriorityBucket;
+  relocationPriorityIndex: number;
+}
+
 export interface MlServiceClientOptions {
   baseUrl?: string;
   timeoutMs?: number;
@@ -201,6 +276,32 @@ export class MlServiceClient {
     if (!parsed.success) {
       throw new Error(
         `[mlServiceClient] POST /assessment/run response failed validation: ${parsed.error.toString()}`,
+      );
+    }
+    return parsed.data;
+  }
+
+  async runSiteScoring(
+    state: string,
+    terrainTier: TerrainTier,
+    redOrangeZoneGeometries: GeoPolygonal[],
+    sites: SiteScoringRunSiteInput[],
+    habitations: SiteScoringRunHabitationInput[],
+  ): Promise<SiteScoringRunResponse> {
+    const raw = await this.postWithRetry(
+      "/sites/run",
+      JSON.stringify({
+        state,
+        terrainTier,
+        redOrangeZoneGeometries,
+        sites,
+        habitations,
+      }),
+    );
+    const parsed = siteScoringRunResponseSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new Error(
+        `[mlServiceClient] POST /sites/run response failed validation: ${parsed.error.toString()}`,
       );
     }
     return parsed.data;

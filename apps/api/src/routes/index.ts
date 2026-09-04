@@ -6,6 +6,8 @@ import { habitationRouter } from "./habitation.routes";
 import { districtRouter } from "./district.routes";
 import { hazardEventRouter } from "./hazardEvent.routes";
 import { relocationSiteRouter } from "./relocationSite.routes";
+import { sitesRouter } from "./sites.routes";
+import { recommendationRouter } from "./recommendation.routes";
 
 export const apiV1Router = Router();
 apiV1Router.use("/auth", authRouter);
@@ -15,3 +17,5 @@ apiV1Router.use(habitationRouter);
 apiV1Router.use(districtRouter);
 apiV1Router.use(hazardEventRouter);
 apiV1Router.use(relocationSiteRouter);
+apiV1Router.use(sitesRouter);
+apiV1Router.use(recommendationRouter);

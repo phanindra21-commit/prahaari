@@ -2,6 +2,14 @@ import { Schema, model, type Document, type Types } from "mongoose";
 import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES } from "@punarvas/shared";
 import type { RelocationPriorityBucket, RecommendationStatus } from "@punarvas/shared";
 
+/**
+ * `districtId` is denormalized from `habitationId`'s Habitation at
+ * generation time — every scoped collection in this project carries its
+ * own `districtId` so `requireScope()`'s default filter shape (`{districtId: ...}`)
+ * works without a $lookup; Recommendation is queried directly (list/detail
+ * routes, RBAC), never only reached via its habitation.
+ */
+
 export interface RankedCandidateSite {
   relocationSiteId: Types.ObjectId;
   rank: number;
@@ -17,6 +25,7 @@ export interface PhasingPlanEntry {
 /** A system-generated pairing of one habitation with its ranked candidate relocation sites. */
 export interface RecommendationDoc extends Document {
   habitationId: Types.ObjectId;
+  districtId: Types.ObjectId;
   candidateSites: RankedCandidateSite[];
   priorityBucket: RelocationPriorityBucket;
   estimatedHouseholdsToMove: number;
@@ -50,6 +59,7 @@ const phasingPlanEntrySchema = new Schema<PhasingPlanEntry>(
 const recommendationSchema = new Schema<RecommendationDoc>(
   {
     habitationId: { type: Schema.Types.ObjectId, ref: "Habitation", required: true },
+    districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     candidateSites: { type: [rankedCandidateSiteSchema], required: true },
     priorityBucket: { type: String, enum: PRIORITY_BUCKETS, required: true },
     estimatedHouseholdsToMove: { type: Number, required: true, min: 0 },
@@ -68,6 +78,7 @@ const recommendationSchema = new Schema<RecommendationDoc>(
 );
 
 recommendationSchema.index({ habitationId: 1, status: 1 });
+recommendationSchema.index({ districtId: 1, priorityBucket: 1, status: 1 });
 
 export const Recommendation = model<RecommendationDoc>(
   "Recommendation",

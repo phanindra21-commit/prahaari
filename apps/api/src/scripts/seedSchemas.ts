@@ -25,7 +25,7 @@ import {
   habitationAccessSchema,
   habitationLivelihoodSchema,
   habitationCopingCapacitySchema,
-  carryingCapacitySchema,
+  relocationSiteRawAttributesSchema,
 } from "@punarvas/shared";
 
 export const seedDistrictSchema = z.object({
@@ -122,11 +122,7 @@ export const seedRelocationSiteFeatureSchema = z.object({
     areaSqm: z.number().positive(),
     landOwnership: landOwnershipTypeSchema,
     dataProvenance: dataProvenanceSchema,
-    exclusionsPassed: z.array(z.string()),
-    exclusionsFailed: z.array(z.string()),
-    suitabilitySubScores: z.record(z.string(), z.number()),
-    overallSuitabilityScore: z.number().min(0).max(1).nullable(),
-    carryingCapacity: carryingCapacitySchema.nullable(),
+    rawAttributes: relocationSiteRawAttributesSchema,
   }),
 });
 export const seedRelocationSiteCollectionSchema = z.object({

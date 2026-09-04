@@ -113,8 +113,17 @@ export const suitabilityAhpSchema = z.object({
 });
 export type SuitabilityAhpConfig = z.infer<typeof suitabilityAhpSchema>;
 
+export const terrainTierSchema = z.enum(["HILLY_TRIBAL", "PLAINS"]);
+export type TerrainTier = z.infer<typeof terrainTierSchema>;
+
 export const capacityNormsSchema = z.object({
   modelVersion: z.string(),
+  /** Which IPHS health-facility norm tier (METHODOLOGY §5.4) applies to
+   * each pilot state's sites. Wayanad -> Kerala -> HILLY_TRIBAL; Ganjam ->
+   * Odisha -> PLAINS. Single source of truth for the mapping the site
+   * scoring pipeline needs when calling services/ml — never hardcode this
+   * per-district in apps/api. */
+  stateTerrainTier: z.record(z.string(), terrainTierSchema),
   water: z.object({
     lpcd: z.number().positive(),
     source: z.string(),

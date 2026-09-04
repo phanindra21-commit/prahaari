@@ -37,6 +37,20 @@ async function seedSite(districtId: Types.ObjectId, name: string) {
     centroid: { type: "Point", coordinates: [76.055, 11.655] },
     areaSqm: 50000,
     landOwnership: "GOVT",
+    rawAttributes: {
+      slopeDegrees: 5,
+      inCrzI: false,
+      inProtectedForest: false,
+      inFloodplain100yr: false,
+      distanceToActiveFaultM: 5000,
+      distanceToWaterBodyM: 300,
+      inMiningLease: false,
+      distanceToAllWeatherRoadM: 200,
+      availableWaterSupplyLpd: 45000,
+      nearbySchoolSpareCapacitySeats: 120,
+      nearbyHealthFacilitySpareCapacityPopulation: 1800,
+      existingInfrastructureIndex: 0.5,
+    },
     dataProvenance: "SYNTHETIC_DEMO",
   });
 }

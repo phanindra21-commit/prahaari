@@ -1,5 +1,9 @@
 {
   "modelVersion": "capacity-norms-v1",
+  "stateTerrainTier": {
+    "Kerala": "HILLY_TRIBAL",
+    "Odisha": "PLAINS"
+  },
   "water": {
     "lpcd": 55,
     "source": "Jal Jeevan Mission / MoHUA rural basic service level benchmark",
