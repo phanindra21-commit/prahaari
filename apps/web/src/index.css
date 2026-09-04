@@ -1,3 +1,70 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-ink-950 text-mist-100 antialiased;
+  }
+
+  ::selection {
+    @apply bg-signal/30 text-mist-50;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.signal.bright");
+    outline-offset: 1px;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.ink.500") theme("colors.ink.800");
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: theme("colors.ink.800");
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: theme("colors.ink.500");
+    border-radius: 4px;
+  }
+}
+
+/* MapLibre's own stylesheet controls, restyled to the ink palette instead of its default light chrome. */
+.maplibregl-ctrl-group {
+  background: theme("colors.ink.800") !important;
+  border: 1px solid theme("colors.ink.600") !important;
+  box-shadow: none !important;
+}
+.maplibregl-ctrl-group button {
+  background: transparent !important;
+}
+.maplibregl-ctrl-group button:hover {
+  background: theme("colors.ink.700") !important;
+}
+.maplibregl-ctrl-icon {
+  filter: invert(1) brightness(1.5);
+}
+.maplibregl-popup-content {
+  background: theme("colors.ink.800") !important;
+  color: theme("colors.mist.100") !important;
+  border: 1px solid theme("colors.ink.600") !important;
+  box-shadow: theme("boxShadow.panel") !important;
+  border-radius: 4px !important;
+  font-family: "IBM Plex Sans", sans-serif !important;
+}
+.maplibregl-popup-tip {
+  border-top-color: theme("colors.ink.800") !important;
+  border-bottom-color: theme("colors.ink.800") !important;
+}
