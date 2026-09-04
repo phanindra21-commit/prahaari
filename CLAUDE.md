@@ -345,23 +345,115 @@ completed.
       exposed via API and a prioritized list view in web. API in the
       Step 5 track above; the web priority list is the Step 6 (calibration
       + web app) track's Priorities page.
-- [ ] **Step 9 — Candidate site discovery:** Exclusion-criteria filtering +
-      AHP-weighted site suitability scoring in `services/ml`.
-- [ ] **Step 10 — Carrying capacity:** Land/water/education/health/access
+- [x] **Step 9 — Candidate site discovery:** Exclusion-criteria filtering +
+      AHP-weighted site suitability scoring in `services/ml`. Done in the
+      Step 7 (relocation sites + decision workbench) track below.
+- [x] **Step 10 — Carrying capacity:** Land/water/education/health/access
       constraint model, reporting the binding constraint per candidate site.
-- [ ] **Step 11 — Officer decision workbench:** Web UI where an officer
+      Done in the Step 7 track below (same commit as Step 9).
+- [x] **Step 11 — Officer decision workbench:** Web UI where an officer
       reviews a recommendation (hazard, vulnerability, RPI, candidate
       sites, capacity) and approves/overrides with mandatory justification.
+      Done in the Step 7 track below.
 - [ ] **Step 12 — Audit trail UI:** The append-only, hash-chained
-      `AuditLog` backend and `/api/v1/audit/**` API already exist (Step 3)
-      — this step is the officer-facing audit view (filterable table,
-      chain-verification indicator) in `apps/web`, plus wiring
-      `Decision`-specific before/after snapshots once Step 11 exists.
+      `AuditLog` backend and `/api/v1/audit/**` API already exist (Step 3).
+      **Partially done** in the Step 7 track below: `Decision`-specific
+      before/after snapshots are wired (every decision's overridden fields
+      are diffed and shown), and a recommendation-scoped audit view with a
+      chain-verification indicator exists
+      (`GET /recommendations/:id/audit-trail`, `AuditTrailPanel.tsx`). What
+      remains: a general, district-wide filterable audit-log table backed
+      by the broader `GET /api/v1/audit` endpoint — deliberately not built
+      in the Step 7 track (see that track's note on why granting
+      `DISTRICT_OFFICER` the `auditLog:read` permission was rejected as a
+      scope leak).
 - [ ] **Step 13 — Explainability:** SHAP-based explanations surfaced
-      alongside every ML-driven score shown to the officer.
+      alongside every ML-driven score shown to the officer. Hazard/
+      vulnerability scores already surface SHAP-derived explanations
+      (Step 4/6 tracks); site suitability (AHP, not a black-box model) is
+      shown as a transparent per-criterion weighted breakdown instead
+      (Step 7 track below) — nothing further planned here without a new
+      ML-driven score that needs it.
 - [ ] **Step 14 — Deployment & demo hardening:** Production build/deploy
       config, seeded demo dataset for Wayanad + Ganjam, walkthrough script
       for the hackathon presentation.
+
+  ### Step 7 (relocation sites + decision workbench) — DONE
+
+  A later work session used "Step 7" for its own three-commit scope,
+  unrelated to this roadmap's own numbering (same reused-name situation as
+  Steps 5/6 above — the two numbering schemes are tracked separately, not
+  reconciled in place).
+
+  **Commit 1** (`a262f42`): compound-hazard handling (a (trigger,
+  mechanism) pair, e.g. cloudburst triggering landslide, both
+  independently Red/Orange, reported as one compound risk rather than two
+  competing hazards) + UI self-check fixes.
+
+  **Commit 2** (`d254bda`): METHODOLOGY §4/§5 — `services/ml/app/engine/
+  {exclusions,suitability,capacity,site_matching}.py`, `POST /sites/run`,
+  `siteStage.ts` (a third pipeline stage scoring every `RelocationSite` in
+  a district and matching Immediate/ShortTerm habitations to ranked
+  candidate sites, priority-ordered with cumulative capacity tracking),
+  `GET /sites`, `/sites/:id`, `/recommendations`, `/recommendations/:id`.
+  Found and fixed a real dimensional-analysis bug in the documented
+  `C_health` carrying-capacity formula (dividing by a households-per-
+  facility figure instead of a per-household rate — made every seeded
+  site's health capacity ~0.3 households, silently making the whole
+  matching pipeline vacuous); see `docs/METHODOLOGY.md` §5.4's corrected
+  formula and explanatory note. 150 new Python tests, full TS suite green.
+
+  **Commit 3** (`0b8dd42` backend, `36298e5` frontend): the officer
+  decision workbench. `POST /api/v1/decisions` (Approve/Modify/Reject/
+  Defer, mandatory >=30-char justification, whitelisted field overrides
+  with from/to stale-value checking), `GET /recommendations/:id/audit-
+  trail` (a recommendation-scoped alternative to granting
+  `DISTRICT_OFFICER` the broad `auditLog:read` permission, which would
+  leak every other district's audit data since `AuditLog` has no
+  per-district filter — considered and explicitly reverted, see
+  `docs/SECURITY.md`). Found and fixed a real bug while testing: hash-
+  chained audit writes blew the call stack on live Mongoose documents in
+  a `before`/`after` payload (`Recommendation.phasing`), silently
+  dropping the AuditLog entry for every decision — fixed centrally in
+  `hashChain.ts::canonicalize()` for every caller, not just this route.
+
+  Web: a review queue (`/recommendations`, filterable by bucket/status)
+  leading with a district capacity-shortfall banner — computed from
+  already-scoped `GET /priorities` + `GET /recommendations` data, no new
+  endpoint — stating e.g. live Wayanad data: "lacks sufficient safe
+  land... 4 of 7 [Immediate/Short-term habitations] do not [have a viable
+  site]"; a recommendation detail view (`/recommendations/:id`) with a
+  focused origin/destination MapLibre view, per-criterion AHP suitability
+  bars, and carrying capacity with the binding constraint named
+  prominently; the decision action panel (RBAC-gated on
+  `recommendation:approve` — every other role sees an explicit read-only
+  "Approval restricted" note); a "chain verified" badge; and a map
+  decision-ring overlay (color per decision status) once a habitation has
+  one, with a new `ZoneLegend` section explaining it.
+
+  Verified in a real browser (Playwright against the built production
+  bundle, not just the dev server — this repo's standing rule after an
+  earlier session's blank-#root regression passed every static check) —
+  full stack (mongo + api + services/ml, freshly seeded, grid generated,
+  factors derived/ingested, pipeline run for Wayanad): login as the
+  seeded Wayanad `DISTRICT_OFFICER`, the capacity banner rendering real
+  data (7 eligible, 3 matched, 4 not), opening a recommendation, the map
+  and suitability/capacity panels rendering, submitting an Approve
+  decision with a justification, and the chain-verified badge appearing —
+  kept as `apps/web/e2e/decision-workbench.spec.ts` (same
+  `PUNARVAS_E2E_BACKEND=1`-gated pattern as the existing smoke test).
+  Also manually verified and then discarded (not kept as standing tests):
+  an `ANALYST` sees the read-only restricted note instead of decision
+  controls; a `DISTRICT_OFFICER`'s district switcher never lists another
+  district; the map legend's decision-ring section appears once a
+  decision exists.
+
+  **Known pre-existing issue, not introduced here:** the CARTO free-tier
+  basemap tiles now render an "API KEY REQUIRED" watermark in every map
+  view (main map and the new recommendation-detail map) — a change on
+  CARTO's side since `mapStyle.ts` was written in the Step 6 track, not a
+  regression from this track. Not fixed here (out of scope for Step 7);
+  flagged for whoever picks up Step 14 (deployment hardening).
 
 ## Why Python Is a Separate Service
 
