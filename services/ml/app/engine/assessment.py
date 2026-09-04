@@ -27,6 +27,7 @@ from datetime import datetime, timezone
 
 from shapely.geometry.base import BaseGeometry
 
+from app.engine.compound_hazard import CompoundHazardResult, detect_compound_hazard
 from app.engine.disaster_history import HazardEventPoint, compute_disaster_history_boost
 from app.engine.priority import bucket_for_rpi, compute_rpi, normalize_risk, rpi_contributions
 from app.engine.risk import compute_exposure, compute_risk, governing_risk, habitation_footprint
@@ -67,6 +68,7 @@ class AssessmentResult:
     relocation_priority_index: float | None = None
     priority_bucket: str | None = None
     explanation: list[dict] = field(default_factory=list)
+    compound_hazard: CompoundHazardResult | None = None
 
 
 def _dominant_zone_class(footprint: BaseGeometry, zone_geoms_by_class: dict[str, BaseGeometry]) -> str:
@@ -86,6 +88,23 @@ def _dominant_zone_class(footprint: BaseGeometry, zone_geoms_by_class: dict[str,
         if fraction > best_fraction:
             best_class, best_fraction = zone_class, fraction
     return best_class
+
+
+def _relabel_compound_risk_entry(explanation: list[dict], compound: CompoundHazardResult) -> None:
+    """Renames the generic "risk" explanation entry's label to name the
+    compound mechanism explicitly, in place — the underlying contribution
+    value is untouched (it is still the exact additive decomposition
+    priority.py computed); only the plain-language label changes, so an
+    officer reading the explanation sees WHY this is a compound hazard
+    rather than a generic risk statement."""
+    for entry in explanation:
+        if entry.get("factor") == "risk":
+            entry["label"] = (
+                f"{compound.mechanism.capitalize()} risk, compounded by {compound.trigger}-scale "
+                f"rainfall (both independently Red/Orange at this site — the {compound.trigger} is "
+                f"the trigger, the {compound.mechanism} is the mechanism that damages habitations)"
+            )
+            return
 
 
 def assess_habitations_batch(
@@ -143,6 +162,21 @@ def assess_habitations_batch(
         governing = governing_risk(risk_by_hazard)
         overall_zone_class = aggregate_multi_hazard(zone_class_by_hazard)
 
+        # A configured (trigger, mechanism) pair both independently Red/Orange
+        # at this habitation is a compound hazard, not two competing
+        # alternatives — see compound_hazard.py. When detected, the governing
+        # hazard reported is the MECHANISM (the consequence that actually
+        # destroys habitations), not simply whichever score is numerically
+        # larger, and the composite risk score uses the compound (union)
+        # combination rather than the simple max.
+        compound = detect_compound_hazard(risk_by_hazard, zone_class_by_hazard)
+        if compound is not None:
+            composite_risk_score = compound.compound_risk
+            governing_hazard = compound.mechanism
+        else:
+            composite_risk_score = governing.risk
+            governing_hazard = governing.hazard_type
+
         results.append(
             AssessmentResult(
                 habitation_id=habitation.habitation_id,
@@ -150,9 +184,10 @@ def assess_habitations_batch(
                 vulnerability_index=vresult.vi,
                 vulnerability_dimensions=vresult.dimension_scores,
                 coping_capacity=vresult.coping_capacity,
-                composite_risk_score=governing.risk,
-                governing_hazard=governing.hazard_type,
+                composite_risk_score=composite_risk_score,
+                governing_hazard=governing_hazard,
                 overall_zone_class=overall_zone_class,
+                compound_hazard=compound,
             )
         )
 
@@ -167,5 +202,7 @@ def assess_habitations_batch(
             result.explanation = rpi_contributions(
                 normalized, normalized_indicators_by_id[result.habitation_id], top_n=5
             )
+            if result.compound_hazard is not None:
+                _relabel_compound_risk_entry(result.explanation, result.compound_hazard)
 
     return results

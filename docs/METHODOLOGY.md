@@ -76,6 +76,66 @@ mechanism against a GSI landslide inventory or CWC flood-extent
 shapefile in place of this dataset's three seeded events — see the
 Validation section below.
 
+### Compound Hazards
+
+`governing_risk()` picks the single hazard with the numerically largest
+Risk at a habitation and reports it alone. That is the right behaviour
+when hazards are genuinely independent alternatives — but some hazard
+pairs are not alternatives at all: one is the **trigger**, the other is
+the **mechanism/consequence** of the same physical event. Cloudburst
+(extreme short-duration rainfall) is a documented trigger for landslide
+(rainfall-induced slope failure) on already-susceptible terrain — the
+causal chain behind the July 2024 Wayanad disaster at Chooralmala and
+Mundakkai: the rainfall was the trigger, the landslide was the mechanism
+that destroyed habitations and killed over 230 people.
+
+Reporting only whichever of the two happens to have the numerically
+larger blended score, and calling that the "governing hazard", loses
+this story — worse, if the trigger happens to score higher (as
+cloudburst does at both sites even after the Step 6 calibration fixes,
+§6.2), the platform names the wrong hazard as governing for a landslide
+disaster site.
+
+**Detection** (`services/ml/app/engine/compound_hazard.py::detect_compound_hazard`):
+a configured `(trigger, mechanism)` pair is treated as compound at a
+habitation only when **both** hazards are independently at or above
+`activationZoneClasses` (Red/Orange) there — never inferred from one
+hazard alone, and never applied to a pair not explicitly configured.
+Source of truth: `packages/shared/src/config/compound-hazards.json`.
+
+**Combination.** When detected, the composite risk score is not the
+simple max — it is a standard probabilistic-OR combination, treating
+each hazard's Risk (already bounded in [0,1] by construction) as a
+probability-like quantity:
+
+```
+CompoundRisk = 1 - (1 - TriggerRisk) * (1 - MechanismRisk)
+```
+
+This is `>= max(TriggerRisk, MechanismRisk)` always — the union of two
+correlated bad outcomes is at least as likely as either alone — and is a
+principled combination rule, not an arbitrary multiplier tuned to reach
+a target score. **`governingHazard` is set to the MECHANISM**, not
+whichever raw score is larger: the mechanism is the consequence that
+actually damages habitations and endangers people, which is what an
+officer's "governing hazard" field should name. The explanation's `risk`
+factor is relabelled (not recomputed — the exact additive decomposition
+is untouched) to name both hazards explicitly, e.g. "Landslide risk,
+compounded by cloudburst-scale rainfall (both independently Red/Orange
+at this site — the cloudburst is the trigger, the landslide is the
+mechanism that damages habitations)".
+
+**Why only this one pair.** `compound-hazards.json` currently configures
+exactly `{trigger: cloudburst, mechanism: landslide}` and nothing else.
+Flood and coastal erosion are correlated in this dataset (a cyclone
+drives both storm surge and heavy rainfall) but are not a trigger/
+mechanism pair in this same direct causal sense — flooding is not "the
+mechanism by which coastal erosion damages a habitation," it is a
+separate consequence of the same storm. Adding a pair here is a claim
+about physical causation, not merely correlation, and should not be done
+without the same explicit justification given for cloudburst→landslide
+above.
+
 ---
 
 ## 1. Hazard Zoning
@@ -811,3 +871,42 @@ defect — and it was deliberately left unfixed rather than adjusting a
 fourth field specifically to move these two habitations' ranking, which
 would cross from calibration into exactly the outcome-forcing this
 project's standing instruction rules out.
+
+### 6.3 The residual finding was a framing gap, not a scoring gap
+
+A later session revisited this specific residual finding and concluded
+it was not, in the end, a case that needed a fourth synthetic-field
+adjustment: it was a case the platform was framing wrong. Chooralmala
+and Mundakkai are not a site where cloudburst and landslide compete for
+which is "worse" — they are a site where extreme rainfall (cloudburst)
+triggers slope failure (landslide), and both were independently Red at
+the exact same cell. Picking whichever scores numerically higher and
+calling it "the governing hazard" was never the right question to ask
+at a site like this. The Compound Hazards mechanism above (§0) resolves
+it: `governingHazard` is now the mechanism (landslide), and the risk
+score is the compound (union) combination, not the max.
+
+| Habitation  | Governing hazard (Step 6) | Bucket (Step 6) | RPI (Step 6) | Governing hazard (Step 7 Commit 1) | Bucket (Step 7 Commit 1) | RPI (Step 7 Commit 1) |
+| ----------- | -------------------------- | ---------------- | -------------- | -------------------------- | ---------------- | -------------- |
+| Chooralmala | cloudburst                  | ShortTerm        | 0.627          | **landslide** (compound, triggered by cloudburst) | ShortTerm        | 0.653          |
+| Mundakkai   | cloudburst                  | Immediate        | 0.759          | **landslide** (compound, triggered by cloudburst) | Immediate        | 0.759          |
+
+Both habitations now correctly name **landslide** as the governing
+hazard — the mechanism that actually destroyed them — with cloudburst
+recorded explicitly as the compound trigger, not silently outranking it.
+Mundakkai's RPI is unchanged (it was already the highest-risk habitation
+in its batch before and after, so `normalize(Risk)` still maps it to
+1.0 either way); Chooralmala's RPI rises slightly (0.627 -> 0.653,
+still ShortTerm) because the compound (union) risk is strictly higher
+than the simple max it replaced.
+
+**Reported plainly:** across Wayanad's 21 Red/Orange habitations in this
+run, 17 (81%) turn out to be compound cloudburst+landslide sites, not
+just these two. This is not the mechanism over-firing — landslide and
+cloudburst susceptibility share the same underlying driver in this
+dataset (proximity to the steep escarpment), so their Red/Orange
+footprints are substantially overlapping across the district's terrain
+corridor, which is the physically expected shape for a hill district
+where both hazards are orographic. It is a real, honest consequence of
+what "compound hazard" means at district scale, not a narrow fix
+scoped only to the two headline habitations.

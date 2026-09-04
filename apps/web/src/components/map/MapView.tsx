@@ -26,7 +26,7 @@ function zonesToFeatureCollection(zones: ZonePolygon[], visibleHazards: Set<Haza
     .filter((z) => visibleHazards.has(z.hazardType))
     .map((z) => ({
       type: "Feature" as const,
-      geometry: z.simplifiedGeometry as GeoJSON.Geometry,
+      geometry: (z.simplifiedGeometry ?? z.geometry) as GeoJSON.Geometry,
       properties: { hazardType: z.hazardType, zoneClass: z.zoneClass, hazardScore: z.hazardScore },
     }))
     .sort((a, b) => (ZONE_SEVERITY[a.properties.zoneClass] ?? 0) - (ZONE_SEVERITY[b.properties.zoneClass] ?? 0));

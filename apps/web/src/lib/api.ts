@@ -31,9 +31,10 @@ export interface ZonePolygon {
   hazardType: HazardType;
   zoneClass: ZoneClass;
   geometry: GeoPolygonal;
-  simplifiedGeometry: GeoPolygonal;
+  /** Absent for a hand-drawn seed-authored zone (data/seed/*-hazard-zones.geojson)
+   * — every ML-generated zone (the live pipeline's output) always sets it. */
+  simplifiedGeometry?: GeoPolygonal;
   hazardScore: number;
-  cellCount: number;
   modelVersion: string;
   validFrom: string;
   validTo: string | null;
@@ -125,6 +126,21 @@ export interface ExplanationEntry {
   label?: string;
 }
 
+/**
+ * Set only when a configured (trigger, mechanism) pair — e.g. cloudburst
+ * triggering landslide — is independently Red/Orange for BOTH hazards at
+ * this habitation. When set, `governingHazard` on the assessment is the
+ * MECHANISM (the consequence that actually damages habitations), not
+ * simply whichever raw score is numerically larger.
+ */
+export interface CompoundHazard {
+  trigger: HazardType;
+  mechanism: HazardType;
+  triggerRisk: number;
+  mechanismRisk: number;
+  compoundRisk: number;
+}
+
 export interface AssessmentDetail {
   id: string;
   habitationId: string;
@@ -143,6 +159,7 @@ export interface AssessmentDetail {
   validFrom: string;
   validTo: string | null;
   explanation: ExplanationEntry[];
+  compoundHazard: CompoundHazard | null;
 }
 
 export interface HabitationDetail extends Omit<HabitationSummary, "assessment"> {
@@ -173,6 +190,7 @@ export interface ExplainResponse {
   priorityBucket: RelocationPriorityBucket | null;
   hazardExposure: HazardExposureEntry[];
   explanation: ExplanationEntry[];
+  compoundHazard: CompoundHazard | null;
   summary: string;
 }
 
@@ -191,6 +209,7 @@ export interface PriorityItem {
   relocationPriorityIndex: number;
   priorityBucket: RelocationPriorityBucket;
   topFactor: ExplanationEntry | null;
+  compoundHazard: CompoundHazard | null;
   computedAt: string;
 }
 

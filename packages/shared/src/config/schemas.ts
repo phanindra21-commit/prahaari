@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { USER_ROLES } from "../constants";
+import { USER_ROLES, HAZARD_TYPES } from "../constants";
+
+const hazardTypeEnum = z.enum(HAZARD_TYPES);
 
 const zoneClassEnum = z.enum(["Red", "Orange", "Yellow", "Green"]);
 
@@ -217,6 +219,20 @@ const permissionStringSchema = z
 const roleKeysShape = Object.fromEntries(
   USER_ROLES.map((role) => [role, z.array(permissionStringSchema)]),
 ) as Record<(typeof USER_ROLES)[number], z.ZodArray<typeof permissionStringSchema>>;
+
+const compoundHazardPairSchema = z.object({
+  trigger: hazardTypeEnum,
+  mechanism: hazardTypeEnum,
+  description: z.string(),
+});
+
+export const compoundHazardsConfigSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  activationZoneClasses: z.array(zoneClassEnum).min(1),
+  pairs: z.array(compoundHazardPairSchema),
+});
+export type CompoundHazardsConfig = z.infer<typeof compoundHazardsConfigSchema>;
 
 export const disasterHistoryConfigSchema = z.object({
   modelVersion: z.string(),

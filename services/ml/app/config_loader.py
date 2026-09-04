@@ -187,6 +187,17 @@ def load_disaster_history() -> dict[str, Any]:
     return config
 
 
+def load_compound_hazards() -> dict[str, Any]:
+    config = _load_json("compound-hazards.json")
+    for pair in config["pairs"]:
+        if pair["trigger"] == pair["mechanism"]:
+            raise ValueError(
+                f"[ml/config] compound-hazards.json: a pair's trigger and mechanism must differ "
+                f"(got \"{pair['trigger']}\" for both)"
+            )
+    return config
+
+
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
@@ -198,3 +209,4 @@ EXCLUSION_CRITERIA = load_exclusion_criteria()
 FACTOR_RECLASSIFICATION = load_factor_reclassification()
 BLEND_CONFIG = load_blend_config()
 DISASTER_HISTORY = load_disaster_history()
+COMPOUND_HAZARDS = load_compound_hazards()

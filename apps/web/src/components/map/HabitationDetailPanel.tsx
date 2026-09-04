@@ -95,9 +95,24 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
                   )}
                 </div>
 
+                {assessment.compoundHazard && (
+                  <section className="mb-4 rounded border border-signal-bright/50 bg-signal/10 p-3">
+                    <p className="mb-1 text-xs font-medium text-signal-bright">Compound hazard</p>
+                    <p className="text-xs leading-relaxed text-mist-200">
+                      Both {HAZARD_LABELS[assessment.compoundHazard.trigger]} (the trigger — a risk score of{" "}
+                      {assessment.compoundHazard.triggerRisk.toFixed(3)}) and{" "}
+                      {HAZARD_LABELS[assessment.compoundHazard.mechanism]} (the mechanism that damages
+                      habitations — {assessment.compoundHazard.mechanismRisk.toFixed(3)}) are independently
+                      Red/Orange at this site. Reported as one compound risk (
+                      {assessment.compoundHazard.compoundRisk.toFixed(3)}), not two competing hazards.
+                    </p>
+                  </section>
+                )}
+
                 <section className="mb-4 rounded border border-ink-600 bg-ink-800 p-3">
                   <p className="mb-2 text-xs font-medium text-mist-200">
                     Risk breakdown — governing hazard: {HAZARD_LABELS[assessment.governingHazard]}
+                    {assessment.compoundHazard ? " (mechanism)" : ""}
                   </p>
                   <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
                     <Stat label="Composite risk" value={assessment.compositeRiskScore.toFixed(3)} />

@@ -118,6 +118,7 @@ export async function assessDistrictHabitations(
       // which leaves label optional for GridCell's Step 4 SHAP entries.
       explanation: assessment.explanation.map((entry) => ({ ...entry, label: entry.label ?? entry.factor })),
       overallZoneClass: assessment.overallZoneClass,
+      compoundHazard: assessment.compoundHazard,
     };
   });
 

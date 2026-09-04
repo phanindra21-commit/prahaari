@@ -72,6 +72,7 @@ function assessmentInput(
       { factor: "risk", contribution: 0.4, direction: "INCREASES_RISK", label: "Overall hazard risk" },
       { factor: "vi", contribution: 0.2, direction: "INCREASES_RISK", label: "Vulnerability index" },
     ],
+    compoundHazard: null,
     ...overrides,
   };
 }
@@ -294,5 +295,47 @@ describe("habitation routes integration", () => {
 
     const list = await request(app).get("/api/v1/habitations").set("Authorization", `Bearer ${token}`);
     expect(list.status).toBe(200);
+  });
+
+  it("surfaces a compound hazard on /explain and /priorities when persisted on the Assessment", async () => {
+    const district = await seedDistrict("HAB-RT-009");
+    const districtId = district._id as Types.ObjectId;
+    const habitation = await seedHabitation(districtId, "HAB-RT-009-A", "Compound Habitation");
+    await writeAssessmentVersions([
+      assessmentInput(habitation._id as Types.ObjectId, districtId, {
+        governingHazard: "landslide",
+        compoundHazard: {
+          trigger: "cloudburst",
+          mechanism: "landslide",
+          triggerRisk: 0.28,
+          mechanismRisk: 0.27,
+          compoundRisk: 0.4744,
+        },
+      }),
+    ]);
+    const token = await tokenForRole("SUPER_ADMIN");
+    const habitationId = (habitation._id as Types.ObjectId).toString();
+
+    const explain = await request(app)
+      .get(`/api/v1/habitations/${habitationId}/explain`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(explain.status).toBe(200);
+    expect(explain.body.compoundHazard).toEqual({
+      trigger: "cloudburst",
+      mechanism: "landslide",
+      triggerRisk: 0.28,
+      mechanismRisk: 0.27,
+      compoundRisk: 0.4744,
+    });
+    expect(explain.body.summary).toContain("cloudburst");
+    expect(explain.body.summary).toContain("landslide");
+    expect(explain.body.summary).toContain("compound hazard");
+
+    const priorities = await request(app)
+      .get("/api/v1/priorities")
+      .query({ districtId: districtId.toString() })
+      .set("Authorization", `Bearer ${token}`);
+    expect(priorities.body.items[0].compoundHazard.trigger).toBe("cloudburst");
+    expect(priorities.body.items[0].compoundHazard.mechanism).toBe("landslide");
   });
 });

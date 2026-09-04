@@ -28,6 +28,23 @@ export interface ExplanationEntry {
 }
 
 /**
+ * Set only when a configured (trigger, mechanism) pair — e.g. cloudburst
+ * triggering landslide — is independently Red/Orange for BOTH hazards at
+ * this habitation (services/ml/app/engine/compound_hazard.py). When set,
+ * `governingHazard` is the MECHANISM (the consequence-bearing hazard),
+ * not simply whichever raw score is numerically larger, and
+ * `compositeRiskScore` is `compoundRisk` (a probabilistic-OR combination
+ * of the two, so it is >= either alone) rather than the simple max.
+ */
+export interface CompoundHazardEntry {
+  trigger: HazardType;
+  mechanism: HazardType;
+  triggerRisk: number;
+  mechanismRisk: number;
+  compoundRisk: number;
+}
+
+/**
  * The computed risk record for one habitation at one point in time. Never
  * mutated — versioned like HazardZone: a new pipeline run inserts a new
  * doc and closes (`validTo`) the previously-active one for the same
@@ -60,6 +77,7 @@ export interface AssessmentDoc extends Document {
   validTo: Date | null;
   supersedes: Types.ObjectId | null;
   explanation: ExplanationEntry[];
+  compoundHazard: CompoundHazardEntry | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -95,6 +113,17 @@ const explanationEntrySchema = new Schema<ExplanationEntry>(
   { _id: false },
 );
 
+const compoundHazardEntrySchema = new Schema<CompoundHazardEntry>(
+  {
+    trigger: { type: String, enum: HAZARD_TYPES, required: true },
+    mechanism: { type: String, enum: HAZARD_TYPES, required: true },
+    triggerRisk: { type: Number, required: true, min: 0, max: 1 },
+    mechanismRisk: { type: Number, required: true, min: 0, max: 1 },
+    compoundRisk: { type: Number, required: true, min: 0, max: 1 },
+  },
+  { _id: false },
+);
+
 const assessmentSchema = new Schema<AssessmentDoc>(
   {
     habitationId: { type: Schema.Types.ObjectId, ref: "Habitation", required: true },
@@ -114,6 +143,7 @@ const assessmentSchema = new Schema<AssessmentDoc>(
     validTo: { type: Date, default: null },
     supersedes: { type: Schema.Types.ObjectId, ref: "Assessment", default: null },
     explanation: { type: [explanationEntrySchema], required: true, default: [] },
+    compoundHazard: { type: compoundHazardEntrySchema, default: null },
   },
   { timestamps: true },
 );

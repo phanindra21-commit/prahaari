@@ -7,6 +7,7 @@ import {
   hazardExposureEntrySchema,
   vulnerabilityDimensionScoresSchema,
   explanationEntrySchema,
+  compoundHazardEntrySchema,
   geoPointSchema,
 } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
@@ -56,6 +57,7 @@ const assessmentDetailSchema = z.object({
   validFrom: z.date(),
   validTo: z.date().nullable(),
   explanation: z.array(explanationEntrySchema),
+  compoundHazard: compoundHazardEntrySchema.nullable(),
 });
 type AssessmentDetail = z.infer<typeof assessmentDetailSchema>;
 
@@ -122,6 +124,7 @@ function toAssessmentDetail(doc: AssessmentDoc): AssessmentDetail {
     validFrom: doc.validFrom,
     validTo: doc.validTo,
     explanation: doc.explanation,
+    compoundHazard: doc.compoundHazard,
   };
 }
 
@@ -342,12 +345,16 @@ const explainResponseSchema = z.object({
   priorityBucket: priorityBucketSchema.nullable(),
   hazardExposure: z.array(hazardExposureEntrySchema),
   explanation: z.array(explanationEntrySchema),
+  compoundHazard: compoundHazardEntrySchema.nullable(),
   summary: z.string(),
 });
 
 /** Renders a one-sentence plain-language synthesis of an Assessment's top factor, for the officer workbench. */
 function summarize(habitationName: string, assessment: AssessmentDoc): string {
-  const zonePhrase = `a ${assessment.overallZoneClass} ${assessment.governingHazard} zone`;
+  const zonePhrase = assessment.compoundHazard
+    ? `a ${assessment.overallZoneClass} zone for both ${assessment.compoundHazard.trigger} (the trigger) and ` +
+      `${assessment.compoundHazard.mechanism} (the mechanism that damages habitations) — a compound hazard`
+    : `a ${assessment.overallZoneClass} ${assessment.governingHazard} zone`;
   if (!assessment.priorityBucket || assessment.relocationPriorityIndex === null) {
     return `${habitationName} sits in ${zonePhrase} but was not bucketed for relocation priority (only Red/Orange habitations receive a priority ranking).`;
   }
@@ -398,6 +405,7 @@ habitationRouter.get(
         priorityBucket: assessment.priorityBucket,
         hazardExposure: assessment.hazardExposure,
         explanation: assessment.explanation,
+        compoundHazard: assessment.compoundHazard,
         summary: summarize(habitation.name, assessment),
       });
       res.status(200).json(body);
@@ -423,6 +431,7 @@ const priorityItemSchema = z.object({
   relocationPriorityIndex: z.number().min(0).max(1),
   priorityBucket: priorityBucketSchema,
   topFactor: explanationEntrySchema.nullable(),
+  compoundHazard: compoundHazardEntrySchema.nullable(),
   computedAt: z.date(),
 });
 
@@ -492,6 +501,7 @@ habitationRouter.get(
           relocationPriorityIndex: a.relocationPriorityIndex,
           priorityBucket: a.priorityBucket,
           topFactor,
+          compoundHazard: a.compoundHazard,
           computedAt: a.computedAt,
         });
       });

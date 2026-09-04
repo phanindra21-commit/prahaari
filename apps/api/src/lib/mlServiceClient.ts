@@ -71,6 +71,14 @@ const hazardExposureOutSchema = z.object({
   disasterHistoryBoost: z.number().min(0).max(1).default(0),
 });
 
+const compoundHazardOutSchema = z.object({
+  trigger: hazardTypeSchema,
+  mechanism: hazardTypeSchema,
+  triggerRisk: z.number().min(0).max(1),
+  mechanismRisk: z.number().min(0).max(1),
+  compoundRisk: z.number().min(0).max(1),
+});
+
 const assessmentOutSchema = z.object({
   habitationId: z.string().min(1),
   hazardExposure: z.array(hazardExposureOutSchema).min(1),
@@ -83,6 +91,7 @@ const assessmentOutSchema = z.object({
   relocationPriorityIndex: z.number().min(0).max(1).nullable(),
   priorityBucket: priorityBucketSchema.nullable(),
   explanation: z.array(explanationEntrySchema),
+  compoundHazard: compoundHazardOutSchema.nullable().default(null),
 });
 export type MlAssessment = z.infer<typeof assessmentOutSchema>;
 

@@ -78,6 +78,14 @@ class VulnerabilityDimensionsOut(BaseModel):
     accessibility: float
 
 
+class CompoundHazardOut(BaseModel):
+    trigger: str
+    mechanism: str
+    triggerRisk: float
+    mechanismRisk: float
+    compoundRisk: float
+
+
 class AssessmentOut(BaseModel):
     habitationId: str
     hazardExposure: list[HazardExposureOut]
@@ -90,6 +98,7 @@ class AssessmentOut(BaseModel):
     relocationPriorityIndex: float | None
     priorityBucket: Literal["Immediate", "ShortTerm", "MediumTerm"] | None
     explanation: list[ContributionOut]
+    compoundHazard: CompoundHazardOut | None = None
 
 
 class AssessmentRunResponse(BaseModel):
@@ -160,6 +169,17 @@ def run_assessment(request: AssessmentRunRequest) -> AssessmentRunResponse:
                 relocationPriorityIndex=result.relocation_priority_index,
                 priorityBucket=result.priority_bucket,
                 explanation=[ContributionOut(**c) for c in result.explanation],
+                compoundHazard=(
+                    CompoundHazardOut(
+                        trigger=result.compound_hazard.trigger,
+                        mechanism=result.compound_hazard.mechanism,
+                        triggerRisk=result.compound_hazard.trigger_risk,
+                        mechanismRisk=result.compound_hazard.mechanism_risk,
+                        compoundRisk=result.compound_hazard.compound_risk,
+                    )
+                    if result.compound_hazard is not None
+                    else None
+                ),
             )
         )
 

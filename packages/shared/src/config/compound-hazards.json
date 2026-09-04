@@ -1,0 +1,12 @@
+{
+  "modelVersion": "compound-hazards-v1",
+  "note": "Some hazard pairs at this platform are not independent alternatives to rank against each other by raw score — one is a TRIGGER and the other is the MECHANISM/CONSEQUENCE of the same physical event. Extreme short-duration rainfall (cloudburst) is a well-documented triggering mechanism for rainfall-induced slope failure (landslide) on already-susceptible terrain -- the causal chain behind the July 2024 Wayanad disaster (Chooralmala/Mundakkai): the rainfall was the trigger, the landslide was the mechanism that destroyed habitations and killed people. Reporting only whichever of the two happens to have the numerically larger blended score, and calling that the 'governing hazard', loses this story: a site where BOTH register severe simultaneously is not two competing risks, it is one compound hazard. services/ml/app/engine/compound_hazard.py::detect_compound_hazard applies this ONLY when both the trigger and mechanism hazards are independently Red/Orange (activationZoneClasses) at the SAME habitation -- never inferred from one hazard alone, and never applied to hazards that are not physically coupled this way. See docs/METHODOLOGY.md's Compound Hazards section for the combination formula and the reasoning for restricting this to the one pair below (not, for example, flood+coastalErosion, which are correlated but not a trigger/mechanism pair in this same direct causal sense).",
+  "activationZoneClasses": ["Red", "Orange"],
+  "pairs": [
+    {
+      "trigger": "cloudburst",
+      "mechanism": "landslide",
+      "description": "Extreme short-duration rainfall (the cloudburst hazard) triggers rainfall-induced slope failure (the landslide hazard) on susceptible terrain. When both are independently Red/Orange at a habitation, the governing hazard is reported as the MECHANISM (landslide) -- the consequence that actually destroys habitations -- with the TRIGGER (cloudburst) named explicitly in the explanation, and the composite risk score uses the compound (not simple-max) combination."
+    }
+  ]
+}

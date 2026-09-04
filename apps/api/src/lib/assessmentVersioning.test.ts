@@ -25,6 +25,7 @@ function baseInput(
     modelVersion: "v1",
     explanation: [{ factor: "risk", contribution: 0.3, direction: "INCREASES_RISK", label: "Overall risk" }],
     overallZoneClass: "Orange",
+    compoundHazard: null,
     ...overrides,
   };
 }

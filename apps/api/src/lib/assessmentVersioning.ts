@@ -1,6 +1,6 @@
 import type { Types } from "mongoose";
 import type { HazardType, ZoneClass, RelocationPriorityBucket } from "@punarvas/shared";
-import { Assessment, type AssessmentDoc, type ExplanationEntry } from "../models/Assessment";
+import { Assessment, type AssessmentDoc, type ExplanationEntry, type CompoundHazardEntry } from "../models/Assessment";
 
 /**
  * `Assessment` documents are never mutated — same pattern as HazardZone
@@ -36,6 +36,7 @@ export interface AssessmentVersionInput {
   explanation: ExplanationEntry[];
   /** The habitation's overall zone class (Red/Orange/Yellow/Green). */
   overallZoneClass: ZoneClass;
+  compoundHazard: CompoundHazardEntry | null;
 }
 
 export interface WriteAssessmentVersionResult {
@@ -76,6 +77,7 @@ export async function writeAssessmentVersions(
       validTo: null,
       supersedes: activeByHabitation.get(input.habitationId.toString())?._id ?? null,
       explanation: input.explanation,
+      compoundHazard: input.compoundHazard,
     })),
   );
 

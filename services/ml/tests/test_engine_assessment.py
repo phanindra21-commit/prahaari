@@ -190,3 +190,52 @@ def test_yellow_green_habitations_do_not_affect_red_orange_normalization():
     assert by_id["green1"].priority_bucket is None
     # Alone among Red/Orange habitations -> normalized to 1.0, same as the single-habitation case.
     assert by_id["red1"].relocation_priority_index == 0.55 * 1.0 + 0.45 * by_id["red1"].vulnerability_index
+
+
+def test_compound_hazard_reports_the_mechanism_as_governing_not_the_larger_score():
+    # A site fully Red for BOTH cloudburst (the configured trigger) and
+    # landslide (the configured mechanism) is a compound hazard, not two
+    # competing alternatives — the Chooralmala/Mundakkai shape exactly.
+    results = assess_habitations_batch(
+        [_habitation("h1", 76.0, 11.6)],
+        hazard_zone_geoms={"cloudburst": {"Red": RED_ZONE}, "landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"cloudburst": {"Red": 0.9}, "landslide": {"Red": 0.85}},
+    )
+    result = results[0]
+    assert result.compound_hazard is not None
+    assert result.compound_hazard.trigger == "cloudburst"
+    assert result.compound_hazard.mechanism == "landslide"
+    # cloudburst's raw risk is numerically larger (higher hazardScore), but the
+    # MECHANISM (landslide) is reported as governing, not the larger score.
+    assert result.governing_hazard == "landslide"
+    assert result.compound_hazard.trigger_risk > result.compound_hazard.mechanism_risk
+    # composite_risk_score is the compound (union) risk, exceeding either alone.
+    assert result.composite_risk_score == result.compound_hazard.compound_risk
+    assert result.composite_risk_score > result.compound_hazard.trigger_risk
+    assert result.composite_risk_score > result.compound_hazard.mechanism_risk
+    # The explanation's risk entry names both the trigger and the mechanism.
+    risk_entry = next(e for e in result.explanation if e["factor"] == "risk")
+    assert "cloudburst" in risk_entry["label"]
+    assert "landslide" in risk_entry["label"]
+
+
+def test_no_compound_hazard_when_only_one_of_the_pair_is_present():
+    results = assess_habitations_batch(
+        [_habitation("h1", 76.0, 11.6)],
+        hazard_zone_geoms={"cloudburst": {"Red": RED_ZONE}},
+        hazard_zone_scores={"cloudburst": {"Red": 0.9}},
+    )
+    result = results[0]
+    assert result.compound_hazard is None
+    assert result.governing_hazard == "cloudburst"
+
+
+def test_no_compound_hazard_when_mechanism_is_only_yellow():
+    results = assess_habitations_batch(
+        [_habitation("h1", 76.0, 11.6)],
+        hazard_zone_geoms={"cloudburst": {"Red": RED_ZONE}, "landslide": {"Yellow": RED_ZONE}},
+        hazard_zone_scores={"cloudburst": {"Red": 0.9}, "landslide": {"Yellow": 0.3}},
+    )
+    result = results[0]
+    assert result.compound_hazard is None
+    assert result.governing_hazard == "cloudburst"

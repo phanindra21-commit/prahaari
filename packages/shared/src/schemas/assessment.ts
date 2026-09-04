@@ -26,6 +26,22 @@ export const vulnerabilityDimensionScoresSchema = z.object({
 export type VulnerabilityDimensionScores = z.infer<typeof vulnerabilityDimensionScoresSchema>;
 
 /**
+ * Set only when a configured (trigger, mechanism) pair is independently
+ * Red/Orange for BOTH hazards at this habitation — see
+ * services/ml/app/engine/compound_hazard.py and docs/METHODOLOGY.md's
+ * Compound Hazards section. When set, `governingHazard` on the parent
+ * Assessment is the MECHANISM, not simply the larger raw score.
+ */
+export const compoundHazardEntrySchema = z.object({
+  trigger: hazardTypeSchema,
+  mechanism: hazardTypeSchema,
+  triggerRisk: z.number().min(0).max(1),
+  mechanismRisk: z.number().min(0).max(1),
+  compoundRisk: z.number().min(0).max(1),
+});
+export type CompoundHazardEntry = z.infer<typeof compoundHazardEntrySchema>;
+
+/**
  * The computed risk record for one habitation at one point in time.
  * Never mutated — versioned like HazardZone: a new pipeline run inserts a
  * new doc and closes (`validTo`) the previously-active one for the same
@@ -57,6 +73,7 @@ export const assessmentSchema = z
     validTo: z.date().nullable(),
     supersedes: objectIdSchema.nullable(),
     explanation: z.array(explanationEntrySchema),
+    compoundHazard: compoundHazardEntrySchema.nullable().default(null),
   })
   .merge(timestampsSchema);
 export type Assessment = z.infer<typeof assessmentSchema>;

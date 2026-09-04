@@ -74,7 +74,17 @@ export function PrioritiesPage(): JSX.Element {
                   <td className="px-3 py-2">
                     <ZoneBadge zoneClass={item.overallZoneClass} />
                   </td>
-                  <td className="px-3 py-2 text-mist-300">{HAZARD_LABELS[item.governingHazard]}</td>
+                  <td className="px-3 py-2 text-mist-300">
+                    {HAZARD_LABELS[item.governingHazard]}
+                    {item.compoundHazard && (
+                      <span
+                        className="ml-1.5 rounded border border-signal-bright/50 bg-signal/10 px-1 py-0.5 text-[10px] text-signal-bright"
+                        title={`Compound: triggered by ${HAZARD_LABELS[item.compoundHazard.trigger]}`}
+                      >
+                        compound
+                      </span>
+                    )}
+                  </td>
                   <td className="px-3 py-2">
                     <PriorityBadge bucket={item.priorityBucket} />
                   </td>

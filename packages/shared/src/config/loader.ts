@@ -11,6 +11,7 @@ import capacityNormsJson from "./capacity-norms.json";
 import exclusionCriteriaJson from "./exclusion-criteria.json";
 import permissionsJson from "./permissions.json";
 import disasterHistoryJson from "./disaster-history.json";
+import compoundHazardsJson from "./compound-hazards.json";
 import {
   hazardWeightsSchema,
   zoneThresholdsSchema,
@@ -24,6 +25,7 @@ import {
   indicatorNormalizationSchema,
   permissionsConfigSchema,
   disasterHistoryConfigSchema,
+  compoundHazardsConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
   type VulnerabilityWeightsConfig,
@@ -36,6 +38,7 @@ import {
   type IndicatorNormalizationConfig,
   type PermissionsConfig,
   type DisasterHistoryConfig,
+  type CompoundHazardsConfig,
 } from "./schemas";
 
 const WEIGHT_SUM_TOLERANCE = 1e-6;
@@ -228,6 +231,18 @@ function loadDisasterHistory(): DisasterHistoryConfig {
   return parseConfig(disasterHistoryConfigSchema, disasterHistoryJson, "disaster-history.json");
 }
 
+function loadCompoundHazards(): CompoundHazardsConfig {
+  const config = parseConfig(compoundHazardsConfigSchema, compoundHazardsJson, "compound-hazards.json");
+  for (const pair of config.pairs) {
+    if (pair.trigger === pair.mechanism) {
+      throw new Error(
+        `[shared/config] compound-hazards.json: a pair's trigger and mechanism must differ (got "${pair.trigger}" for both)`,
+      );
+    }
+  }
+  return config;
+}
+
 function loadPermissions(): PermissionsConfig {
   const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
 
@@ -270,3 +285,4 @@ export const factorReclassification: FactorReclassificationConfig = loadFactorRe
 export const blendConfig: BlendConfig = loadBlendConfig();
 export const permissionsConfig: PermissionsConfig = loadPermissions();
 export const disasterHistoryConfig: DisasterHistoryConfig = loadDisasterHistory();
+export const compoundHazardsConfig: CompoundHazardsConfig = loadCompoundHazards();
