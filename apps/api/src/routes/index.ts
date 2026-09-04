@@ -3,9 +3,15 @@ import { authRouter } from "./auth.routes";
 import { auditRouter } from "./audit.routes";
 import { zoningRouter } from "./zoning.routes";
 import { habitationRouter } from "./habitation.routes";
+import { districtRouter } from "./district.routes";
+import { hazardEventRouter } from "./hazardEvent.routes";
+import { relocationSiteRouter } from "./relocationSite.routes";
 
 export const apiV1Router = Router();
 apiV1Router.use("/auth", authRouter);
 apiV1Router.use("/audit", auditRouter);
 apiV1Router.use(zoningRouter);
 apiV1Router.use(habitationRouter);
+apiV1Router.use(districtRouter);
+apiV1Router.use(hazardEventRouter);
+apiV1Router.use(relocationSiteRouter);

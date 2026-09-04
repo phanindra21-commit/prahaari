@@ -246,6 +246,27 @@ describe("zoning routes integration", () => {
     expect(res.status).toBe(404);
   });
 
+  it("a DISTRICT_OFFICER CAN see their own district's zones (positive-case regression: scoping must not match nothing for every role)", async () => {
+    const district = await seedDistrict("ZONING-RT-003C");
+    await seedGridCells(district._id as Types.ObjectId, 3);
+    const superAdminToken = await tokenForRole("SUPER_ADMIN");
+
+    const runRes = await request(app)
+      .post("/api/v1/zoning/run")
+      .set("Authorization", `Bearer ${superAdminToken}`)
+      .send({ districtId: (district._id as Types.ObjectId).toString(), hazardTypes: ["landslide"] });
+    await waitForJobCompletion(runRes.body.jobId as string, superAdminToken);
+
+    const officerToken = await tokenForRole("DISTRICT_OFFICER", district._id as Types.ObjectId);
+    const res = await request(app)
+      .get("/api/v1/zones")
+      .query({ districtId: (district._id as Types.ObjectId).toString() })
+      .set("Authorization", `Bearer ${officerToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.items.length).toBeGreaterThan(0);
+  });
+
   it("pools cells across every district sharing a hazard for training, but only writes the requested district's GridCells", async () => {
     const districtA = await seedDistrict("ZONING-RT-005A", ["flood"], "Pool District A");
     const districtB = await seedDistrict("ZONING-RT-005B", ["flood"], "Pool District B");

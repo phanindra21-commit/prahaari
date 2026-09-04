@@ -171,7 +171,7 @@ habitationRouter.get(
       let districtFilter: Record<string, unknown> = req.scopeFilter ?? {};
       if (query.districtId) {
         const districtId = new Types.ObjectId(query.districtId);
-        const district = await requireDistrictInScope(req.scopeFilter, districtId);
+        const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
         if (!district) {
           res.status(404).json({ error: "District not found or out of scope" });
           return;
@@ -453,7 +453,7 @@ habitationRouter.get(
       let districtFilter: Record<string, unknown> = req.scopeFilter ?? {};
       if (query.districtId) {
         const districtId = new Types.ObjectId(query.districtId);
-        const district = await requireDistrictInScope(req.scopeFilter, districtId);
+        const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
         if (!district) {
           res.status(404).json({ error: "District not found or out of scope" });
           return;

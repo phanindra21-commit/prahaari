@@ -249,7 +249,23 @@ describe("habitation routes integration", () => {
       assessmentInput(habitationB._id as Types.ObjectId, districtB._id as Types.ObjectId),
     ]);
 
+    const habitationA = await seedHabitation(districtA._id as Types.ObjectId, "HAB-RT-007-A-1", "Own District Habitation");
     const token = await tokenForRole("DISTRICT_OFFICER", districtA._id as Types.ObjectId);
+
+    // Positive case first: the officer CAN see their own district's data.
+    // (Regression coverage for a bug where the scope filter's
+    // req.auth.scope.districtId/state were read off the wrong object shape
+    // and silently matched nothing for every non-SUPER_ADMIN role — every
+    // prior test here only asserted the negative case below, which
+    // "passed" even when scoping matched nothing for both districts.)
+    const ownList = await request(app)
+      .get("/api/v1/habitations")
+      .query({ districtId: (districtA._id as Types.ObjectId).toString() })
+      .set("Authorization", `Bearer ${token}`);
+    expect(ownList.status).toBe(200);
+    expect(ownList.body.items.map((i: { id: string }) => i.id)).toContain(
+      (habitationA._id as Types.ObjectId).toString(),
+    );
 
     const list = await request(app)
       .get("/api/v1/habitations")

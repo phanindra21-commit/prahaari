@@ -14,7 +14,15 @@ export function requireScope(options?: ScopeFilterOptions): RequestHandler {
       res.status(401).json({ error: "Authentication required" });
       return;
     }
-    buildScopeFilter(req.auth, options)
+    // req.auth's scope fields are nested (`req.auth.scope.{state,districtId}`,
+    // per types/express.d.ts) but buildScopeFilter's AuthScope is flat —
+    // must destructure explicitly here, never pass req.auth through
+    // directly: since state/districtId are OPTIONAL on AuthScope,
+    // TypeScript accepts req.auth's nested shape as a structural match
+    // without complaint, but auth.districtId/auth.state would then always
+    // read as undefined at runtime, silently matching nothing for every
+    // non-SUPER_ADMIN role.
+    buildScopeFilter({ role: req.auth.role, ...req.auth.scope }, options)
       .then((filter) => {
         req.scopeFilter = filter;
         next();

@@ -36,7 +36,7 @@ zoningRouter.post(
       const body = runRequestSchema.parse(req.body);
       const districtId = new Types.ObjectId(body.districtId);
 
-      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
       if (!district) {
         res.status(404).json({ error: "District not found or out of scope" });
         return;
@@ -95,7 +95,7 @@ zoningRouter.post(
       const body = runRequestSchema.parse(req.body);
       const districtId = new Types.ObjectId(body.districtId);
 
-      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
       if (!district) {
         res.status(404).json({ error: "District not found or out of scope" });
         return;
@@ -179,7 +179,7 @@ zoningRouter.get(
       const query = zonesQuerySchema.parse(req.query);
       const districtId = new Types.ObjectId(query.districtId);
 
-      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
       if (!district) {
         res.status(404).json({ error: "District not found or out of scope" });
         return;
@@ -205,7 +205,7 @@ zoningRouter.get(
       const query = zonesQuerySchema.parse(req.query);
       const districtId = new Types.ObjectId(query.districtId);
 
-      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
       if (!district) {
         res.status(404).json({ error: "District not found or out of scope" });
         return;
@@ -246,7 +246,7 @@ zoningRouter.get(
       }
       const districtId = new Types.ObjectId(query.districtId);
 
-      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
       if (!district) {
         res.status(404).json({ error: "District not found or out of scope" });
         return;
@@ -299,7 +299,7 @@ zoningRouter.get(
         return;
       }
 
-      const district = await requireDistrictInScope(req.scopeFilter, cell.districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, cell.districtId);
       if (!district) {
         res.status(404).json({ error: "Grid cell not found or out of scope" });
         return;
