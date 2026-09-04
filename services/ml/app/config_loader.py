@@ -63,6 +63,38 @@ def load_vulnerability_weights() -> dict[str, Any]:
     return config
 
 
+def load_indicator_normalization() -> dict[str, Any]:
+    config = _load_json("indicator-normalization.json")
+
+    required: set[str] = set()
+    for dimension in VULNERABILITY_WEIGHTS["dimensions"].values():
+        required.update(dimension["indicators"].keys())
+    required.update(VULNERABILITY_WEIGHTS["copingCapacity"]["indicators"].keys())
+
+    declared = set(config["indicators"].keys())
+    missing = required - declared
+    if missing:
+        raise ValueError(
+            f"[ml/config] indicator-normalization.json is missing entries for {sorted(missing)} "
+            "(present in vulnerability-weights.json)"
+        )
+    extra = declared - required
+    if extra:
+        raise ValueError(
+            f"[ml/config] indicator-normalization.json declares {sorted(extra)}, "
+            "which are not vulnerability-weights.json indicators"
+        )
+
+    for name, entry in config["indicators"].items():
+        if entry["method"] != "BOOLEAN" and entry["max"] <= entry["min"]:
+            raise ValueError(
+                f"[ml/config] indicator-normalization.json indicators.{name}: max "
+                f"({entry['max']}) must be greater than min ({entry['min']})"
+            )
+
+    return config
+
+
 def load_priority_weights() -> dict[str, Any]:
     config = _load_json("priority-weights.json")
     _assert_sums_to_one(config["weights"], "priority-weights.json weights")
@@ -145,6 +177,7 @@ def load_blend_config() -> dict[str, Any]:
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
+INDICATOR_NORMALIZATION = load_indicator_normalization()
 PRIORITY_WEIGHTS = load_priority_weights()
 SUITABILITY_AHP = load_suitability_ahp()
 CAPACITY_NORMS = load_capacity_norms()

@@ -53,6 +53,14 @@ export interface HabitationLivelihood {
   primaryLivelihoodDependenceShare: number;
 }
 
+/** Raw inputs for METHODOLOGY §2.2's CopingCapacity index. */
+export interface HabitationCopingCapacity {
+  sdrfResponseTimeMinutes: number;
+  shelterWithin2km: boolean;
+  communityTaskForcePresent: boolean;
+  earlyWarningCoverage: number;
+}
+
 export interface HabitationDoc extends Document {
   lgdHabitationCode: string;
   name: string;
@@ -67,6 +75,7 @@ export interface HabitationDoc extends Document {
   structures: HabitationStructures;
   access: HabitationAccess;
   livelihood: HabitationLivelihood;
+  copingCapacity: HabitationCopingCapacity;
   consentStatus: ConsentStatus;
   dataProvenance: DataProvenance;
   sourceUrl?: string;
@@ -115,6 +124,16 @@ const livelihoodSchema = new Schema<HabitationLivelihood>(
   { _id: false },
 );
 
+const copingCapacitySchema = new Schema<HabitationCopingCapacity>(
+  {
+    sdrfResponseTimeMinutes: { type: Number, required: true, min: 0 },
+    shelterWithin2km: { type: Boolean, required: true },
+    communityTaskForcePresent: { type: Boolean, required: true },
+    earlyWarningCoverage: { type: Number, required: true, min: 0, max: 1 },
+  },
+  { _id: false },
+);
+
 const habitationSchema = new Schema<HabitationDoc>(
   {
     lgdHabitationCode: { type: String, required: true, unique: true },
@@ -130,6 +149,7 @@ const habitationSchema = new Schema<HabitationDoc>(
     structures: { type: structuresSchema, required: true },
     access: { type: accessSchema, required: true },
     livelihood: { type: livelihoodSchema, required: true },
+    copingCapacity: { type: copingCapacitySchema, required: true },
     consentStatus: { type: String, enum: CONSENT_STATUSES, required: true, default: "NOT_ENGAGED" },
     dataProvenance: { type: String, enum: DATA_PROVENANCE_VALUES, required: true },
     sourceUrl: { type: String },

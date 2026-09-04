@@ -53,6 +53,15 @@ export const habitationLivelihoodSchema = z.object({
 });
 export type HabitationLivelihood = z.infer<typeof habitationLivelihoodSchema>;
 
+/** Raw inputs for METHODOLOGY §2.2's CopingCapacity index — see packages/shared/src/config/vulnerability-weights.json's copingCapacity block and indicator-normalization.json for how each becomes a 0-1 indicator. */
+export const habitationCopingCapacitySchema = z.object({
+  sdrfResponseTimeMinutes: z.number().positive(),
+  shelterWithin2km: z.boolean(),
+  communityTaskForcePresent: z.boolean(),
+  earlyWarningCoverage: z.number().min(0).max(1),
+});
+export type HabitationCopingCapacity = z.infer<typeof habitationCopingCapacitySchema>;
+
 export const habitationSchema = z
   .object({
     _id: objectIdSchema,
@@ -69,6 +78,7 @@ export const habitationSchema = z
     structures: habitationStructuresSchema,
     access: habitationAccessSchema,
     livelihood: habitationLivelihoodSchema,
+    copingCapacity: habitationCopingCapacitySchema,
     consentStatus: consentStatusSchema,
     dataProvenance: dataProvenanceSchema,
     sourceUrl: z.string().url().optional(),

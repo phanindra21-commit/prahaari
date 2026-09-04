@@ -1,6 +1,12 @@
 import { z } from "zod";
-import { explanationEntrySchema, geoPolygonalSchema, hazardTypeSchema, zoneClassSchema } from "@punarvas/shared";
-import type { HazardType } from "@punarvas/shared";
+import {
+  explanationEntrySchema,
+  geoPolygonalSchema,
+  hazardTypeSchema,
+  zoneClassSchema,
+  priorityBucketSchema,
+} from "@punarvas/shared";
+import type { HazardType, GeoPolygonal, ZoneClass } from "@punarvas/shared";
 import { env } from "./env";
 
 const cellScoreSchema = z.object({
@@ -48,6 +54,58 @@ export interface ZoningRunCellInput {
   lon: number;
   lat: number;
   factors: Record<string, number>;
+}
+
+const vulnerabilityDimensionsSchema = z.object({
+  demographic: z.number().min(0).max(1),
+  socioeconomic: z.number().min(0).max(1),
+  structural: z.number().min(0).max(1),
+  accessibility: z.number().min(0).max(1),
+});
+
+const hazardExposureOutSchema = z.object({
+  hazardType: hazardTypeSchema,
+  hazardScore: z.number().min(0).max(1),
+  exposure: z.number().min(0).max(1),
+  zoneClass: zoneClassSchema,
+});
+
+const assessmentOutSchema = z.object({
+  habitationId: z.string().min(1),
+  hazardExposure: z.array(hazardExposureOutSchema).min(1),
+  vulnerabilityIndex: z.number().min(0).max(1),
+  vulnerabilityDimensions: vulnerabilityDimensionsSchema,
+  copingCapacity: z.number().min(0).max(1),
+  compositeRiskScore: z.number().min(0).max(1),
+  governingHazard: hazardTypeSchema,
+  overallZoneClass: zoneClassSchema,
+  relocationPriorityIndex: z.number().min(0).max(1).nullable(),
+  priorityBucket: priorityBucketSchema.nullable(),
+  explanation: z.array(explanationEntrySchema),
+});
+export type MlAssessment = z.infer<typeof assessmentOutSchema>;
+
+const assessmentRunResponseSchema = z.object({
+  assessments: z.array(assessmentOutSchema),
+});
+export type AssessmentRunResponse = z.infer<typeof assessmentRunResponseSchema>;
+
+export interface AssessmentRunZoneEntry {
+  zoneClass: ZoneClass;
+  geometry: GeoPolygonal;
+  hazardScore: number;
+}
+
+export interface AssessmentRunHabitationInput {
+  habitationId: string;
+  lon: number;
+  lat: number;
+  households: number;
+  demographics: Record<string, number>;
+  structures: Record<string, unknown>;
+  access: Record<string, unknown>;
+  livelihood: Record<string, unknown>;
+  copingCapacity: Record<string, unknown>;
 }
 
 export interface MlServiceClientOptions {
@@ -108,6 +166,23 @@ export class MlServiceClient {
     if (!parsed.success) {
       throw new Error(
         `[mlServiceClient] POST /zoning/run response failed validation: ${parsed.error.toString()}`,
+      );
+    }
+    return parsed.data;
+  }
+
+  async runAssessment(
+    hazardZones: Partial<Record<HazardType, AssessmentRunZoneEntry[]>>,
+    habitations: AssessmentRunHabitationInput[],
+  ): Promise<AssessmentRunResponse> {
+    const raw = await this.postWithRetry(
+      "/assessment/run",
+      JSON.stringify({ hazardZones, habitations }),
+    );
+    const parsed = assessmentRunResponseSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new Error(
+        `[mlServiceClient] POST /assessment/run response failed validation: ${parsed.error.toString()}`,
       );
     }
     return parsed.data;

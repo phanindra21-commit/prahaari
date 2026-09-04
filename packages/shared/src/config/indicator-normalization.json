@@ -1,0 +1,25 @@
+{
+  "modelVersion": "indicator-normalization-v1",
+  "note": "Single source of truth for how every vulnerability-weights.json indicator's raw Habitation value becomes a 0-1 normalized indicator (METHODOLOGY §2.1/§2.2). 'method' is MINMAX (the raw value is already an inherently 0-1 share/fraction — min/max are 0/1), REFERENCE_RANGE (an open-ended raw value like a distance or a duration, clamped against a chosen realistic planning range and scaled to 0-1), or BOOLEAN (a presence/absence flag — min/max are unused placeholders). 'direction' DIRECT means higher raw value -> higher (more vulnerable / more capable, depending on the indicator) normalized value; INVERSE flips it (normalized = 1 - scaled), mirroring the DIRECT/INVERSE convention already used in factor-reclassification.json. services/ml/app/engine/vulnerability.py never hardcodes a normalization bound — every min/max/direction comes from this file.",
+  "indicators": {
+    "shareUnder5": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "shareOver60": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "womenHeadedHouseholdShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "disabledPersonsShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "bplShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "scStShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "literacyRateInverse": { "method": "MINMAX", "min": 0, "max": 1, "direction": "INVERSE" },
+    "primaryLivelihoodDependenceShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "kutchaHousingShare": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT" },
+    "buildingAgeIndex": { "method": "REFERENCE_RANGE", "min": 0, "max": 60, "direction": "DIRECT", "unit": "years", "sourceField": "structures.avgBuildingAgeYears" },
+    "foundationTypeRisk": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT", "note": "Raw value is NOT numeric on Habitation — structures.predominantFoundationType (NONE/RUBBLE/STONE_MASONRY/RCC) is mapped to a 0-1 risk score by the FOUNDATION_TYPE_RISK lookup in vulnerability.py before this (identity) normalization is applied." },
+    "distanceToAllWeatherRoad": { "method": "REFERENCE_RANGE", "min": 0, "max": 10, "direction": "DIRECT", "unit": "km", "sourceField": "access.distanceToAllWeatherRoadKm" },
+    "distanceToPHC": { "method": "REFERENCE_RANGE", "min": 0, "max": 15, "direction": "DIRECT", "unit": "km", "sourceField": "access.distanceToPhcKm" },
+    "mobileNetworkCoverageInverse": { "method": "MINMAX", "min": 0, "max": 1, "direction": "INVERSE" },
+    "evacuationRouteRedundancyInverse": { "method": "REFERENCE_RANGE", "min": 0, "max": 4, "direction": "INVERSE", "unit": "routeCount", "sourceField": "access.evacuationRouteCount" },
+    "sdrfResponseTimeInverse": { "method": "REFERENCE_RANGE", "min": 15, "max": 180, "direction": "INVERSE", "unit": "minutes", "sourceField": "copingCapacity.sdrfResponseTimeMinutes" },
+    "shelterWithin2kmPresence": { "method": "BOOLEAN", "min": 0, "max": 1, "direction": "DIRECT", "sourceField": "copingCapacity.shelterWithin2km" },
+    "communityTaskForcePresence": { "method": "BOOLEAN", "min": 0, "max": 1, "direction": "DIRECT", "sourceField": "copingCapacity.communityTaskForcePresent" },
+    "earlyWarningCoverage": { "method": "MINMAX", "min": 0, "max": 1, "direction": "DIRECT", "sourceField": "copingCapacity.earlyWarningCoverage" }
+  }
+}

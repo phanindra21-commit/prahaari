@@ -5,7 +5,10 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.913702, 19.309533]
+        "coordinates": [
+          84.913702,
+          19.309533
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H001",
@@ -42,14 +45,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 5.41
+        "approxDistanceToCoastKm": 5.41,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 73.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.749
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.941666, 19.298001]
+        "coordinates": [
+          84.941666,
+          19.298001
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H002",
@@ -86,14 +98,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 3.0
+        "approxDistanceToCoastKm": 3.0,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 56.4,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.575
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.953069, 19.295846]
+        "coordinates": [
+          84.953069,
+          19.295846
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H003",
@@ -130,14 +151,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 1.92
+        "approxDistanceToCoastKm": 1.92,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 56.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.522
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.004524, 19.267386]
+        "coordinates": [
+          85.004524,
+          19.267386
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H004",
@@ -174,14 +204,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 2.21
+        "approxDistanceToCoastKm": 2.21,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 79.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.875
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.984517, 19.351062]
+        "coordinates": [
+          84.984517,
+          19.351062
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H005",
@@ -218,14 +257,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 3.6
+        "approxDistanceToCoastKm": 3.6,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 77.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.527
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.95155, 19.292672]
+        "coordinates": [
+          84.95155,
+          19.292672
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H006",
@@ -262,14 +310,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 2.2
+        "approxDistanceToCoastKm": 2.2,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 93.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.421
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.990459, 19.356727]
+        "coordinates": [
+          84.990459,
+          19.356727
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H007",
@@ -306,14 +363,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 4.45
+        "approxDistanceToCoastKm": 4.45,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 46.6,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.912
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.956427, 19.32354]
+        "coordinates": [
+          84.956427,
+          19.32354
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H008",
@@ -350,14 +416,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 0.43
+        "approxDistanceToCoastKm": 0.43,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 58.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.675
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.005152, 19.300812]
+        "coordinates": [
+          85.005152,
+          19.300812
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H009",
@@ -394,14 +469,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 3.66
+        "approxDistanceToCoastKm": 3.66,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 69.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.891
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.915058, 19.357109]
+        "coordinates": [
+          84.915058,
+          19.357109
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H010",
@@ -438,14 +522,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 3.57
+        "approxDistanceToCoastKm": 3.57,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 76.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.605
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.970578, 19.359106]
+        "coordinates": [
+          84.970578,
+          19.359106
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H011",
@@ -482,14 +575,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 2.46
+        "approxDistanceToCoastKm": 2.46,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 59.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.402
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.032334, 19.323163]
+        "coordinates": [
+          85.032334,
+          19.323163
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H012",
@@ -526,14 +628,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 7.38
+        "approxDistanceToCoastKm": 7.38,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 99.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.6
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.033092, 19.378279]
+        "coordinates": [
+          85.033092,
+          19.378279
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H013",
@@ -570,14 +681,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 9.71
+        "approxDistanceToCoastKm": 9.71,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 64.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.848
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.005265, 19.367459]
+        "coordinates": [
+          85.005265,
+          19.367459
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H014",
@@ -614,14 +734,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 6.42
+        "approxDistanceToCoastKm": 6.42,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 43.5,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.587
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.023627, 19.328011]
+        "coordinates": [
+          85.023627,
+          19.328011
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H015",
@@ -658,14 +787,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 6.68
+        "approxDistanceToCoastKm": 6.68,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 55.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.632
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.024632, 19.379986]
+        "coordinates": [
+          85.024632,
+          19.379986
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H016",
@@ -702,14 +840,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 8.84
+        "approxDistanceToCoastKm": 8.84,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 49.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.783
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.012204, 19.341566]
+        "coordinates": [
+          85.012204,
+          19.341566
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H017",
@@ -746,14 +893,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 6.06
+        "approxDistanceToCoastKm": 6.06,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 71.3,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.572
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.042701, 19.293773]
+        "coordinates": [
+          85.042701,
+          19.293773
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H018",
@@ -790,14 +946,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 7.24
+        "approxDistanceToCoastKm": 7.24,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 66.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.819
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.062761, 19.310187]
+        "coordinates": [
+          85.062761,
+          19.310187
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H019",
@@ -834,14 +999,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 9.98
+        "approxDistanceToCoastKm": 9.98,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 78.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.417
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.982644, 19.316627]
+        "coordinates": [
+          84.982644,
+          19.316627
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H020",
@@ -878,14 +1052,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 1.99
+        "approxDistanceToCoastKm": 1.99,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 63.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.526
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.055734, 19.340617]
+        "coordinates": [
+          85.055734,
+          19.340617
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H021",
@@ -922,14 +1105,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 10.51
+        "approxDistanceToCoastKm": 10.51,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 61.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.739
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.050052, 19.430772]
+        "coordinates": [
+          85.050052,
+          19.430772
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H022",
@@ -966,14 +1158,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 12.95
+        "approxDistanceToCoastKm": 12.95,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 72.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.46
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.060796, 19.367969]
+        "coordinates": [
+          85.060796,
+          19.367969
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H023",
@@ -1010,14 +1211,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 12.16
+        "approxDistanceToCoastKm": 12.16,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 44.4,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 1.0
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.072012, 19.416318]
+        "coordinates": [
+          85.072012,
+          19.416318
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H024",
@@ -1054,14 +1264,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 14.92
+        "approxDistanceToCoastKm": 14.92,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 64.9,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.576
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.088512, 19.412087]
+        "coordinates": [
+          85.088512,
+          19.412087
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H025",
@@ -1098,14 +1317,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 16.59
+        "approxDistanceToCoastKm": 16.59,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 41.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.805
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.028917, 19.3584]
+        "coordinates": [
+          85.028917,
+          19.3584
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H026",
@@ -1142,14 +1370,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 8.48
+        "approxDistanceToCoastKm": 8.48,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 39.5,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.642
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.033506, 19.420117]
+        "coordinates": [
+          85.033506,
+          19.420117
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H027",
@@ -1186,14 +1423,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 10.88
+        "approxDistanceToCoastKm": 10.88,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 53.8,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.532
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.01876, 19.414138]
+        "coordinates": [
+          85.01876,
+          19.414138
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H028",
@@ -1230,14 +1476,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 9.13
+        "approxDistanceToCoastKm": 9.13,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 49.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.464
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.016086, 19.380711]
+        "coordinates": [
+          85.016086,
+          19.380711
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H029",
@@ -1274,14 +1529,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 7.94
+        "approxDistanceToCoastKm": 7.94,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 62.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.307
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.030365, 19.433104]
+        "coordinates": [
+          85.030365,
+          19.433104
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H030",
@@ -1318,14 +1582,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 10.89
+        "approxDistanceToCoastKm": 10.89,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 58.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.77
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.965159, 19.488698]
+        "coordinates": [
+          84.965159,
+          19.488698
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H031",
@@ -1362,14 +1635,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 5.37
+        "approxDistanceToCoastKm": 5.37,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 56.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.494
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.983664, 19.574464]
+        "coordinates": [
+          84.983664,
+          19.574464
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H032",
@@ -1406,14 +1688,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 9.68
+        "approxDistanceToCoastKm": 9.68,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 51.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.768
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.980155, 19.553976]
+        "coordinates": [
+          84.980155,
+          19.553976
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H033",
@@ -1450,14 +1741,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 8.74
+        "approxDistanceToCoastKm": 8.74,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 45.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.755
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.039947, 19.521215]
+        "coordinates": [
+          85.039947,
+          19.521215
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H034",
@@ -1494,14 +1794,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 14.3
+        "approxDistanceToCoastKm": 14.3,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 45.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.555
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.006188, 19.506457]
+        "coordinates": [
+          85.006188,
+          19.506457
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H035",
@@ -1538,14 +1847,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 10.26
+        "approxDistanceToCoastKm": 10.26,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 48.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.775
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.995876, 19.56437]
+        "coordinates": [
+          84.995876,
+          19.56437
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H036",
@@ -1582,14 +1900,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 10.71
+        "approxDistanceToCoastKm": 10.71,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 50.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.777
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.976703, 19.497533]
+        "coordinates": [
+          84.976703,
+          19.497533
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H037",
@@ -1626,14 +1953,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 6.85
+        "approxDistanceToCoastKm": 6.85,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 52.1,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.659
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.029593, 19.574493]
+        "coordinates": [
+          85.029593,
+          19.574493
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H038",
@@ -1670,14 +2006,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 14.61
+        "approxDistanceToCoastKm": 14.61,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 39.8,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.881
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [84.966081, 19.511466]
+        "coordinates": [
+          84.966081,
+          19.511466
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H039",
@@ -1714,14 +2059,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 6.08
+        "approxDistanceToCoastKm": 6.08,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 56.2,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.699
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [85.031078, 19.55842]
+        "coordinates": [
+          85.031078,
+          19.55842
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-GJM-H040",
@@ -1758,7 +2112,13 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "approxDistanceToCoastKm": 14.34
+        "approxDistanceToCoastKm": 14.34,
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 56.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.85
+        }
       }
     }
   ]

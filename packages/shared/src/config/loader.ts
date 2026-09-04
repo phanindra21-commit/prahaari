@@ -4,6 +4,7 @@ import zoneThresholdsJson from "./zone-thresholds.json";
 import factorReclassificationJson from "./factor-reclassification.json";
 import blendConfigJson from "./blend-config.json";
 import vulnerabilityWeightsJson from "./vulnerability-weights.json";
+import indicatorNormalizationJson from "./indicator-normalization.json";
 import priorityWeightsJson from "./priority-weights.json";
 import suitabilityAhpJson from "./suitability-ahp.json";
 import capacityNormsJson from "./capacity-norms.json";
@@ -19,6 +20,7 @@ import {
   exclusionCriteriaSchema,
   factorReclassificationSchema,
   blendConfigSchema,
+  indicatorNormalizationSchema,
   permissionsConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
@@ -29,6 +31,7 @@ import {
   type ExclusionCriteriaConfig,
   type FactorReclassificationConfig,
   type BlendConfig,
+  type IndicatorNormalizationConfig,
   type PermissionsConfig,
 } from "./schemas";
 
@@ -89,6 +92,50 @@ function loadVulnerabilityWeights(): VulnerabilityWeightsConfig {
     config.copingCapacity.indicators,
     "vulnerability-weights.json copingCapacity.indicators",
   );
+
+  return config;
+}
+
+function loadIndicatorNormalization(): IndicatorNormalizationConfig {
+  const config = parseConfig(
+    indicatorNormalizationSchema,
+    indicatorNormalizationJson,
+    "indicator-normalization.json",
+  );
+
+  const requiredIndicators = new Set<string>();
+  for (const dimension of Object.values(vulnerabilityWeights.dimensions)) {
+    for (const indicator of Object.keys(dimension.indicators)) {
+      requiredIndicators.add(indicator);
+    }
+  }
+  for (const indicator of Object.keys(vulnerabilityWeights.copingCapacity.indicators)) {
+    requiredIndicators.add(indicator);
+  }
+
+  const declaredIndicators = new Set(Object.keys(config.indicators));
+  for (const indicator of requiredIndicators) {
+    if (!declaredIndicators.has(indicator)) {
+      throw new Error(
+        `[shared/config] indicator-normalization.json is missing a normalization entry for "${indicator}" (present in vulnerability-weights.json)`,
+      );
+    }
+  }
+  for (const indicator of declaredIndicators) {
+    if (!requiredIndicators.has(indicator)) {
+      throw new Error(
+        `[shared/config] indicator-normalization.json declares "${indicator}", which is not a vulnerability-weights.json indicator`,
+      );
+    }
+  }
+
+  for (const [name, entry] of Object.entries(config.indicators)) {
+    if (entry.method !== "BOOLEAN" && entry.max <= entry.min) {
+      throw new Error(
+        `[shared/config] indicator-normalization.json indicators.${name}: max (${entry.max}) must be greater than min (${entry.min})`,
+      );
+    }
+  }
 
   return config;
 }
@@ -207,6 +254,7 @@ function loadPermissions(): PermissionsConfig {
 export const hazardWeights: HazardWeightsConfig = loadHazardWeights();
 export const zoneThresholds: ZoneThresholdsConfig = loadZoneThresholds();
 export const vulnerabilityWeights: VulnerabilityWeightsConfig = loadVulnerabilityWeights();
+export const indicatorNormalization: IndicatorNormalizationConfig = loadIndicatorNormalization();
 export const priorityWeights: PriorityWeightsConfig = loadPriorityWeights();
 export const suitabilityAhp: SuitabilityAhpConfig = loadSuitabilityAhp();
 export const capacityNorms: CapacityNormsConfig = loadCapacityNorms();

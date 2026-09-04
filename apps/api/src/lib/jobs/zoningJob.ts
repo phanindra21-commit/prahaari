@@ -18,7 +18,7 @@ export interface ZoningJobActor {
   userAgent: string;
 }
 
-interface HazardRunSummary {
+export interface HazardRunSummary {
   hazardType: HazardType;
   modelVersion: string;
   cellCount: number;
@@ -37,7 +37,7 @@ const TRAIN_HYPERPARAMETERS = {
   colsampleByTree: 0.8,
 };
 
-async function scoreOneHazard(
+export async function scoreOneHazard(
   districtId: Types.ObjectId,
   districtSlug: string,
   hazardType: HazardType,

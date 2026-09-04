@@ -1,8 +1,9 @@
 """PunarVas ML service — FastAPI entrypoint.
 
 Hazard zoning (weighted-overlay + ML susceptibility, Step 4) is live at
-/zoning/run. Vulnerability scoring and site-suitability models are added
-in later build steps (see CLAUDE.md Build Roadmap).
+/zoning/run. Vulnerability/risk/priority scoring (Step 5) is live at
+/assessment/run. Site-suitability models are added in a later build step
+(see CLAUDE.md Build Roadmap).
 """
 
 from datetime import datetime, timezone
@@ -10,6 +11,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from app.routes.assessment import router as assessment_router
 from app.routes.zoning import router as zoning_router
 
 app = FastAPI(
@@ -19,6 +21,7 @@ app = FastAPI(
 )
 
 app.include_router(zoning_router)
+app.include_router(assessment_router)
 
 
 class HealthCheckResponse(BaseModel):

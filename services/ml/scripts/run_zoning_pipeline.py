@@ -55,10 +55,12 @@ def build_zones_for_hazard(hazard: str):
 
     cells_by_group: dict[tuple[str, str], list[str]] = defaultdict(list)
     counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    blended_sum_by_group: dict[tuple[str, str], float] = defaultdict(float)
     for h3_index, district, blended in zip(result.h3_indexes, result.districts, result.blended_scores):
         zone_class = classify_zone(float(blended), hazard)
         cells_by_group[(district, zone_class)].append(h3_index)
         counts[district][zone_class] += 1
+        blended_sum_by_group[(district, zone_class)] += float(blended)
 
     model_version = f"{hazard}-overlay-ml-v1"
     features = []
@@ -67,6 +69,10 @@ def build_zones_for_hazard(hazard: str):
     for (district, zone_class), h3_indexes in sorted(cells_by_group.items()):
         full, simplified = dissolve_zone_class(h3_indexes)
         zone_geoms[district][zone_class] = full
+        # Mean blended score across the class's cells — the same "representative
+        # hazardScore per zone class" apps/api's live zoningJob.ts persists onto
+        # HazardZone.hazardScore, kept consistent here for run_priority_pipeline.py.
+        mean_hazard_score = blended_sum_by_group[(district, zone_class)] / len(h3_indexes)
         features.append(
             {
                 "type": "Feature",
@@ -77,6 +83,7 @@ def build_zones_for_hazard(hazard: str):
                     "zoneClass": zone_class,
                     "cellCount": len(h3_indexes),
                     "modelVersion": model_version,
+                    "hazardScore": round(mean_hazard_score, 4),
                     "fullGeometry": geometry_to_geojson(full),
                 },
             }

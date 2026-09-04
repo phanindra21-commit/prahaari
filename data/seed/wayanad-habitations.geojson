@@ -5,7 +5,10 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.086251, 11.509548]
+        "coordinates": [
+          76.086251,
+          11.509548
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H001",
@@ -42,14 +45,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 79.8,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.785
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.098369, 11.520293]
+        "coordinates": [
+          76.098369,
+          11.520293
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H002",
@@ -86,14 +98,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 72.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.663
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.088124, 11.515411]
+        "coordinates": [
+          76.088124,
+          11.515411
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H003",
@@ -130,14 +151,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 71.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.545
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.113185, 11.471765]
+        "coordinates": [
+          76.113185,
+          11.471765
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H004",
@@ -174,14 +204,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 65.7,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.604
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.119946, 11.532804]
+        "coordinates": [
+          76.119946,
+          11.532804
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H005",
@@ -218,14 +257,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 115.1,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.768
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.153174, 11.519579]
+        "coordinates": [
+          76.153174,
+          11.519579
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H006",
@@ -262,14 +310,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 62.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.375
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.137905, 11.534664]
+        "coordinates": [
+          76.137905,
+          11.534664
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H007",
@@ -306,14 +363,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 82.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.882
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.167602, 11.538793]
+        "coordinates": [
+          76.167602,
+          11.538793
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H008",
@@ -350,14 +416,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 92.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.517
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.090377, 11.529367]
+        "coordinates": [
+          76.090377,
+          11.529367
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H009",
@@ -394,14 +469,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 100.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.727
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.149539, 11.457455]
+        "coordinates": [
+          76.149539,
+          11.457455
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H010",
@@ -438,14 +522,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 73.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.669
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.127708, 11.466968]
+        "coordinates": [
+          76.127708,
+          11.466968
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H011",
@@ -482,14 +575,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 78.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.536
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.112224, 11.457486]
+        "coordinates": [
+          76.112224,
+          11.457486
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H012",
@@ -526,14 +628,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 76.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.5
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.107469, 11.480473]
+        "coordinates": [
+          76.107469,
+          11.480473
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H013",
@@ -570,14 +681,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 79.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.644
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.098197, 11.485257]
+        "coordinates": [
+          76.098197,
+          11.485257
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H014",
@@ -614,14 +734,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 109.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.591
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.106601, 11.497487]
+        "coordinates": [
+          76.106601,
+          11.497487
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H015",
@@ -658,14 +787,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 59.8,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.72
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.122681, 11.501727]
+        "coordinates": [
+          76.122681,
+          11.501727
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H016",
@@ -702,14 +840,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "HIGH"
+        "terrainTier": "HIGH",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 99.9,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.768
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.062054, 11.635415]
+        "coordinates": [
+          76.062054,
+          11.635415
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H017",
@@ -746,14 +893,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 60.7,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.371
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.070847, 11.596603]
+        "coordinates": [
+          76.070847,
+          11.596603
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H018",
@@ -790,14 +946,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 89.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.781
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.025152, 11.628791]
+        "coordinates": [
+          76.025152,
+          11.628791
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H019",
@@ -834,14 +999,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 67.9,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.577
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.106252, 11.625959]
+        "coordinates": [
+          76.106252,
+          11.625959
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H020",
@@ -878,14 +1052,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 74.6,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.355
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.045218, 11.625552]
+        "coordinates": [
+          76.045218,
+          11.625552
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H021",
@@ -922,14 +1105,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 46.3,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.457
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.075167, 11.606809]
+        "coordinates": [
+          76.075167,
+          11.606809
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H022",
@@ -966,14 +1158,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 60.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.698
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.071917, 11.633923]
+        "coordinates": [
+          76.071917,
+          11.633923
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H023",
@@ -1010,14 +1211,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 51.9,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.502
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.077567, 11.646435]
+        "coordinates": [
+          76.077567,
+          11.646435
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H024",
@@ -1054,14 +1264,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 89.1,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.317
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.100646, 11.630176]
+        "coordinates": [
+          76.100646,
+          11.630176
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H025",
@@ -1098,14 +1317,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 67.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.785
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.032372, 11.587704]
+        "coordinates": [
+          76.032372,
+          11.587704
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H026",
@@ -1142,14 +1370,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 63.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.683
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.079652, 11.580101]
+        "coordinates": [
+          76.079652,
+          11.580101
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H027",
@@ -1186,14 +1423,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 35.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.897
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.063554, 11.596248]
+        "coordinates": [
+          76.063554,
+          11.596248
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H028",
@@ -1230,14 +1476,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 79.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.929
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.065572, 11.590104]
+        "coordinates": [
+          76.065572,
+          11.590104
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H029",
@@ -1274,14 +1529,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 62.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.277
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.083131, 11.627155]
+        "coordinates": [
+          76.083131,
+          11.627155
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H030",
@@ -1318,14 +1582,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "MED"
+        "terrainTier": "MED",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 82.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.405
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.009228, 11.76176]
+        "coordinates": [
+          76.009228,
+          11.76176
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H031",
@@ -1362,14 +1635,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 34.5,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.621
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.972365, 11.813768]
+        "coordinates": [
+          75.972365,
+          11.813768
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H032",
@@ -1406,14 +1688,23 @@
         },
         "consentStatus": "CONSULTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 39.7,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.867
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.983337, 11.758666]
+        "coordinates": [
+          75.983337,
+          11.758666
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H033",
@@ -1450,14 +1741,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 68.4,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.486
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.967756, 11.766643]
+        "coordinates": [
+          75.967756,
+          11.766643
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H034",
@@ -1494,14 +1794,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 47.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.753
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.032337, 11.756367]
+        "coordinates": [
+          76.032337,
+          11.756367
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H035",
@@ -1538,14 +1847,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 64.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.397
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.962867, 11.803841]
+        "coordinates": [
+          75.962867,
+          11.803841
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H036",
@@ -1582,14 +1900,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 64.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.441
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.046067, 11.77694]
+        "coordinates": [
+          76.046067,
+          11.77694
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H037",
@@ -1626,14 +1953,23 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 38.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.582
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.972791, 11.775035]
+        "coordinates": [
+          75.972791,
+          11.775035
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H038",
@@ -1670,14 +2006,23 @@
         },
         "consentStatus": "OBJECTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 87.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.863
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [75.998394, 11.814487]
+        "coordinates": [
+          75.998394,
+          11.814487
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H039",
@@ -1714,14 +2059,23 @@
         },
         "consentStatus": "CONSENTED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 67.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.48
+        }
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [76.001189, 11.828873]
+        "coordinates": [
+          76.001189,
+          11.828873
+        ]
       },
       "properties": {
         "lgdHabitationCode": "DEMO-WYD-H040",
@@ -1758,7 +2112,13 @@
         },
         "consentStatus": "NOT_ENGAGED",
         "dataProvenance": "SYNTHETIC_DEMO",
-        "terrainTier": "LOW"
+        "terrainTier": "LOW",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 67.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.862
+        }
       }
     }
   ]

@@ -64,6 +64,25 @@ export const vulnerabilityWeightsSchema = z.object({
 });
 export type VulnerabilityWeightsConfig = z.infer<typeof vulnerabilityWeightsSchema>;
 
+const normalizationDirectionSchema = z.enum(["DIRECT", "INVERSE"]);
+
+const indicatorNormalizationEntrySchema = z.object({
+  method: z.enum(["MINMAX", "REFERENCE_RANGE", "BOOLEAN"]),
+  min: z.number(),
+  max: z.number(),
+  direction: normalizationDirectionSchema,
+  unit: z.string().optional(),
+  sourceField: z.string().optional(),
+  note: z.string().optional(),
+});
+
+export const indicatorNormalizationSchema = z.object({
+  modelVersion: z.string().min(1),
+  note: z.string(),
+  indicators: z.record(z.string(), indicatorNormalizationEntrySchema),
+});
+export type IndicatorNormalizationConfig = z.infer<typeof indicatorNormalizationSchema>;
+
 export const priorityWeightsSchema = z.object({
   modelVersion: z.string(),
   note: z.string(),

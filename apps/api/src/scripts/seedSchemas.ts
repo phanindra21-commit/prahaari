@@ -24,6 +24,7 @@ import {
   habitationStructuresSchema,
   habitationAccessSchema,
   habitationLivelihoodSchema,
+  habitationCopingCapacitySchema,
   carryingCapacitySchema,
 } from "@punarvas/shared";
 
@@ -59,6 +60,7 @@ export const seedHabitationFeatureSchema = z.object({
     structures: habitationStructuresSchema,
     access: habitationAccessSchema,
     livelihood: habitationLivelihoodSchema,
+    copingCapacity: habitationCopingCapacitySchema,
     consentStatus: consentStatusSchema,
     dataProvenance: dataProvenanceSchema,
   }),

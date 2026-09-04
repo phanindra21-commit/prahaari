@@ -79,6 +79,8 @@ export const explanationEntrySchema = z.object({
   factor: z.string().min(1),
   contribution: z.number(),
   direction: explanationDirectionSchema,
+  /** Plain-language rendering of `factor` (e.g. "slope" -> "Steepness of the terrain") for the officer workbench to render as a sentence, not a machine key. Optional for backward compatibility with GridCell's per-cell SHAP explanations (Step 4); always populated on Assessment.explanation (Step 5). */
+  label: z.string().min(1).optional(),
 });
 export type ExplanationEntry = z.infer<typeof explanationEntrySchema>;
 

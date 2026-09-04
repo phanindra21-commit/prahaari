@@ -59,7 +59,7 @@ export const FIELD_REPORT_VERIFICATION_STATUSES = ["PENDING", "VERIFIED", "REJEC
 
 export const JOB_STATUSES = ["PENDING", "RUNNING", "SUCCEEDED", "FAILED"] as const;
 
-export const JOB_TYPES = ["ZONING_RUN"] as const;
+export const JOB_TYPES = ["ZONING_RUN", "PIPELINE_RUN"] as const;
 
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },

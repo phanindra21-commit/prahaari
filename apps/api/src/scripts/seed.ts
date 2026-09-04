@@ -188,6 +188,7 @@ async function seedHabitations(districtByLgdCode: Map<string, Types.ObjectId>): 
               structures: feature.properties.structures,
               access: feature.properties.access,
               livelihood: feature.properties.livelihood,
+              copingCapacity: feature.properties.copingCapacity,
               consentStatus: feature.properties.consentStatus,
               dataProvenance: feature.properties.dataProvenance,
             },
