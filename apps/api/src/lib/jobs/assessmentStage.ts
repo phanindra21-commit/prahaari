@@ -77,15 +77,18 @@ export async function assessDistrictHabitations(
     }
     return {
       habitationId: habitation._id as Types.ObjectId,
+      districtId,
       hazardExposure: assessment.hazardExposure.map((e) => ({
         hazardType: e.hazardType,
         hazardScore: e.hazardScore,
         exposure: e.exposure,
+        zoneClass: e.zoneClass,
       })),
       vulnerabilityIndex: assessment.vulnerabilityIndex,
       vulnerabilityDimensions: assessment.vulnerabilityDimensions,
       copingCapacity: assessment.copingCapacity,
       compositeRiskScore: assessment.compositeRiskScore,
+      governingHazard: assessment.governingHazard,
       relocationPriorityIndex: assessment.relocationPriorityIndex,
       priorityBucket: assessment.priorityBucket,
       modelVersion,

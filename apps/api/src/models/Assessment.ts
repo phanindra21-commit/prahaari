@@ -1,11 +1,12 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { HAZARD_TYPES, PRIORITY_BUCKETS, EXPLANATION_DIRECTIONS } from "@punarvas/shared";
-import type { HazardType, RelocationPriorityBucket, ExplanationDirection } from "@punarvas/shared";
+import { HAZARD_TYPES, PRIORITY_BUCKETS, EXPLANATION_DIRECTIONS, ZONE_CLASSES } from "@punarvas/shared";
+import type { HazardType, RelocationPriorityBucket, ExplanationDirection, ZoneClass } from "@punarvas/shared";
 
 export interface HazardExposureEntry {
   hazardType: HazardType;
   hazardScore: number;
   exposure: number;
+  zoneClass: ZoneClass;
 }
 
 export interface VulnerabilityDimensionScores {
@@ -37,11 +38,17 @@ export interface ExplanationEntry {
  */
 export interface AssessmentDoc extends Document {
   habitationId: Types.ObjectId;
+  /** Denormalized from Habitation — same convention as GridCell.districtId —
+   * so requireScope()'s filter fragment can be merged directly into a query
+   * against this collection without a join (e.g. GET /priorities). */
+  districtId: Types.ObjectId;
   hazardExposure: HazardExposureEntry[];
   vulnerabilityIndex: number;
   vulnerabilityDimensions: VulnerabilityDimensionScores;
   copingCapacity: number;
   compositeRiskScore: number;
+  governingHazard: HazardType;
+  overallZoneClass: ZoneClass;
   relocationPriorityIndex: number | null;
   priorityBucket: RelocationPriorityBucket | null;
   modelVersion: string;
@@ -59,6 +66,7 @@ const hazardExposureEntrySchema = new Schema<HazardExposureEntry>(
     hazardType: { type: String, enum: HAZARD_TYPES, required: true },
     hazardScore: { type: Number, required: true, min: 0, max: 1 },
     exposure: { type: Number, required: true, min: 0, max: 1 },
+    zoneClass: { type: String, enum: ZONE_CLASSES, required: true },
   },
   { _id: false },
 );
@@ -86,11 +94,14 @@ const explanationEntrySchema = new Schema<ExplanationEntry>(
 const assessmentSchema = new Schema<AssessmentDoc>(
   {
     habitationId: { type: Schema.Types.ObjectId, ref: "Habitation", required: true },
+    districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     hazardExposure: { type: [hazardExposureEntrySchema], required: true },
     vulnerabilityIndex: { type: Number, required: true, min: 0, max: 1 },
     vulnerabilityDimensions: { type: vulnerabilityDimensionScoresSchema, required: true },
     copingCapacity: { type: Number, required: true, min: 0, max: 1 },
     compositeRiskScore: { type: Number, required: true, min: 0, max: 1 },
+    governingHazard: { type: String, enum: HAZARD_TYPES, required: true },
+    overallZoneClass: { type: String, enum: ZONE_CLASSES, required: true },
     relocationPriorityIndex: { type: Number, min: 0, max: 1, default: null },
     priorityBucket: { type: String, enum: PRIORITY_BUCKETS, default: null },
     modelVersion: { type: String, required: true },
@@ -105,5 +116,7 @@ const assessmentSchema = new Schema<AssessmentDoc>(
 
 assessmentSchema.index({ habitationId: 1, computedAt: -1 });
 assessmentSchema.index({ habitationId: 1, validTo: 1 });
+assessmentSchema.index({ districtId: 1, validTo: 1, priorityBucket: 1, relocationPriorityIndex: -1 });
+assessmentSchema.index({ districtId: 1, validTo: 1, overallZoneClass: 1 });
 
 export const Assessment = model<AssessmentDoc>("Assessment", assessmentSchema, "assessments");

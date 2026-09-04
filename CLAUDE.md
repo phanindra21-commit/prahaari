@@ -219,52 +219,64 @@ completed.
   tracked in its own status block immediately below rather than renumbered
   in place, to avoid rewriting history — don't confuse the two "Step 5"s.
 
-  ### Step 5 (fix Step 4 + vulnerability/RPI) — status as of this session
+  ### Step 5 (fix Step 4 + vulnerability/RPI) — DONE
 
-  **Done and committed** (`88d58c0` "fix: orphaned habitations, weak ML
-  signal, per-hazard blend"): Wayanad/Ganjam district boundaries corrected
+  **Commit 1** (`88d58c0` "fix: orphaned habitations, weak ML signal,
+  per-hazard blend"): Wayanad/Ganjam district boundaries corrected
   (Chooralmala/Mundakkai now have grid coverage — landslide blendedScore
   0.744/0.777, both Red), `validateSeedGeometry.ts` guards against a
   regression, ML labels redesigned to a physically-motivated latent
   process landing all four hazards' AUC-ROC in 0.72-0.85 (was 0.50-0.64),
   `blend-config.json`'s alpha is now per-hazard.
 
-  **Committed as WIP, not finished** (`2d2cc14` "wip: step 5 partial"):
-  the vulnerability/coping-capacity/risk/RPI engine
-  (`services/ml/app/engine/{vulnerability,risk,priority,assessment}.py`,
-  live at `POST /assessment/run`), `Habitation.copingCapacity`,
-  `Assessment` versioning, `apps/api`'s `assessmentVersioning.ts` +
-  `mlServiceClient.runAssessment()` + `assessmentStage.ts`/`pipelineJob.ts`
-  (written and typechecked, but **not wired to any route** — unreachable).
-  All of the above is tested and passing (86 Python + 192 TS tests,
-  typecheck/lint clean) as isolated units.
+  **Commit 2** (`0f578fc` "feat: assessment pipeline, RPI-ceiling fix, and
+  full pipeline job"): the vulnerability/coping-capacity/risk/RPI engine
+  (`services/ml/app/engine/{vulnerability,risk,priority,assessment}.py`),
+  `Habitation.copingCapacity`, `Assessment` versioning, wired end-to-end
+  behind `POST /api/v1/pipeline/run` (grid → zones → assessments,
+  per-stage progress via `apps/api/src/lib/jobs/pipelineJob.ts` +
+  `assessmentStage.ts`).
 
-  **Known unresolved problem:** running the real pipeline
-  (`services/ml/scripts/run_priority_pipeline.py`) against Wayanad shows
-  Chooralmala and Mundakkai — the actual 2024 landslide site, this
-  project's single most important sanity check — do NOT reach the
-  Immediate RPI bucket (they land in MediumTerm, RPI ≈0.25-0.27) despite
-  a correctly-computed Red-zone hazard score (~0.73) and exposure=1.0.
-  Traced root cause: `Risk = H*E*VI/(1+CopingCapacity)` is multiplicative,
-  so `Risk <= VI` always; since `RPI = 0.55*Risk + 0.45*VI`, that makes
-  `RPI <= VI` structurally, however severe the hazard — a habitation with
-  realistic moderate vulnerability (~0.3-0.5) can never cross the 0.70
-  Immediate threshold. This reads as a tension between METHODOLOGY §0's
-  Risk formula and §3's stated intent ("hazard severity should dominate
-  when triggered"), not a coding bug. Leading candidate fix (not yet
-  implemented or validated): treat §3's `normalize(Risk)` as a
-  population-relative min-max rescaling across the assessed batch, rather
-  than the no-op identity the current code uses (defensible since raw
-  Risk is already in [0,1], so "normalize" was assumed to be a formality —
-  it may not be).
+  Fixed the RPI-ceiling bug flagged below: `Risk = H*E*VI/(1+CopingCapacity)`
+  is multiplicative in VI, so `Risk <= VI` always; treating §3's
+  `normalize(Risk)` as a no-op made `RPI <= VI` for every habitation
+  (verified: 0 of 27 Red/Orange habitations reached Immediate/ShortTerm
+  pre-fix). Fix: `normalize(Risk)` is population-relative min-max
+  rescaling of a habitation's governing Risk against the other Red/Orange
+  habitations in the same district-scoped run
+  (`priority.py::normalize_risk`) — see `docs/METHODOLOGY.md` §3's
+  implementation note and `docs/SCORING_PIPELINE.md`'s worked example.
+  Verified against live Wayanad/Ganjam data post-fix: 3 of 27 Red/Orange
+  habitations now reach Immediate (Pozhuthana, Kottathara, Sorada),
+  distribution 3 Immediate / 14 ShortTerm / 10 MediumTerm.
 
-  **Next action:** decide and implement the `normalize(Risk)` fix (or an
-  alternative), re-run `run_priority_pipeline.py`, and confirm
-  Chooralmala/Mundakkai land in Immediate before anything else in this
-  track — then wire `POST /api/v1/pipeline/run` (so `pipelineJob.ts`
-  becomes reachable), finish the 2G honest-evaluation print, and proceed
-  to the routes/docs commit (`GET /api/v1/habitations`,
-  `/api/v1/priorities`, `docs/SCORING_PIPELINE.md`, etc.).
+  **Honest residual finding, not a bug:** Chooralmala and Mundakkai — the
+  actual 2024 landslide site — still land in MediumTerm/ShortTerm
+  (RPI 0.446/0.482) even after the structural fix, not Immediate.
+  Diagnosed: within Wayanad's batch, cloudburst's synthetic Red-zone
+  hazard scores run higher than landslide's in this dataset (each
+  hazard's label calibration was tuned independently in Commit 1 to its
+  own AUC target, with no cross-hazard magnitude-consistency constraint),
+  and the cloudburst-governed habitations that outrank them also carry
+  higher VI. This was diagnosed and reported, not tuned away, per this
+  project's standing instruction not to force a particular answer.
+
+  **Commit 3** (routes + docs): `GET /api/v1/habitations` (paginated,
+  filterable by district/bucket/zoneClass, GeoJSON option),
+  `GET /api/v1/habitations/:id`, `GET /api/v1/habitations/:id/assessment`
+  (with `?at=` history), `GET /api/v1/habitations/:id/explain`,
+  `GET /api/v1/priorities` — all behind `requirePermission`+`requireScope`,
+  every response Zod-validated (`apps/api/src/routes/habitation.routes.ts`).
+  `docs/SCORING_PIPELINE.md` added: full pipeline diagram plus a worked,
+  reproducible numeric example (Chooralmala) traced from raw attributes
+  through every intermediate value to the final RPI/bucket.
+
+  All of the above is tested and passing (96 Python + 202 TS tests,
+  typecheck/lint clean).
+
+  **Not done in this track (left for later steps):** the web UI — a
+  MapLibre habitation/priority-list view consuming these new endpoints —
+  is Step 7/8/11's remaining web half, not built here.
 - [ ] **Step 6 — Vulnerability assessment (ML):** Vulnerability index model
       (demographic, socio-economic, structural, accessibility, coping
       capacity components).

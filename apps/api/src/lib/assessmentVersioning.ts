@@ -12,10 +12,12 @@ export interface HazardExposureInput {
   hazardType: HazardType;
   hazardScore: number;
   exposure: number;
+  zoneClass: ZoneClass;
 }
 
 export interface AssessmentVersionInput {
   habitationId: Types.ObjectId;
+  districtId: Types.ObjectId;
   hazardExposure: HazardExposureInput[];
   vulnerabilityIndex: number;
   vulnerabilityDimensions: {
@@ -26,12 +28,12 @@ export interface AssessmentVersionInput {
   };
   copingCapacity: number;
   compositeRiskScore: number;
+  governingHazard: HazardType;
   relocationPriorityIndex: number | null;
   priorityBucket: RelocationPriorityBucket | null;
   modelVersion: string;
   explanation: ExplanationEntry[];
-  /** The habitation's overall zone class (Red/Orange/Yellow/Green) — not persisted on
-   * Assessment itself, but useful to callers deciding what to log/report. */
+  /** The habitation's overall zone class (Red/Orange/Yellow/Green). */
   overallZoneClass: ZoneClass;
 }
 
@@ -57,11 +59,14 @@ export async function writeAssessmentVersions(
   const created = await Assessment.insertMany(
     inputs.map((input) => ({
       habitationId: input.habitationId,
+      districtId: input.districtId,
       hazardExposure: input.hazardExposure,
       vulnerabilityIndex: input.vulnerabilityIndex,
       vulnerabilityDimensions: input.vulnerabilityDimensions,
       copingCapacity: input.copingCapacity,
       compositeRiskScore: input.compositeRiskScore,
+      governingHazard: input.governingHazard,
+      overallZoneClass: input.overallZoneClass,
       relocationPriorityIndex: input.relocationPriorityIndex,
       priorityBucket: input.priorityBucket,
       modelVersion: input.modelVersion,

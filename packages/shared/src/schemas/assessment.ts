@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   objectIdSchema,
   hazardTypeSchema,
+  zoneClassSchema,
   priorityBucketSchema,
   explanationEntrySchema,
   timestampsSchema,
@@ -11,6 +12,7 @@ export const hazardExposureEntrySchema = z.object({
   hazardType: hazardTypeSchema,
   hazardScore: z.number().min(0).max(1),
   exposure: z.number().min(0).max(1),
+  zoneClass: zoneClassSchema,
 });
 export type HazardExposureEntry = z.infer<typeof hazardExposureEntrySchema>;
 
@@ -38,11 +40,14 @@ export const assessmentSchema = z
   .object({
     _id: objectIdSchema,
     habitationId: objectIdSchema,
+    districtId: objectIdSchema,
     hazardExposure: z.array(hazardExposureEntrySchema).min(1),
     vulnerabilityIndex: z.number().min(0).max(1),
     vulnerabilityDimensions: vulnerabilityDimensionScoresSchema,
     copingCapacity: z.number().min(0).max(1),
     compositeRiskScore: z.number().min(0).max(1),
+    governingHazard: hazardTypeSchema,
+    overallZoneClass: zoneClassSchema,
     relocationPriorityIndex: z.number().min(0).max(1).nullable(),
     priorityBucket: priorityBucketSchema.nullable(),
     modelVersion: z.string().min(1),

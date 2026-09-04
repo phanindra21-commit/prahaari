@@ -13,11 +13,13 @@ function baseInput(
 ): AssessmentVersionInput {
   return {
     habitationId,
-    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.7, exposure: 0.8 }],
+    districtId: new Types.ObjectId(),
+    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.7, exposure: 0.8, zoneClass: "Orange" }],
     vulnerabilityIndex: 0.5,
     vulnerabilityDimensions: { demographic: 0.4, socioeconomic: 0.5, structural: 0.5, accessibility: 0.5 },
     copingCapacity: 0.3,
     compositeRiskScore: 0.4,
+    governingHazard: "landslide",
     relocationPriorityIndex: 0.6,
     priorityBucket: "ShortTerm",
     modelVersion: "v1",

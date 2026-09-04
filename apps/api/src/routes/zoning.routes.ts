@@ -5,13 +5,13 @@ import { HAZARD_TYPES } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
-import { District, type DistrictDoc } from "../models/District";
 import { GridCell } from "../models/GridCell";
 import { HazardZone } from "../models/HazardZone";
 import { Job } from "../models/Job";
 import { getActiveZones } from "../lib/zoneVersioning";
 import { runZoningJob } from "../lib/jobs/zoningJob";
 import { runPipelineJob } from "../lib/jobs/pipelineJob";
+import { requireDistrictInScope } from "../lib/districtScope";
 
 export const zoningRouter = Router();
 
@@ -19,15 +19,6 @@ const PIPELINE_RUN = "pipeline:run";
 const HAZARD_ZONE_READ = "hazardZone:read";
 
 const objectIdString = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId");
-
-/** Verifies `districtId` both exists AND is within the authenticated user's
- * scope, in one pre-query filter — never a post-hoc check on an already-fetched doc. */
-async function requireDistrictInScope(
-  scopeFilter: Record<string, unknown> | undefined,
-  districtId: Types.ObjectId,
-): Promise<DistrictDoc | null> {
-  return District.findOne({ _id: districtId, ...scopeFilter });
-}
 
 const runRequestSchema = z.object({
   districtId: objectIdString,
