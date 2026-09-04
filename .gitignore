@@ -41,3 +41,9 @@ data/processed/*
 
 # Coverage
 coverage/
+
+# Playwright (apps/web/e2e)
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

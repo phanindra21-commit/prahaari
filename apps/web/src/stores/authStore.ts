@@ -121,24 +121,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   /** Called once on app load: the refresh cookie may still be valid from a
-   * previous session even though this store starts empty every reload. */
+   * previous session even though this store starts empty every reload.
+   * Network failures (offline, CORS misconfiguration, the API being down)
+   * must resolve to "unauthenticated" — same as a clean 401 — never an
+   * uncaught rejection: this runs unconditionally on every page load,
+   * including the login page itself, so a thrown fetch here must not be
+   * able to wedge the app in "loading" forever. */
   async bootstrap() {
     set({ status: "loading" });
-    const res = await fetch(`${API_BASE_URL}/auth/refresh`, { method: "POST", credentials: "include" });
-    if (!res.ok) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/refresh`, { method: "POST", credentials: "include" });
+      if (!res.ok) {
+        set({ status: "unauthenticated" });
+        return;
+      }
+      const body = (await res.json()) as { accessToken: string; accessTokenExpiresAt: string };
+      const meRes = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${body.accessToken}` },
+      });
+      if (!meRes.ok) {
+        set({ status: "unauthenticated" });
+        return;
+      }
+      const meBody = (await meRes.json()) as { user: SafeUser };
+      get().setSession(meBody.user, body.accessToken, body.accessTokenExpiresAt);
+    } catch {
       set({ status: "unauthenticated" });
-      return;
     }
-    const body = (await res.json()) as { accessToken: string; accessTokenExpiresAt: string };
-    const meRes = await fetch(`${API_BASE_URL}/auth/me`, {
-      headers: { Authorization: `Bearer ${body.accessToken}` },
-    });
-    if (!meRes.ok) {
-      set({ status: "unauthenticated" });
-      return;
-    }
-    const meBody = (await meRes.json()) as { user: SafeUser };
-    get().setSession(meBody.user, body.accessToken, body.accessTokenExpiresAt);
   },
 }));
 
