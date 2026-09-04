@@ -4,9 +4,13 @@ zones.geojson) and prints the resulting Immediate/ShortTerm/MediumTerm
 split, the five highest-RPI habitations, and an explicit Chooralmala/
 Mundakkai sanity check.
 
-Reuses app.engine.assessment.assess_habitation directly — the same
+Reuses app.engine.assessment.assess_habitations_batch directly — the same
 function the live /assessment/run route calls — against real seed data,
-no MongoDB or HTTP round trip needed for this offline diagnostic.
+no MongoDB or HTTP round trip needed for this offline diagnostic. Batched
+ONE CALL PER DISTRICT: normalize(Risk) (METHODOLOGY §3, priority.py) is
+relative to the other Red/Orange habitations in the same batch, and that
+population is scoped per district-per-run — see priority.py's module
+docstring for why.
 
 Every score here is SYNTHETIC_DEMO: it depends on the SYNTHETIC_DEMO
 hazard-zoning pipeline (Step 4/5) and, for habitations, hand-authored
@@ -28,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from shapely.geometry import shape  # noqa: E402
 
-from app.engine.assessment import assess_habitation  # noqa: E402
+from app.engine.assessment import HabitationInput, assess_habitations_batch  # noqa: E402
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 PROCESSED_DIR = DATA_DIR / "processed"
@@ -76,46 +80,49 @@ def main() -> None:
         district_meta = districts[district_slug]
         primary_hazards = district_meta["primaryHazards"]
 
-        habitations = json.loads((SEED_DIR / habitation_file).read_text(encoding="utf-8"))
+        habitations_geojson = json.loads((SEED_DIR / habitation_file).read_text(encoding="utf-8"))
         bucket_counts_by_district[district_slug] = {
             "Immediate": 0, "ShortTerm": 0, "MediumTerm": 0, "unbucketed": 0,
         }
 
-        for feature in habitations["features"]:
+        hazard_zone_geoms = {}
+        hazard_zone_scores = {}
+        for hazard in primary_hazards:
+            zones_for_district = zone_data.get(hazard, {}).get(district_slug, {})
+            if not zones_for_district:
+                continue
+            hazard_zone_geoms[hazard] = {c: v["geometry"] for c, v in zones_for_district.items()}
+            hazard_zone_scores[hazard] = {c: v["hazardScore"] for c, v in zones_for_district.items()}
+
+        batch_inputs = []
+        name_by_id: dict[str, str] = {}
+        for feature in habitations_geojson["features"]:
             props = feature["properties"]
             lon, lat = feature["geometry"]["coordinates"]
-
-            hazard_zone_geoms = {}
-            hazard_zone_scores = {}
-            for hazard in primary_hazards:
-                zones_for_district = zone_data.get(hazard, {}).get(district_slug, {})
-                if not zones_for_district:
-                    continue
-                hazard_zone_geoms[hazard] = {c: v["geometry"] for c, v in zones_for_district.items()}
-                hazard_zone_scores[hazard] = {c: v["hazardScore"] for c, v in zones_for_district.items()}
-
-            if not hazard_zone_geoms:
-                continue
-
-            result = assess_habitation(
-                habitation_id=props["lgdHabitationCode"],
-                lon=lon,
-                lat=lat,
-                households=props["households"],
-                habitation_attributes={
-                    "demographics": props["demographics"],
-                    "structures": props["structures"],
-                    "access": props["access"],
-                    "livelihood": props["livelihood"],
-                    "copingCapacity": props["copingCapacity"],
-                },
-                hazard_zone_geoms=hazard_zone_geoms,
-                hazard_zone_scores=hazard_zone_scores,
+            habitation_id = props["lgdHabitationCode"]
+            name_by_id[habitation_id] = props["name"]
+            batch_inputs.append(
+                HabitationInput(
+                    habitation_id=habitation_id,
+                    lon=lon,
+                    lat=lat,
+                    households=props["households"],
+                    attributes={
+                        "demographics": props["demographics"],
+                        "structures": props["structures"],
+                        "access": props["access"],
+                        "livelihood": props["livelihood"],
+                        "copingCapacity": props["copingCapacity"],
+                    },
+                )
             )
 
+        district_results = assess_habitations_batch(batch_inputs, hazard_zone_geoms, hazard_zone_scores)
+
+        for result in district_results:
             bucket_key = result.priority_bucket or "unbucketed"
             bucket_counts_by_district[district_slug][bucket_key] += 1
-            all_results.append((district_slug, props["name"], result))
+            all_results.append((district_slug, name_by_id[result.habitation_id], result))
 
     print("\n[run_priority_pipeline] Habitation counts by priority bucket, per district:")
     for district_slug, counts in bucket_counts_by_district.items():
@@ -146,9 +153,10 @@ def main() -> None:
     for district_slug, name, result in all_results:
         if name in ("Chooralmala", "Mundakkai"):
             status = "IMMEDIATE (expected)" if result.priority_bucket == "Immediate" else "NOT IMMEDIATE"
+            rpi_str = f"{result.relocation_priority_index:.4f}" if result.relocation_priority_index is not None else "None"
             print(
                 f"[run_priority_pipeline]   {name}: bucket={result.priority_bucket} "
-                f"RPI={result.relocation_priority_index} zoneClass={result.overall_zone_class} "
+                f"RPI={rpi_str} zoneClass={result.overall_zone_class} "
                 f"risk={result.composite_risk_score:.3f} VI={result.vulnerability_index:.3f}  <- {status}"
             )
             if result.priority_bucket != "Immediate":

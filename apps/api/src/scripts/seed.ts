@@ -25,6 +25,7 @@ import {
   GridCell,
   ModelRun,
   Job,
+  Assessment,
   type DistrictDoc,
   type DmAuthorityContact,
   type HabitationDoc,
@@ -89,15 +90,17 @@ async function resetCollections(): Promise<void> {
     HazardEvent.deleteMany({}),
     RelocationSite.deleteMany({}),
     User.deleteMany({}),
-    // GridCell/ModelRun/Job are derived from District (generateGrid.ts,
-    // the zoning pipeline) rather than seeded from data/seed/ directly,
-    // but --reset re-inserts District docs with fresh ObjectIds, so
-    // leaving these behind would orphan them against a districtId that
-    // no longer exists. Regenerate with `npm run generate-grid` after a
+    // GridCell/ModelRun/Job/Assessment are derived from District/Habitation
+    // (generateGrid.ts, the zoning + pipeline jobs) rather than seeded from
+    // data/seed/ directly, but --reset re-inserts District/Habitation docs
+    // with fresh ObjectIds, so leaving these behind would orphan them
+    // against a districtId/habitationId that no longer exists. Regenerate
+    // with `npm run generate-grid` (+ the zoning/pipeline job) after a
     // --reset.
     GridCell.deleteMany({}),
     ModelRun.deleteMany({}),
     Job.deleteMany({}),
+    Assessment.deleteMany({}),
   ]);
 }
 

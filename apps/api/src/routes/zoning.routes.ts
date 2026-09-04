@@ -11,6 +11,7 @@ import { HazardZone } from "../models/HazardZone";
 import { Job } from "../models/Job";
 import { getActiveZones } from "../lib/zoneVersioning";
 import { runZoningJob } from "../lib/jobs/zoningJob";
+import { runPipelineJob } from "../lib/jobs/pipelineJob";
 
 export const zoningRouter = Router();
 
@@ -85,6 +86,65 @@ zoningRouter.post(
       // recorded on the Job doc, and audited internally) — no queue, per
       // CLAUDE.md's Step 4 roadmap entry ("in-process job runner").
       void runZoningJob(job._id as Types.ObjectId, actor);
+    })().catch(next);
+  },
+);
+
+/** POST /api/v1/pipeline/run — the full pipeline (zones -> habitation
+ * assessments -> priorities) for a district, in one job. ANALYST+ per
+ * permissions.json's existing pipeline:run grant (SUPER_ADMIN,
+ * STATE_ADMIN, ANALYST). */
+zoningRouter.post(
+  "/pipeline/run",
+  authenticate,
+  requirePermission(PIPELINE_RUN),
+  requireScope(),
+  (req, res, next) => {
+    void (async () => {
+      const body = runRequestSchema.parse(req.body);
+      const districtId = new Types.ObjectId(body.districtId);
+
+      const district = await requireDistrictInScope(req.scopeFilter, districtId);
+      if (!district) {
+        res.status(404).json({ error: "District not found or out of scope" });
+        return;
+      }
+
+      const hazardTypes = body.hazardTypes ?? district.primaryHazards;
+      const unsupported = hazardTypes.filter((h) => !district.primaryHazards.includes(h));
+      if (unsupported.length > 0) {
+        res.status(422).json({
+          error: `District "${district.name}" does not list these as primary hazards: ${unsupported.join(", ")}`,
+        });
+        return;
+      }
+
+      const job = await Job.create({
+        type: "PIPELINE_RUN",
+        districtId,
+        status: "PENDING",
+        params: { districtId: districtId.toString(), hazardTypes },
+        createdBy: req.auth!.userId,
+      });
+
+      res.locals.auditEntity = {
+        entityType: "job",
+        entityId: job._id.toString(),
+        after: { districtId: districtId.toString(), hazardTypes },
+      };
+      res.status(202).json({ jobId: job._id.toString(), status: job.status, hazardTypes });
+
+      const actor = {
+        actorId: req.auth!.userId,
+        actorLabel: req.auth!.userId.toString(),
+        requestId: req.requestId,
+        ipAddress: req.ip ?? "unknown",
+        userAgent: req.header("User-Agent") ?? "unknown",
+      };
+      // Fire-and-forget: runPipelineJob never throws (every failure is
+      // caught, recorded on the Job doc, and audited internally) — no
+      // queue, same in-process pattern as runZoningJob.
+      void runPipelineJob(job._id as Types.ObjectId, actor);
     })().catch(next);
   },
 );

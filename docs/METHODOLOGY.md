@@ -369,6 +369,34 @@ vulnerability from being marginalized: two habitations facing identical
 hazard severity can still land in different priority buckets because of
 markedly different vulnerability, which is the intended behaviour.
 
+**What `normalize(Risk)` means (a Step 5 finding, not the original
+assumption).** Risk (Section 0) is already guaranteed in `[0, 1]` by
+construction, so an early implementation treated `normalize(Risk)` as a
+no-op — Risk passed into RPI unchanged. That produced a structural bug:
+`Risk = H x E x VI / (1 + CopingCapacity)` has `VI` as a multiplicative
+factor, so `Risk <= VI` always; with RPI a weighted average of Risk and
+VI, that makes `RPI <= VI` for every habitation, regardless of hazard
+severity. Verified against the real Wayanad/Ganjam pilot data: every
+Red/Orange habitation landed in Medium-term — zero in Short-term or
+Immediate — because no habitation's VI in this dataset clears 0.70, the
+Immediate floor. `normalize(Risk)` is instead **min-max rescaling of each
+habitation's governing Risk against the other Red/Orange habitations
+assessed in the same run** (`services/ml/app/engine/priority.py::
+normalize_risk`) — the standard reading of "normalize" in a scoring
+context, and the only one consistent with this section's own stated
+intent, since a no-op reading gives "normalize" nothing to do. This is
+scoped **per district, per pipeline run** (not state-wide across every
+district ever assessed): the highest-risk Red/Orange habitation in a run
+is always normalized to 1.0, the lowest to 0.0, so a single habitation
+assessed alone is trivially the most urgent in its own batch. The
+tradeoff this implies — RPI is a relative ranking within a run, not an
+absolute cross-run/cross-district score — is deliberate: it is what
+makes hazard severity able to drive urgency at all, per this section's
+own design intent, and matches how the priority list is actually used (an
+officer's ranked worklist for one district's current pipeline run, not a
+number compared across districts assessed weeks apart). See
+`docs/SCORING_PIPELINE.md` for a fully worked numeric example.
+
 ### 3.1 Priority Buckets
 
 `RPI` (0–1) is bucketed into three action timeframes. Each threshold is

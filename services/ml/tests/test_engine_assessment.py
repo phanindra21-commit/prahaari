@@ -1,6 +1,6 @@
 from shapely.geometry import Polygon
 
-from app.engine.assessment import assess_habitation
+from app.engine.assessment import HabitationInput, assess_habitations_batch
 
 HABITATION_ATTRS = {
     "demographics": {
@@ -29,16 +29,20 @@ RED_ZONE = Polygon([(75.9, 11.5), (76.1, 11.5), (76.1, 11.7), (75.9, 11.7)])
 GREEN_ZONE = Polygon([(76.2, 11.5), (76.4, 11.5), (76.4, 11.7), (76.2, 11.7)])
 
 
+def _habitation(habitation_id: str, lon: float, lat: float, **overrides) -> HabitationInput:
+    return HabitationInput(
+        habitation_id=habitation_id, lon=lon, lat=lat, households=200,
+        attributes={**HABITATION_ATTRS, **overrides},
+    )
+
+
 def test_habitation_fully_inside_a_red_zone_gets_a_priority_bucket():
-    result = assess_habitation(
-        habitation_id="h1",
-        lon=76.0,
-        lat=11.6,
-        households=200,
-        habitation_attributes=HABITATION_ATTRS,
+    results = assess_habitations_batch(
+        [_habitation("h1", 76.0, 11.6)],
         hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
         hazard_zone_scores={"landslide": {"Red": 0.85}},
     )
+    result = results[0]
     assert result.overall_zone_class == "Red"
     assert result.relocation_priority_index is not None
     assert result.priority_bucket is not None
@@ -47,16 +51,29 @@ def test_habitation_fully_inside_a_red_zone_gets_a_priority_bucket():
     assert result.hazard_exposure[0].exposure > 0.9
 
 
+def test_a_lone_red_zone_habitation_is_the_most_urgent_in_its_own_batch():
+    # The whole point of the normalize(Risk) fix: assessed alone, a
+    # Red-zone habitation is trivially the most urgent habitation in its
+    # batch, so normalized risk = 1.0 and RPI = 0.55*1.0 + 0.45*VI, which
+    # crosses the Immediate threshold even for a moderate VI. This is the
+    # exact shape of the Chooralmala/Mundakkai case.
+    results = assess_habitations_batch(
+        [_habitation("h1", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85}},
+    )
+    result = results[0]
+    assert result.relocation_priority_index == 0.55 * 1.0 + 0.45 * result.vulnerability_index
+    assert result.priority_bucket == "Immediate"
+
+
 def test_habitation_fully_inside_a_green_zone_is_assessed_but_not_bucketed():
-    result = assess_habitation(
-        habitation_id="h2",
-        lon=76.3,
-        lat=11.6,
-        households=200,
-        habitation_attributes=HABITATION_ATTRS,
+    results = assess_habitations_batch(
+        [_habitation("h2", 76.3, 11.6)],
         hazard_zone_geoms={"landslide": {"Green": GREEN_ZONE}},
         hazard_zone_scores={"landslide": {"Green": 0.1}},
     )
+    result = results[0]
     assert result.overall_zone_class == "Green"
     assert result.relocation_priority_index is None
     assert result.priority_bucket is None
@@ -67,41 +84,73 @@ def test_habitation_fully_inside_a_green_zone_is_assessed_but_not_bucketed():
 
 
 def test_governing_hazard_is_the_worst_across_multiple_hazards():
-    result = assess_habitation(
-        habitation_id="h3",
-        lon=76.0,
-        lat=11.6,
-        households=200,
-        habitation_attributes=HABITATION_ATTRS,
-        hazard_zone_geoms={
-            "landslide": {"Red": RED_ZONE},
-            "flood": {"Green": GREEN_ZONE},
-        },
-        hazard_zone_scores={
-            "landslide": {"Red": 0.85},
-            "flood": {"Green": 0.05},
-        },
+    results = assess_habitations_batch(
+        [_habitation("h3", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}, "flood": {"Green": GREEN_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85}, "flood": {"Green": 0.05}},
     )
+    result = results[0]
     assert result.governing_hazard == "landslide"
     assert len(result.hazard_exposure) == 2
 
 
 def test_two_orange_hazards_escalate_the_overall_zone_class_to_red():
     orange_zone = Polygon([(75.9, 11.5), (76.1, 11.5), (76.1, 11.7), (75.9, 11.7)])
-    result = assess_habitation(
-        habitation_id="h4",
-        lon=76.0,
-        lat=11.6,
-        households=200,
-        habitation_attributes=HABITATION_ATTRS,
-        hazard_zone_geoms={
-            "landslide": {"Orange": orange_zone},
-            "flood": {"Orange": orange_zone},
-        },
-        hazard_zone_scores={
-            "landslide": {"Orange": 0.55},
-            "flood": {"Orange": 0.6},
-        },
+    results = assess_habitations_batch(
+        [_habitation("h4", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Orange": orange_zone}, "flood": {"Orange": orange_zone}},
+        hazard_zone_scores={"landslide": {"Orange": 0.55}, "flood": {"Orange": 0.6}},
     )
+    result = results[0]
     assert result.overall_zone_class == "Red"
     assert result.priority_bucket is not None
+
+
+def test_normalize_risk_ranks_habitations_relative_to_the_batch():
+    # Two Red-zone habitations, identical attributes, different hazard
+    # scores: the higher-risk one must get normalized_risk=1.0 (and thus
+    # the higher RPI); the lower-risk one gets 0.0 (min of the batch).
+    results = assess_habitations_batch(
+        [_habitation("low", 76.0, 11.6), _habitation("high", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.72}},  # same zone/score for both cells... see below
+    )
+    # Both habitations share the same footprint/zone here, so give them
+    # different governing risk via different VI instead (still exercises
+    # the same normalize_risk ranking logic end-to-end).
+    low_vi_habitation = _habitation("low2", 76.0, 11.6, demographics={
+        "shareUnder5": 0.05, "shareOver60": 0.05, "womenHeadedHouseholdShare": 0.05,
+        "disabledPersonsShare": 0.02, "bplShare": 0.05, "scStShare": 0.05, "literacyRate": 0.95,
+    })
+    high_vi_habitation = _habitation("high2", 76.0, 11.6, demographics={
+        "shareUnder5": 0.9, "shareOver60": 0.9, "womenHeadedHouseholdShare": 0.9,
+        "disabledPersonsShare": 0.9, "bplShare": 0.95, "scStShare": 0.95, "literacyRate": 0.05,
+    })
+    results2 = assess_habitations_batch(
+        [low_vi_habitation, high_vi_habitation],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.9}},
+    )
+    by_id = {r.habitation_id: r for r in results2}
+    assert by_id["low2"].composite_risk_score < by_id["high2"].composite_risk_score
+    assert by_id["high2"].relocation_priority_index > by_id["low2"].relocation_priority_index
+    # The batch's own highest-risk habitation is normalized to exactly 1.0.
+    assert by_id["high2"].relocation_priority_index == 0.55 * 1.0 + 0.45 * by_id["high2"].vulnerability_index
+    assert results[0].habitation_id == "low"  # sanity: batch ordering preserved
+
+
+def test_yellow_green_habitations_do_not_affect_red_orange_normalization():
+    # A Green habitation's near-zero risk must not stretch the Red/Orange
+    # normalization range — normalize_risk's population is the Red/Orange
+    # subset only.
+    red_habitation = _habitation("red1", 76.0, 11.6)
+    green_habitation = _habitation("green1", 76.3, 11.6)
+    results = assess_habitations_batch(
+        [red_habitation, green_habitation],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE, "Green": GREEN_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85, "Green": 0.05}},
+    )
+    by_id = {r.habitation_id: r for r in results}
+    assert by_id["green1"].priority_bucket is None
+    # Alone among Red/Orange habitations -> normalized to 1.0, same as the single-habitation case.
+    assert by_id["red1"].relocation_priority_index == 0.55 * 1.0 + 0.45 * by_id["red1"].vulnerability_index

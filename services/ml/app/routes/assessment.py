@@ -15,7 +15,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from shapely.geometry import shape
 
-from app.engine.assessment import assess_habitation
+from app.engine.assessment import HabitationInput, assess_habitations_batch
 
 router = APIRouter(prefix="/assessment", tags=["assessment"])
 
@@ -96,30 +96,30 @@ def run_assessment(request: AssessmentRunRequest) -> AssessmentRunResponse:
     except (ValueError, AttributeError) as error:
         raise HTTPException(status_code=422, detail=f"invalid zone geometry: {error}") from error
 
-    assessments = []
-    for habitation in request.habitations:
-        try:
-            result = assess_habitation(
-                habitation_id=habitation.habitationId,
-                lon=habitation.lon,
-                lat=habitation.lat,
-                households=habitation.households,
-                habitation_attributes={
-                    "demographics": habitation.demographics,
-                    "structures": habitation.structures,
-                    "access": habitation.access,
-                    "livelihood": habitation.livelihood,
-                    "copingCapacity": habitation.copingCapacity,
-                },
-                hazard_zone_geoms=zone_geoms,
-                hazard_zone_scores=zone_scores,
-            )
-        except (KeyError, ValueError) as error:
-            raise HTTPException(
-                status_code=422,
-                detail=f"habitation {habitation.habitationId}: {error}",
-            ) from error
+    batch_inputs = [
+        HabitationInput(
+            habitation_id=habitation.habitationId,
+            lon=habitation.lon,
+            lat=habitation.lat,
+            households=habitation.households,
+            attributes={
+                "demographics": habitation.demographics,
+                "structures": habitation.structures,
+                "access": habitation.access,
+                "livelihood": habitation.livelihood,
+                "copingCapacity": habitation.copingCapacity,
+            },
+        )
+        for habitation in request.habitations
+    ]
 
+    try:
+        batch_results = assess_habitations_batch(batch_inputs, zone_geoms, zone_scores)
+    except (KeyError, ValueError) as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+
+    assessments = []
+    for result in batch_results:
         assessments.append(
             AssessmentOut(
                 habitationId=result.habitation_id,
