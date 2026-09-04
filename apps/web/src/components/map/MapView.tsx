@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { HazardType, RecommendationStatus } from "@punarvas/shared";
-import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite } from "../../lib/api";
+import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite, ScenarioRun } from "../../lib/api";
+import type { ScenarioViewMode } from "../../stores/scenarioStore";
 import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR } from "./mapStyle";
 
 /** Step 7 Commit 3F: ring color for a habitation with a recorded decision
@@ -34,6 +35,12 @@ interface MapViewProps {
   /** habitationId -> decided Recommendation.status (PENDING_REVIEW entries
    * omitted — only a recorded decision gets a ring). */
   recommendationStatusByHabitationId?: Record<string, RecommendationStatus>;
+  /** Step 8 Part 2E: while set, the scenario's baseline/scenario zone
+   * geometry REPLACES the live `zones` layer (never shown together —
+   * the toggle is how the officer compares them, not simultaneous
+   * overlap) and a "changed cells" highlight outline is drawn on top. */
+  activeScenario?: ScenarioRun | null;
+  scenarioViewMode?: ScenarioViewMode;
 }
 
 function zonesToFeatureCollection(zones: ZonePolygon[], visibleHazards: Set<HazardType>): GeoJSON.FeatureCollection {
@@ -48,6 +55,44 @@ function zonesToFeatureCollection(zones: ZonePolygon[], visibleHazards: Set<Haza
   return { type: "FeatureCollection", features };
 }
 
+function scenarioZonesToFeatureCollection(
+  scenario: ScenarioRun,
+  viewMode: ScenarioViewMode,
+  visibleHazards: Set<HazardType>,
+): GeoJSON.FeatureCollection {
+  const features: GeoJSON.Feature[] = [];
+  for (const g of scenario.zoneGeometries) {
+    if (!visibleHazards.has(g.hazardType)) continue;
+    const byClass = viewMode === "baseline" ? g.baseline : g.scenario;
+    for (const [zoneClass, geometry] of Object.entries(byClass)) {
+      if (!geometry) continue;
+      features.push({
+        type: "Feature",
+        geometry: geometry as GeoJSON.Geometry,
+        properties: { hazardType: g.hazardType, zoneClass },
+      });
+    }
+  }
+  features.sort(
+    (a, b) =>
+      (ZONE_SEVERITY[(a.properties as { zoneClass: string }).zoneClass] ?? 0) -
+      (ZONE_SEVERITY[(b.properties as { zoneClass: string }).zoneClass] ?? 0),
+  );
+  return { type: "FeatureCollection", features };
+}
+
+function scenarioChangedToFeatureCollection(
+  scenario: ScenarioRun,
+  visibleHazards: Set<HazardType>,
+): GeoJSON.FeatureCollection {
+  const features: GeoJSON.Feature[] = [];
+  for (const g of scenario.zoneGeometries) {
+    if (!visibleHazards.has(g.hazardType) || !g.changed) continue;
+    features.push({ type: "Feature", geometry: g.changed as GeoJSON.Geometry, properties: { hazardType: g.hazardType } });
+  }
+  return { type: "FeatureCollection", features };
+}
+
 export function MapView({
   district,
   zones,
@@ -59,6 +104,8 @@ export function MapView({
   selectedHabitationId,
   onHabitationClick,
   recommendationStatusByHabitationId,
+  activeScenario = null,
+  scenarioViewMode = "scenario",
 }: MapViewProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -131,6 +178,84 @@ export function MapView({
           "line-opacity": 0.6,
         },
         filter: ["in", ["get", "zoneClass"], ["literal", ["Red", "Orange"]]],
+      });
+
+      // Step 8 Part 2E: scenario zone overlay — hidden (layout.visibility)
+      // until a scenario is active, at which point the "Live vs scenario
+      // zones" effect below hides zones-fill/outline and shows these
+      // instead (never both at once — the toggle is how the officer
+      // compares baseline vs scenario, not simultaneous overlap).
+      map.addSource("scenario-zones", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "scenario-zones-fill",
+        type: "fill",
+        source: "scenario-zones",
+        layout: { visibility: "none" },
+        paint: {
+          "fill-color": [
+            "match",
+            ["get", "zoneClass"],
+            "Red",
+            ZONE_COLORS.Red!,
+            "Orange",
+            ZONE_COLORS.Orange!,
+            "Yellow",
+            ZONE_COLORS.Yellow!,
+            "Green",
+            ZONE_COLORS.Green!,
+            "#888888",
+          ],
+          "fill-opacity": [
+            "match",
+            ["get", "zoneClass"],
+            "Red",
+            ZONE_OPACITY.Red!,
+            "Orange",
+            ZONE_OPACITY.Orange!,
+            "Yellow",
+            ZONE_OPACITY.Yellow!,
+            "Green",
+            ZONE_OPACITY.Green!,
+            0.2,
+          ],
+        },
+      });
+      map.addLayer({
+        id: "scenario-zones-outline",
+        type: "line",
+        source: "scenario-zones",
+        layout: { visibility: "none" },
+        paint: {
+          "line-color": [
+            "match",
+            ["get", "zoneClass"],
+            "Red",
+            ZONE_COLORS.Red!,
+            "Orange",
+            ZONE_COLORS.Orange!,
+            "#00000000",
+          ],
+          "line-width": 1,
+          "line-opacity": 0.6,
+        },
+        filter: ["in", ["get", "zoneClass"], ["literal", ["Red", "Orange"]]],
+      });
+
+      // The "what changed" highlight — a thick dashed signal-colored
+      // outline around every cell whose class moved, drawn regardless of
+      // which of baseline/scenario is currently shown underneath.
+      map.addSource("scenario-changed", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "scenario-changed-outline",
+        type: "line",
+        source: "scenario-changed",
+        layout: { visibility: "none" },
+        paint: {
+          "line-color": "#45C9BF",
+          "line-width": 2.5,
+          "line-opacity": 0.9,
+          "line-dasharray": [1.5, 1],
+        },
       });
 
       map.addSource("relocation-sites", { type: "geojson", data: EMPTY_FC });
@@ -246,6 +371,37 @@ export function MapView({
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);
   }, [zones, visibleHazards]);
+
+  // Scenario zone overlay (Step 8 Part 2E): while active, replaces the
+  // live zones layers rather than layering on top of them; the "changed
+  // cells" outline shows regardless of the baseline/scenario toggle.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = (): void => {
+      const zonesSource = map.getSource("scenario-zones") as maplibregl.GeoJSONSource | undefined;
+      const changedSource = map.getSource("scenario-changed") as maplibregl.GeoJSONSource | undefined;
+      if (!zonesSource || !changedSource || !map.getLayer("zones-fill")) return;
+
+      if (activeScenario) {
+        zonesSource.setData(scenarioZonesToFeatureCollection(activeScenario, scenarioViewMode, visibleHazards));
+        changedSource.setData(scenarioChangedToFeatureCollection(activeScenario, visibleHazards));
+      } else {
+        zonesSource.setData(EMPTY_FC);
+        changedSource.setData(EMPTY_FC);
+      }
+
+      const liveVisibility = activeScenario ? "none" : "visible";
+      const scenarioVisibility = activeScenario ? "visible" : "none";
+      map.setLayoutProperty("zones-fill", "visibility", liveVisibility);
+      map.setLayoutProperty("zones-outline", "visibility", liveVisibility);
+      map.setLayoutProperty("scenario-zones-fill", "visibility", scenarioVisibility);
+      map.setLayoutProperty("scenario-zones-outline", "visibility", scenarioVisibility);
+      map.setLayoutProperty("scenario-changed-outline", "visibility", scenarioVisibility);
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once("load", apply);
+  }, [activeScenario, scenarioViewMode, visibleHazards]);
 
   // Habitations.
   useEffect(() => {

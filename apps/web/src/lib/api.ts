@@ -501,4 +501,91 @@ export function listDecisions(recommendationId?: string): Promise<{ items: Decis
   return apiRequest("/decisions", { query: { recommendationId } });
 }
 
+// --- Step 8 Part 2: scenario simulator ---
+
+export interface ScenarioParameters {
+  rainfallMmPer24h?: number;
+  seaLevelRiseM?: number;
+  cycloneCategory?: 1 | 2 | 3 | 4 | 5;
+}
+
+export interface ZoneCounts {
+  Red: number;
+  Orange: number;
+  Yellow: number;
+  Green: number;
+}
+
+export interface HazardCellSummary {
+  hazardType: HazardType;
+  affected: boolean;
+  baselineZoneCounts: ZoneCounts;
+  scenarioZoneCounts: ZoneCounts;
+  cellsChanged: number;
+  newlyRedCells: number;
+}
+
+export interface CellClassTransition {
+  hazardType: HazardType;
+  fromZoneClass: ZoneClass;
+  toZoneClass: ZoneClass;
+  cellCount: number;
+}
+
+export interface ScenarioHabitationDelta {
+  habitationId: string;
+  habitationName: string;
+  baselineOverallZoneClass: ZoneClass;
+  scenarioOverallZoneClass: ZoneClass;
+  baselinePriorityBucket: RelocationPriorityBucket | null;
+  scenarioPriorityBucket: RelocationPriorityBucket | null;
+  enteredImmediate: boolean;
+  zoneClassWorsened: boolean;
+}
+
+export interface ScenarioHazardZoneGeometry {
+  hazardType: HazardType;
+  baseline: Partial<Record<ZoneClass, GeoPolygonal>>;
+  scenario: Partial<Record<ZoneClass, GeoPolygonal>>;
+  changed: GeoPolygonal | null;
+}
+
+export interface ScenarioRun {
+  _id: string;
+  name: string;
+  districtId: string;
+  hazardTypes: HazardType[];
+  parameters: ScenarioParameters;
+  hazardSummaries: HazardCellSummary[];
+  cellTransitions: CellClassTransition[];
+  habitationDeltas: ScenarioHabitationDelta[];
+  habitationsEnteringImmediate: string[];
+  zoneGeometries: ScenarioHazardZoneGeometry[];
+  runtimeSeconds: number;
+  modelVersion: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function listScenarios(districtId: string | undefined): Promise<{ items: ScenarioRun[] }> {
+  return apiRequest("/scenarios", { query: { districtId } });
+}
+
+export function getScenario(id: string): Promise<ScenarioRun> {
+  return apiRequest(`/scenarios/${id}`);
+}
+
+export function runScenario(body: {
+  districtId: string;
+  name: string;
+  parameters: ScenarioParameters;
+}): Promise<ScenarioRun> {
+  return apiRequest("/scenarios/run", { method: "POST", body });
+}
+
+export function deleteScenario(id: string): Promise<{ deleted: boolean }> {
+  return apiRequest(`/scenarios/${id}`, { method: "DELETE" });
+}
+
 export type { UserRole };

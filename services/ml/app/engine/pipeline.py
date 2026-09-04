@@ -111,11 +111,12 @@ def score_cells(
     ml_scores = trained.model.predict_proba(features)[:, 1]
     blended = np.array([blended_score(o, m, hazard) for o, m in zip(overlay_scores, ml_scores)])
 
-    # Cache key scoped to this trained model object only (a fresh model is
-    # trained on every score_cells() call, so there is no cross-run reuse to
-    # worry about) — the batch call still builds the SHAP explainer once for
-    # every cell in this run, not once per cell.
-    top_factors = top_contributions_batch(trained.model, f"run-{id(trained.model)}", features, feature_list)
+    # explain.py caches the SHAP explainer by the model OBJECT itself (a
+    # weak reference), not a derived string key — a fresh model is trained
+    # on every score_cells() call, so this always builds/reuses the right
+    # explainer for THIS model, and the batch call below still builds it
+    # once for every cell in this run, not once per cell.
+    top_factors = top_contributions_batch(trained.model, features, feature_list)
 
     return HazardScoring(
         h3_indexes=h3_indexes,

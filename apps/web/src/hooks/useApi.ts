@@ -133,3 +133,31 @@ export function useDecisions(recommendationId: string | undefined) {
     enabled: !!recommendationId,
   });
 }
+
+export function useScenarios(districtId: string | undefined) {
+  return useQuery({
+    queryKey: ["scenarios", districtId],
+    queryFn: () => api.listScenarios(districtId),
+    enabled: !!districtId,
+  });
+}
+
+export function useRunScenario() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.runScenario,
+    onSuccess: (data) => {
+      void queryClient.invalidateQueries({ queryKey: ["scenarios", data.districtId] });
+    },
+  });
+}
+
+export function useDeleteScenario() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.deleteScenario,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["scenarios"] });
+    },
+  });
+}
