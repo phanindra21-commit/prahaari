@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta, timezone
+
 from shapely.geometry import Polygon
 
 from app.engine.assessment import HabitationInput, assess_habitations_batch
+from app.engine.disaster_history import HazardEventPoint
 
 HABITATION_ATTRS = {
     "demographics": {
@@ -137,6 +140,39 @@ def test_normalize_risk_ranks_habitations_relative_to_the_batch():
     # The batch's own highest-risk habitation is normalized to exactly 1.0.
     assert by_id["high2"].relocation_priority_index == 0.55 * 1.0 + 0.45 * by_id["high2"].vulnerability_index
     assert results[0].habitation_id == "low"  # sanity: batch ordering preserved
+
+
+def test_a_recorded_hazard_event_nearby_elevates_exposure_and_risk():
+    now = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    plain = assess_habitations_batch(
+        [_habitation("plain", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85}},
+        hazard_events=[],
+        as_of=now,
+    )[0]
+    with_history = assess_habitations_batch(
+        [_habitation("history", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85}},
+        hazard_events=[HazardEventPoint(hazard_type="landslide", lon=76.0, lat=11.6, date=now - timedelta(days=30))],
+        as_of=now,
+    )[0]
+    assert with_history.hazard_exposure[0].disaster_history_boost > 0
+    assert with_history.hazard_exposure[0].exposure >= plain.hazard_exposure[0].exposure
+    assert with_history.composite_risk_score >= plain.composite_risk_score
+
+
+def test_hazard_event_of_a_different_hazard_type_does_not_boost_this_hazard():
+    now = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    results = assess_habitations_batch(
+        [_habitation("h5", 76.0, 11.6)],
+        hazard_zone_geoms={"landslide": {"Red": RED_ZONE}},
+        hazard_zone_scores={"landslide": {"Red": 0.85}},
+        hazard_events=[HazardEventPoint(hazard_type="flood", lon=76.0, lat=11.6, date=now - timedelta(days=30))],
+        as_of=now,
+    )
+    assert results[0].hazard_exposure[0].disaster_history_boost == 0.0
 
 
 def test_yellow_green_habitations_do_not_affect_red_orange_normalization():

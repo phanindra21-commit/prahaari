@@ -13,6 +13,7 @@ export interface HazardExposureInput {
   hazardScore: number;
   exposure: number;
   zoneClass: ZoneClass;
+  disasterHistoryBoost: number;
 }
 
 export interface AssessmentVersionInput {

@@ -58,7 +58,7 @@ function assessmentInput(
   return {
     habitationId,
     districtId,
-    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.8, exposure: 0.9, zoneClass: "Red" }],
+    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.8, exposure: 0.9, zoneClass: "Red", disasterHistoryBoost: 0 }],
     vulnerabilityIndex: 0.4,
     vulnerabilityDimensions: { demographic: 0.4, socioeconomic: 0.4, structural: 0.4, accessibility: 0.4 },
     copingCapacity: 0.3,
@@ -222,7 +222,7 @@ describe("habitation routes integration", () => {
         overallZoneClass: "Green",
         relocationPriorityIndex: null,
         priorityBucket: null,
-        hazardExposure: [{ hazardType: "landslide", hazardScore: 0.1, exposure: 0.0, zoneClass: "Green" }],
+        hazardExposure: [{ hazardType: "landslide", hazardScore: 0.1, exposure: 0.0, zoneClass: "Green", disasterHistoryBoost: 0 }],
       }),
     ]);
 

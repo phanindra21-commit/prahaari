@@ -37,39 +37,84 @@ const TRAIN_HYPERPARAMETERS = {
   colsampleByTree: 0.8,
 };
 
+/**
+ * Districts (besides `districtId` itself) that also list `hazardType` as a
+ * primary hazard, in natural (insertion/seed) order — same order
+ * data/seed/districts.json lists them in, since District docs are seeded
+ * from that file in file order and this never explicitly re-sorts.
+ */
+async function poolDistrictsForHazard(hazardType: HazardType) {
+  return District.find({ primaryHazards: hazardType });
+}
+
 export async function scoreOneHazard(
   districtId: Types.ObjectId,
   districtSlug: string,
   hazardType: HazardType,
 ): Promise<HazardRunSummary> {
   const factorField = `factors.${hazardType}`;
-  const cells = await GridCell.find({ districtId, [factorField]: { $exists: true } });
-  if (cells.length === 0) {
+
+  // Pool every district that shares this hazard for TRAINING (a hazard
+  // trained on only one district's cells when another district has the
+  // same hazard is thin — e.g. flood on ~2,900 Wayanad cells alone has too
+  // few positive labels for a reliable model — see
+  // services/ml/app/engine/pipeline.py::score_hazard, the offline
+  // equivalent this mirrors). Persistence below still only touches the
+  // REQUESTED district's GridCells/zones: pooling changes what the model
+  // is trained on, not which district's data this call writes.
+  const poolDistricts = await poolDistrictsForHazard(hazardType);
+  if (!poolDistricts.some((d) => (d._id as Types.ObjectId).equals(districtId))) {
     throw new Error(
-      `No GridCell documents have factors.${hazardType} for this district — run generate-grid, ` +
-        "derive_factors.py, then ingest-factors first.",
+      `District ${districtId.toString()} does not list "${hazardType}" as a primary hazard`,
     );
   }
 
-  const cellInputs: ZoningRunCellInput[] = cells.map((cell) => ({
-    h3Index: cell.h3Index,
-    district: districtSlug,
-    lon: cell.centroid.coordinates[0],
-    lat: cell.centroid.coordinates[1],
-    factors: cell.factors[hazardType] as Record<string, number>,
-  }));
+  const pooledCellInputs: ZoningRunCellInput[] = [];
+  const pooledEventPoints: [number, number][] = [];
+  let requestedDistrictCellCount = 0;
 
-  const events = await HazardEvent.find({ districtId, hazardType, "extent.type": "Point" });
-  const eventPoints: [number, number][] = events.map((event) => {
-    const [lon, lat] = (event.extent as { coordinates: [number, number] }).coordinates;
-    return [lon, lat];
-  });
+  for (const district of poolDistricts) {
+    const slug = slugify(district.name);
+    const cells = await GridCell.find({ districtId: district._id, [factorField]: { $exists: true } });
+    if (cells.length === 0) {
+      if ((district._id as Types.ObjectId).equals(districtId)) {
+        throw new Error(
+          `No GridCell documents have factors.${hazardType} for this district — run generate-grid, ` +
+            "derive_factors.py, then ingest-factors first.",
+        );
+      }
+      continue;
+    }
+    if ((district._id as Types.ObjectId).equals(districtId)) {
+      requestedDistrictCellCount = cells.length;
+    }
+    for (const cell of cells) {
+      pooledCellInputs.push({
+        h3Index: cell.h3Index,
+        district: slug,
+        lon: cell.centroid.coordinates[0],
+        lat: cell.centroid.coordinates[1],
+        factors: cell.factors[hazardType] as Record<string, number>,
+      });
+    }
 
-  const response = await mlServiceClient.runZoning(hazardType, cellInputs, eventPoints);
+    const events = await HazardEvent.find({
+      districtId: district._id,
+      hazardType,
+      "extent.type": "Point",
+    });
+    for (const event of events) {
+      const [lon, lat] = (event.extent as { coordinates: [number, number] }).coordinates;
+      pooledEventPoints.push([lon, lat]);
+    }
+  }
+
+  const response = await mlServiceClient.runZoning(hazardType, pooledCellInputs, pooledEventPoints);
   const modelVersion = `${hazardType}-overlay-ml-v1-${Date.now()}`;
   const computedAt = new Date();
 
-  const gridCellUpdates = response.cellScores.map((score) => ({
+  const districtCellScores = response.cellScores.filter((score) => score.district === districtSlug);
+  const gridCellUpdates = districtCellScores.map((score) => ({
     updateOne: {
       filter: { h3Index: score.h3Index },
       update: {
@@ -101,11 +146,17 @@ export async function scoreOneHazard(
     labelSource: response.labelSource,
     notes:
       "SYNTHETIC_DEMO training labels (services/ml/app/engine/labels.py) — not a real historical " +
-      "hazard inventory. See docs/ZONING_PIPELINE.md.",
+      "hazard inventory. See docs/ZONING_PIPELINE.md." +
+      (poolDistricts.length > 1
+        ? ` Trained on ${pooledCellInputs.length} pooled cells across ` +
+          `${poolDistricts.length} districts that share "${hazardType}" as a primary hazard ` +
+          `(${poolDistricts.map((d) => slugify(d.name)).join(", ")}); this ModelRun's zones/GridCell ` +
+          `writes are still scoped to ${districtSlug} only.`
+        : ""),
   });
 
   const meanBlendedByClass = new Map<string, { sum: number; count: number }>();
-  for (const score of response.cellScores) {
+  for (const score of districtCellScores) {
     const bucket = meanBlendedByClass.get(score.zoneClass) ?? { sum: 0, count: 0 };
     bucket.sum += score.blendedScore;
     bucket.count += 1;
@@ -136,7 +187,7 @@ export async function scoreOneHazard(
   return {
     hazardType,
     modelVersion,
-    cellCount: cells.length,
+    cellCount: requestedDistrictCellCount,
     zoneCounts,
     metrics: response.metrics,
   };

@@ -10,6 +10,7 @@ import suitabilityAhpJson from "./suitability-ahp.json";
 import capacityNormsJson from "./capacity-norms.json";
 import exclusionCriteriaJson from "./exclusion-criteria.json";
 import permissionsJson from "./permissions.json";
+import disasterHistoryJson from "./disaster-history.json";
 import {
   hazardWeightsSchema,
   zoneThresholdsSchema,
@@ -22,6 +23,7 @@ import {
   blendConfigSchema,
   indicatorNormalizationSchema,
   permissionsConfigSchema,
+  disasterHistoryConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
   type VulnerabilityWeightsConfig,
@@ -33,6 +35,7 @@ import {
   type BlendConfig,
   type IndicatorNormalizationConfig,
   type PermissionsConfig,
+  type DisasterHistoryConfig,
 } from "./schemas";
 
 const WEIGHT_SUM_TOLERANCE = 1e-6;
@@ -221,6 +224,10 @@ function loadBlendConfig(): BlendConfig {
   return parseConfig(blendConfigSchema, blendConfigJson, "blend-config.json");
 }
 
+function loadDisasterHistory(): DisasterHistoryConfig {
+  return parseConfig(disasterHistoryConfigSchema, disasterHistoryJson, "disaster-history.json");
+}
+
 function loadPermissions(): PermissionsConfig {
   const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
 
@@ -262,3 +269,4 @@ export const exclusionCriteria: ExclusionCriteriaConfig = loadExclusionCriteria(
 export const factorReclassification: FactorReclassificationConfig = loadFactorReclassification();
 export const blendConfig: BlendConfig = loadBlendConfig();
 export const permissionsConfig: PermissionsConfig = loadPermissions();
+export const disasterHistoryConfig: DisasterHistoryConfig = loadDisasterHistory();

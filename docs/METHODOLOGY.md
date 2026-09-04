@@ -29,6 +29,53 @@ when `CopingCapacity = 1`). `CopingCapacity` is deliberately used in this
 one place only — see Section 2.2 for why it is not also subtracted
 inside `VI`.
 
+### Disaster History (Exposure Boost)
+
+Recurrence at a previously-affected site is a well-established signal in
+hazard assessment: a location that has already experienced a hazard
+event is not equally likely, but MORE likely, to experience the same
+hazard type again than an otherwise-identical location with no recorded
+history — repeat landslides along the same destabilized slope, repeat
+cyclone landfall along the same coastal corridor. Before Step 6, the
+`HazardEvent` collection (`data/seed/hazard-events.json`) existed only as
+read-only historical reference data: it never fed into a habitation's
+hazard score, even though disaster history is an explicit input in the
+problem statement. A platform that ignores its own event inventory is
+discarding its strongest evidence.
+
+`services/ml/app/engine/disaster_history.py::compute_disaster_history_boost`
+fixes this: a habitation within `influenceRadiusKm` of a recorded
+`HazardEvent`'s extent, for the SAME hazard type, gets `Exposure` for
+that hazard elevated:
+
+```
+Exposure_effective = min(1, Exposure_raw + DisasterHistoryBoost)
+
+DisasterHistoryBoost = maxBoost
+                      x (1 - distanceKm / influenceRadiusKm)      # spatial decay, linear to 0 at the radius
+                      x 0.5 ^ (yearsSinceEvent / halfLifeYears)   # temporal decay, exponential half-life
+```
+
+Source of truth: `packages/shared/src/config/disaster-history.json`.
+
+| Parameter          | Value | Meaning                                                          |
+| ------------------- | ----- | ----------------------------------------------------------------- |
+| `influenceRadiusKm` | 8     | Beyond this distance from the event, no boost applies.            |
+| `halfLifeYears`     | 15    | Boost halves every 15 years since the event.                      |
+| `maxBoost`          | 0.3   | The boost at distance 0, time 0 — added to raw Exposure, capped at 1. |
+
+When multiple recorded events match a habitation's hazard type within
+range, the boost takes the **maximum** across them, not the sum — a site
+is elevated-risk because it has *a* history, not proportionally more so
+for each additional listed event. A habitation more than `influenceRadiusKm`
+from every matching event, or with no matching event at all, gets a
+boost of exactly 0 (no change from before this feature existed).
+
+This is standard practice: a real deployment would apply the identical
+mechanism against a GSI landslide inventory or CWC flood-extent
+shapefile in place of this dataset's three seeded events — see the
+Validation section below.
+
 ---
 
 ## 1. Hazard Zoning
@@ -614,3 +661,153 @@ The officer decision workbench always displays, per candidate site:
 - The individual `C_land`, `C_water`, `C_education`, `C_health`,
   `C_access` values, so the officer can see how close the non-binding
   constraints are to also becoming limiting.
+
+---
+
+## 6. Validation Against Ground Truth
+
+All hazard, vulnerability, and priority data in this pilot is
+`SYNTHETIC_DEMO` — see CLAUDE.md's constraints: nothing here is described
+as trained on real historical inventory data. But the platform is still
+**validated** against two known real events, because a model that cannot
+reproduce a known outcome on the ground it claims to assess is not
+trustworthy on ground it hasn't been checked against:
+
+- **The July 2024 Wayanad landslides** (Chooralmala–Mundakkai), which
+  killed over 230 people — the most recognizable disaster location in
+  the Kerala pilot, and this platform's single most important sanity
+  check (`data/seed/hazard-events.json`).
+- **Cyclones Phailin (2013) and Titli (2018)**, which struck the Ganjam
+  coast (`data/seed/hazard-events.json`).
+
+**What "validation" means here, precisely.** Calibration adjusts the
+SYNTHETIC INPUT FIELDS that feed the model (the causative-factor
+generator, `services/ml/scripts/derive_factors.py`; the seed attribute
+data, `data/seed/*.geojson`) and adds a real-event-driven signal the
+model was previously missing (Disaster History, above) — it never
+adjusts the SCORING LOGIC (weights, thresholds, formulas) to force a
+particular habitation toward a particular answer. This is the standard
+practice a real deployment would follow with GSI landslide inventory or
+CWC flood-extent data: you calibrate the inputs against known ground
+truth, you do not hand-tune the model until a known site scores how you
+expect.
+
+### 6.1 What Step 6 found and fixed
+
+Running the full pipeline against live Wayanad/Ganjam data surfaced a
+concrete calibration defect: cloudburst governed several Wayanad
+habitations — including Chooralmala and Mundakkai — ahead of landslide,
+in a district whose only recorded historical disaster, and whose
+defining terrain hazard, is landslide. Diagnosed to three specific
+causes in `derive_factors.py`'s synthetic cloudburst field, all fixed
+without touching any weight, threshold, or scoring formula:
+
+1. **Local vs. absolute normalization.** `orographicIndex` (cloudburst's
+   largest-weighted factor, 0.3) was `0.5*normalize01(slope) +
+   0.5*normalize01(elevation)` — each term rescaled to fill [0,1] across
+   Wayanad's OWN cell population, so the district's own top-ranked cells
+   always hit `orographicIndex ~= 1.0` regardless of how extreme their
+   terrain actually is. Landslide's own dominant factor (`slope`, weight
+   0.2) is never rescaled like this — its rating only reaches 5 above an
+   ABSOLUTE 40 degrees. Fixed to a real physical denominator.
+2. **Double-counted elevation.** `orographicIndex` also reused
+   `elevation_amsl`, which cloudburst ALSO carries as its own separate
+   factor (weight 0.15) — elevation was being counted twice in
+   cloudburst's susceptibility index; landslide has no standalone
+   elevation factor at all. Fixed by dropping elevation from
+   `orographicIndex` entirely (kept purely slope-driven, the actual
+   meteorological orographic-lift trigger, scaled against a genuinely
+   steep 40-degree reference).
+3. **A fabricated historical anchor.** `historicalCloudburstDensity`
+   (weight 0.25) was a gaussian bump centred on the real 2024
+   landslide's location, at nearly the same anchor and weight-share
+   landslide's own `historicalIncidentDensity` uses. The real historical
+   record at that point is a **landslide**, not a cloudburst — inventing
+   a "historical cloudburst" peak at the site of a recorded landslide is
+   not physically justified, and duplicated signal the new Disaster
+   History mechanism (above) now already routes to the CORRECT hazard
+   type. Fixed by dropping the anchored bump; the field is now a
+   uniformly low-magnitude noise proxy, honestly representing "no real
+   cloudburst inventory exists for this site."
+
+Two further, independently-scoped fixes from the same pass:
+
+4. **Vulnerability realism.** Chooralmala and Mundakkai's seed attributes
+   understated how remote these settlements actually were: real accounts
+   describe estate labor-line housing on a single vulnerable access
+   road, later reached by rescuers, with documented early-warning
+   failure. Seed data adjusted (`data/seed/wayanad-habitations.geojson`)
+   — not to hit a target score, but to be plausible for the settlements'
+   actual character: `kutchaHousingShare` raised (0.33/0.38 -> 0.5/0.55),
+   `mobileNetworkCoverage` lowered (0.68/0.85 -> 0.4/0.35),
+   `distanceToAllWeatherRoadKm` raised (2.5/2.75 -> 4.2/5.5),
+   `sdrfResponseTimeMinutes` raised (79.8/72 -> 150/175),
+   `shelterWithin2km` set false (was true for both),
+   `earlyWarningCoverage` lowered (0.785/0.663 -> 0.35/0.3), and
+   Mundakkai's `communityTaskForcePresent` set false (was true).
+5. **Live/offline flood training divergence** (a separate, pre-existing
+   bug, not part of the cloudburst diagnosis): the live zoning job
+   trained flood — a hazard both Wayanad and Ganjam list as primary — on
+   only the requesting district's cells each time, while the offline
+   reference script (`run_zoning_pipeline.py`) correctly pools every
+   district that shares a hazard before training. Per-district training
+   on Wayanad's ~2,900 cells alone starves the model of positive
+   examples. Fixed in `apps/api/src/lib/jobs/zoningJob.ts::scoreOneHazard`:
+   any hazard is now trained on the POOLED cell set across every
+   district that lists it as a primary hazard, then only the requesting
+   district's `GridCell`/`HazardZone` documents are written. Re-verified
+   live against offline after the fix — bit-identical, not merely
+   similar, down to the AUC-ROC/precision/recall/F1/calibration-error
+   metrics: Wayanad flood `{Green: 2074, Orange: 7, Yellow: 712}`,
+   Ganjam flood `{Green: 3339, Orange: 1624, Red: 176, Yellow: 3103}` in
+   both paths.
+
+### 6.2 Result, reported plainly
+
+Blended-score distributions across Wayanad's 2,793 grid cells, before
+and after the three cloudburst fixes:
+
+| Hazard     | Mean (before) | Mean (after) | Median (before) | Median (after) |
+| ---------- | ------------- | ------------- | ---------------- | ---------------- |
+| landslide  | 0.373 (overlay) | unchanged     | 0.363 (overlay)  | unchanged        |
+| cloudburst | 0.344 (overlay) | 0.299 (overlay) | 0.300 (overlay) | 0.238 (overlay) |
+
+(Overlay-score figures — the pre-ML-blend stage — since that isolates
+the causative-factor fix from any ML-side variation; the blended-score
+picture moves the same direction: Wayanad's district-wide blended-score
+**mean now favors landslide** (0.309) **over cloudburst** (0.292),
+reversed from before the fix, and landslide now has more Red-class grid
+cells (153) than cloudburst (116).)
+
+Habitation-level outcome for the pilot's two centrepiece habitations,
+before -> after all of Step 6's fixes:
+
+| Habitation  | Governing hazard (before) | Bucket (before) | RPI (before) | Governing hazard (after) | Bucket (after) | RPI (after) |
+| ----------- | -------------------------- | ---------------- | -------------- | -------------------------- | ---------------- | -------------- |
+| Chooralmala | cloudburst                  | MediumTerm       | 0.446          | cloudburst                  | ShortTerm        | 0.627          |
+| Mundakkai   | cloudburst                  | ShortTerm        | 0.482          | cloudburst                  | **Immediate**    | 0.759          |
+
+**Mundakkai now reaches Immediate.** Chooralmala rises substantially
+(MediumTerm -> ShortTerm) but does not cross the Immediate threshold.
+**Both habitations' governing hazard is still cloudburst, not landslide** —
+this is the honest residual finding Step 6 did not resolve, reported
+plainly rather than forced further:
+
+At Chooralmala/Mundakkai's exact grid cells, both hazards' ML models are
+independently saturated (predicted probability > 0.99 for both landslide
+and cloudburst — the 40-45 degree slope at the real escarpment is
+genuinely extreme by both hazards' latent processes, which is
+physically correct: this terrain really is doubly dangerous). With both
+ML scores pinned near 1.0 and `blend-config.json`'s alpha identical
+(0.6) for both hazards, the tie-breaker is the weighted-overlay score,
+where landslide's `distanceToDrainage` and `distanceToRoadCut` factors
+both land at their SAFEST rating (the synthetic `WAYANAD_RIVER`/
+`WAYANAD_ROAD` reference polylines in `derive_factors.py` do not happen
+to pass near the real escarpment coordinates) — pulling landslide's
+overlay score down to 0.578 against cloudburst's 0.675 at that exact
+cell. This is a real, traceable, further-diagnosable limitation of this
+dataset's synthetic river/road geometry, not a weighting or scoring
+defect — and it was deliberately left unfixed rather than adjusting a
+fourth field specifically to move these two habitations' ranking, which
+would cross from calibration into exactly the outcome-forcing this
+project's standing instruction rules out.

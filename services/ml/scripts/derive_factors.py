@@ -200,14 +200,61 @@ def wayanad_factors(lons: np.ndarray, lats: np.ndarray) -> dict[str, dict[str, n
         "historicalInundation": historical_inundation,
     }
 
-    orographic_index = clamp(0.5 * normalize01(slope) + 0.5 * normalize01(elevation_amsl), 0, 1)
-    historical_cloudburst_density = clamp(
-        0.8 * gaussian_bump(lons, lats, *WAYANAD_ESCARPMENT, sigma_km=10)
-        + 0.2 * coherent_field(lons, lats, bbox, 116, 10),
-        0,
-        1,
-    )
-    drainage_capacity = clamp(1 - 0.5 * normalize01(slope) + 0.3 * coherent_field(lons, lats, bbox, 117, 10), 0, 1)
+    # Orographic uplift potential. Two miscalibrations relative to landslide
+    # fixed here, both diagnosed by comparing overlay-score distributions
+    # (see docs/METHODOLOGY.md's Validation section for the before/after
+    # numbers):
+    #
+    # 1. The old formula, `0.5*normalize01(slope) + 0.5*normalize01(elevation_amsl)`,
+    #    locally rescaled BOTH terms to fill [0,1] across this district's own
+    #    cell population — so Wayanad's own top-ranked cells always hit
+    #    orographicIndex ~= 1.0 regardless of how extreme their terrain
+    #    actually is. Landslide's own dominant factor (`slope`, weight 0.2 of
+    #    landslide's LSI) is never rescaled like this — a cell's slope factor
+    #    only reaches rating 5 above an ABSOLUTE 40 degrees. Fixed to a real
+    #    physical denominator instead of a relative one.
+    # 2. Reusing `elevation_amsl` inside orographicIndex double-counted
+    #    elevation: cloudburst ALSO carries elevation as its own separate
+    #    factor below (weight 0.15). Between orographicIndex's elevation
+    #    term and the standalone `elevation` factor, terrain elevation was
+    #    being counted twice in cloudburst's LSI (landslide has no
+    #    standalone elevation factor at all) — an inflation mechanism
+    #    independent of the local-vs-absolute scaling issue. Fixed by
+    #    dropping elevation from orographicIndex entirely: it stays purely
+    #    slope-driven (the actual meteorological trigger for orographic
+    #    lift — moist air forced upward by a windward slope), scaled
+    #    against a genuinely steep 40-degree reference (matched to
+    #    landslide's OWN top slope breakpoint, not a lower one) since
+    #    pronounced orographic rainfall enhancement requires steeper
+    #    terrain than the moderate slopes (10-30 degrees) that alone can
+    #    already trigger landslide instability given the right soil/
+    #    rainfall conditions.
+    orographic_index = clamp(slope / 40.0, 0, 1)
+    # A THIRD miscalibration, found only after re-running the pipeline with
+    # fixes 1-2 above: historicalCloudburstDensity was ALSO a gaussian bump
+    # anchored at WAYANAD_ESCARPMENT — the real 2024 Chooralmala/Mundakkai
+    # LANDSLIDE site (see data/seed/hazard-events.json) — at weight 0.25,
+    # cloudburst's second-largest factor. Landslide's own historicalIncidentDensity
+    # uses the SAME anchor, but at only weight 0.06. The real historical
+    # record at that point is a LANDSLIDE, not a cloudburst: fabricating a
+    # synthetic "historical cloudburst density" peak at the exact site of a
+    # recorded landslide is not physically justified — there is no real
+    # cloudburst inventory in this dataset to anchor to (disaster_history.py,
+    # 1B, is the correct place for a real recorded event to elevate a
+    # habitation's exposure, and it already does so for the correct hazard
+    # type only). Fixed by dropping the escarpment-anchored bump entirely:
+    # this field is now a LOW-magnitude coherent-noise proxy (mean ~0.1,
+    # matching this factor's own former typical value away from the bump —
+    # i.e. everywhere except the small handful of cells the old bump
+    # actually covered) rather than the ~0.5-mean a bare coherent_field()
+    # would give it: an honest "we have no real cloudburst historical
+    # signal, so this stays uniformly weak" rather than an invented peak
+    # borrowed from a different hazard's real event, and without silently
+    # inflating cloudburst's LSI district-wide by swapping one bias for
+    # another.
+    historical_cloudburst_density = clamp(0.2 * coherent_field(lons, lats, bbox, 116, 10), 0, 1)
+    # Same absolute-threshold fix as orographicIndex above (was normalize01(slope)).
+    drainage_capacity = clamp(1 - 0.5 * clamp(slope / 40.0, 0, 1) + 0.3 * coherent_field(lons, lats, bbox, 117, 10), 0, 1)
 
     cloudburst = {
         "orographicIndex": orographic_index,

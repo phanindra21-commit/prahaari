@@ -18,6 +18,10 @@ const DUMMY_GEOMETRY = {
 };
 
 let mlServer: Server;
+let lastZoningRequestBody: {
+  hazardType: string;
+  cells: Array<{ h3Index: string; district: string; factors: Record<string, number> }>;
+} | null = null;
 
 function startMockMlServer(): void {
   mlServer = createServer((req: IncomingMessage, res: ServerResponse) => {
@@ -34,6 +38,7 @@ function startMockMlServer(): void {
         hazardType: string;
         cells: Array<{ h3Index: string; district: string; factors: Record<string, number> }>;
       };
+      lastZoningRequestBody = body;
       const cellScores = body.cells.map((cell) => {
         const slope = cell.factors.slope ?? 0;
         const blended = Math.min(1, slope / 45);
@@ -81,10 +86,10 @@ afterAll(async () => {
   await new Promise<void>((resolve) => mlServer.close(() => resolve()));
 });
 
-async function seedDistrict(lgdCode: string, primaryHazards: string[] = ["landslide"]) {
+async function seedDistrict(lgdCode: string, primaryHazards: string[] = ["landslide"], name = "Test District") {
   return District.create({
     lgdCode,
-    name: "Test District",
+    name,
     state: "Testland",
     boundary: {
       type: "Polygon",
@@ -97,12 +102,17 @@ async function seedDistrict(lgdCode: string, primaryHazards: string[] = ["landsl
   });
 }
 
-async function seedGridCells(districtId: Types.ObjectId, count = 3) {
+async function seedGridCells(
+  districtId: Types.ObjectId,
+  count = 3,
+  hazardType = "landslide",
+  h3Prefix = "88283082a",
+) {
   const cells = [];
   for (let i = 0; i < count; i += 1) {
     cells.push(
       await GridCell.create({
-        h3Index: `88283082a${i}fffff`,
+        h3Index: `${h3Prefix}${i}fffff`,
         resolution: 8,
         districtId,
         centroid: { type: "Point", coordinates: [76.05 + i * 0.001, 11.65] },
@@ -110,7 +120,7 @@ async function seedGridCells(districtId: Types.ObjectId, count = 3) {
           type: "Polygon",
           coordinates: [[[76.04, 11.64], [76.06, 11.64], [76.06, 11.66], [76.04, 11.66], [76.04, 11.64]]],
         },
-        factors: { landslide: { slope: 10 + i * 15, lithology: 0.4 } },
+        factors: { [hazardType]: { slope: 10 + i * 15, lithology: 0.4 } },
         modelVersion: "PENDING_SCORE",
         computedAt: new Date(),
         dataProvenance: "SYNTHETIC_DEMO",
@@ -234,6 +244,34 @@ describe("zoning routes integration", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(404);
+  });
+
+  it("pools cells across every district sharing a hazard for training, but only writes the requested district's GridCells", async () => {
+    const districtA = await seedDistrict("ZONING-RT-005A", ["flood"], "Pool District A");
+    const districtB = await seedDistrict("ZONING-RT-005B", ["flood"], "Pool District B");
+    await seedGridCells(districtA._id as Types.ObjectId, 3, "flood", "88283090a");
+    await seedGridCells(districtB._id as Types.ObjectId, 4, "flood", "88283091a");
+    const token = await tokenForRole("SUPER_ADMIN");
+
+    const runRes = await request(app)
+      .post("/api/v1/zoning/run")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ districtId: (districtA._id as Types.ObjectId).toString(), hazardTypes: ["flood"] });
+    expect(runRes.status).toBe(202);
+
+    const finished = await waitForJobCompletion(runRes.body.jobId as string, token);
+    expect(finished.status).toBe("SUCCEEDED");
+
+    // The ML service saw cells from BOTH districts in one pooled training call.
+    expect(lastZoningRequestBody?.cells.length).toBe(7);
+    const districtsInRequest = new Set(lastZoningRequestBody?.cells.map((c) => c.district));
+    expect(districtsInRequest.size).toBe(2);
+
+    // But only district A's GridCells were actually written.
+    const updatedA = await GridCell.find({ districtId: districtA._id }).lean();
+    const updatedB = await GridCell.find({ districtId: districtB._id }).lean();
+    expect(updatedA.every((c) => c.hazardScores?.flood)).toBe(true);
+    expect(updatedB.every((c) => !c.hazardScores?.flood)).toBe(true);
   });
 
   it("rejects a hazardType the district does not list as a primary hazard", async () => {

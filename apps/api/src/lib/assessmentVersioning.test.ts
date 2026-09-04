@@ -14,7 +14,7 @@ function baseInput(
   return {
     habitationId,
     districtId: new Types.ObjectId(),
-    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.7, exposure: 0.8, zoneClass: "Orange" }],
+    hazardExposure: [{ hazardType: "landslide", hazardScore: 0.7, exposure: 0.8, zoneClass: "Orange", disasterHistoryBoost: 0 }],
     vulnerabilityIndex: 0.5,
     vulnerabilityDimensions: { demographic: 0.4, socioeconomic: 0.5, structural: 0.5, accessibility: 0.5 },
     copingCapacity: 0.3,

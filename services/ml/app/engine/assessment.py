@@ -23,9 +23,11 @@ docs/ARCHITECTURE.md.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 
 from shapely.geometry.base import BaseGeometry
 
+from app.engine.disaster_history import HazardEventPoint, compute_disaster_history_boost
 from app.engine.priority import bucket_for_rpi, compute_rpi, normalize_risk, rpi_contributions
 from app.engine.risk import compute_exposure, compute_risk, governing_risk, habitation_footprint
 from app.engine.vulnerability import compute_vulnerability
@@ -49,6 +51,7 @@ class HazardExposureResult:
     hazard_score: float
     exposure: float
     zone_class: str
+    disaster_history_boost: float = 0.0
 
 
 @dataclass
@@ -89,15 +92,22 @@ def assess_habitations_batch(
     habitations: list[HabitationInput],
     hazard_zone_geoms: dict[str, dict[str, BaseGeometry]],
     hazard_zone_scores: dict[str, dict[str, float]],
+    hazard_events: list[HazardEventPoint] | None = None,
+    as_of: datetime | None = None,
 ) -> list[AssessmentResult]:
     """`hazard_zone_geoms`/`hazard_zone_scores` are both keyed hazardType ->
     zoneClass -> value (geometry / that class's representative hazardScore)
     — shared by every habitation in the batch (they're all in the same
-    district/run). Pass 1 computes VI, exposure, and raw Risk per
+    district/run). `hazard_events` is this district's recorded HazardEvent
+    history (any hazard type; filtered per-hazard inside the loop below) —
+    see disaster_history.py for how it elevates exposure. Pass 1 computes
+    VI, exposure (raw + disaster-history-boosted), and raw Risk per
     habitation; pass 2 min-max normalizes Risk across the Red/Orange
     subset and computes RPI/bucket/explanation for just that subset."""
     results: list[AssessmentResult] = []
     normalized_indicators_by_id: dict[str, dict[str, float]] = {}
+    events = hazard_events or []
+    now = as_of or datetime.now(timezone.utc)
 
     for habitation in habitations:
         footprint = habitation_footprint(habitation.lon, habitation.lat, habitation.households)
@@ -111,7 +121,11 @@ def assess_habitations_batch(
         for hazard_type, zone_geoms in hazard_zone_geoms.items():
             dominant_class = _dominant_zone_class(footprint, zone_geoms)
             hazard_score = hazard_zone_scores.get(hazard_type, {}).get(dominant_class, 0.0)
-            exposure = compute_exposure(footprint, zone_geoms)
+            raw_exposure = compute_exposure(footprint, zone_geoms)
+            history_boost = compute_disaster_history_boost(
+                habitation.lon, habitation.lat, hazard_type, events, now
+            )
+            exposure = min(1.0, raw_exposure + history_boost)
             risk = compute_risk(hazard_score, exposure, vresult.vi, vresult.coping_capacity)
 
             zone_class_by_hazard[hazard_type] = dominant_class
@@ -122,6 +136,7 @@ def assess_habitations_batch(
                     hazard_score=hazard_score,
                     exposure=exposure,
                     zone_class=dominant_class,
+                    disaster_history_boost=history_boost,
                 )
             )
 

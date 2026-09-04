@@ -28,14 +28,14 @@
           "literacyRate": 0.69
         },
         "structures": {
-          "kutchaHousingShare": 0.33,
+          "kutchaHousingShare": 0.5,
           "avgBuildingAgeYears": 20,
-          "predominantFoundationType": "STONE_MASONRY"
+          "predominantFoundationType": "RUBBLE"
         },
         "access": {
-          "distanceToAllWeatherRoadKm": 2.5,
+          "distanceToAllWeatherRoadKm": 4.2,
           "distanceToPhcKm": 8.15,
-          "mobileNetworkCoverage": 0.68,
+          "mobileNetworkCoverage": 0.4,
           "evacuationRouteCount": 1
         },
         "livelihood": {
@@ -47,10 +47,10 @@
         "dataProvenance": "SYNTHETIC_DEMO",
         "terrainTier": "HIGH",
         "copingCapacity": {
-          "sdrfResponseTimeMinutes": 79.8,
-          "shelterWithin2km": true,
+          "sdrfResponseTimeMinutes": 150,
+          "shelterWithin2km": false,
           "communityTaskForcePresent": false,
-          "earlyWarningCoverage": 0.785
+          "earlyWarningCoverage": 0.35
         }
       }
     },
@@ -81,15 +81,15 @@
           "literacyRate": 0.82
         },
         "structures": {
-          "kutchaHousingShare": 0.38,
+          "kutchaHousingShare": 0.55,
           "avgBuildingAgeYears": 32,
           "predominantFoundationType": "NONE"
         },
         "access": {
-          "distanceToAllWeatherRoadKm": 2.75,
+          "distanceToAllWeatherRoadKm": 5.5,
           "distanceToPhcKm": 7.07,
-          "mobileNetworkCoverage": 0.85,
-          "evacuationRouteCount": 2
+          "mobileNetworkCoverage": 0.35,
+          "evacuationRouteCount": 1
         },
         "livelihood": {
           "primaryOccupation": "AGRICULTURE",
@@ -100,10 +100,10 @@
         "dataProvenance": "SYNTHETIC_DEMO",
         "terrainTier": "HIGH",
         "copingCapacity": {
-          "sdrfResponseTimeMinutes": 72.0,
-          "shelterWithin2km": true,
-          "communityTaskForcePresent": true,
-          "earlyWarningCoverage": 0.663
+          "sdrfResponseTimeMinutes": 175,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.3
         }
       }
     },

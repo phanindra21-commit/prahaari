@@ -1,9 +1,15 @@
 import { Types } from "mongoose";
 import type { HazardType, RelocationPriorityBucket } from "@punarvas/shared";
 import { Habitation } from "../../models/Habitation";
+import { HazardEvent } from "../../models/HazardEvent";
 import { getActiveZones } from "../zoneVersioning";
 import { writeAssessmentVersions, type AssessmentVersionInput } from "../assessmentVersioning";
-import { mlServiceClient, type AssessmentRunZoneEntry, type AssessmentRunHabitationInput } from "../mlServiceClient";
+import {
+  mlServiceClient,
+  type AssessmentRunZoneEntry,
+  type AssessmentRunHabitationInput,
+  type AssessmentRunHazardEventInput,
+} from "../mlServiceClient";
 
 export interface AssessmentStageSummary {
   habitationCount: number;
@@ -66,7 +72,20 @@ export async function assessDistrictHabitations(
     copingCapacity: habitation.copingCapacity as unknown as Record<string, unknown>,
   }));
 
-  const response = await mlServiceClient.runAssessment(hazardZones, habitationInputs);
+  // Only Point-extent events feed the disaster-history boost (disaster_history.py) —
+  // same restriction run_zoning_pipeline.py's offline event-point extraction already
+  // applies; every seeded HazardEvent today is a Point.
+  const hazardEventDocs = await HazardEvent.find({
+    districtId,
+    hazardType: { $in: hazardTypes },
+    "extent.type": "Point",
+  });
+  const hazardEventInputs: AssessmentRunHazardEventInput[] = hazardEventDocs.map((event) => {
+    const [lon, lat] = (event.extent as { coordinates: [number, number] }).coordinates;
+    return { hazardType: event.hazardType, lon, lat, date: event.date.toISOString() };
+  });
+
+  const response = await mlServiceClient.runAssessment(hazardZones, habitationInputs, hazardEventInputs);
   const modelVersion = `assessment-v1-${Date.now()}`;
   const habitationById = new Map(habitations.map((h) => [(h._id as Types.ObjectId).toString(), h]));
 
@@ -83,6 +102,7 @@ export async function assessDistrictHabitations(
         hazardScore: e.hazardScore,
         exposure: e.exposure,
         zoneClass: e.zoneClass,
+        disasterHistoryBoost: e.disasterHistoryBoost,
       })),
       vulnerabilityIndex: assessment.vulnerabilityIndex,
       vulnerabilityDimensions: assessment.vulnerabilityDimensions,

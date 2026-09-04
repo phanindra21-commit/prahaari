@@ -9,6 +9,7 @@ read from MongoDB or the local filesystem here.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
@@ -16,6 +17,7 @@ from pydantic import BaseModel, Field
 from shapely.geometry import shape
 
 from app.engine.assessment import HabitationInput, assess_habitations_batch
+from app.engine.disaster_history import HazardEventPoint
 
 router = APIRouter(prefix="/assessment", tags=["assessment"])
 
@@ -41,9 +43,17 @@ class HabitationRequest(BaseModel):
     copingCapacity: dict
 
 
+class HazardEventRequest(BaseModel):
+    hazardType: str
+    lon: float = Field(ge=-180, le=180)
+    lat: float = Field(ge=-90, le=90)
+    date: datetime
+
+
 class AssessmentRunRequest(BaseModel):
     hazardZones: dict[str, list[ZoneClassEntry]] = Field(min_length=1)
     habitations: list[HabitationRequest] = Field(min_length=1)
+    hazardEvents: list[HazardEventRequest] = Field(default_factory=list)
 
 
 class HazardExposureOut(BaseModel):
@@ -51,6 +61,7 @@ class HazardExposureOut(BaseModel):
     hazardScore: float
     exposure: float
     zoneClass: ZoneClass
+    disasterHistoryBoost: float = 0.0
 
 
 class ContributionOut(BaseModel):
@@ -113,8 +124,15 @@ def run_assessment(request: AssessmentRunRequest) -> AssessmentRunResponse:
         for habitation in request.habitations
     ]
 
+    hazard_events = [
+        HazardEventPoint(hazard_type=e.hazardType, lon=e.lon, lat=e.lat, date=e.date)
+        for e in request.hazardEvents
+    ]
+
     try:
-        batch_results = assess_habitations_batch(batch_inputs, zone_geoms, zone_scores)
+        batch_results = assess_habitations_batch(
+            batch_inputs, zone_geoms, zone_scores, hazard_events, datetime.now(timezone.utc)
+        )
     except (KeyError, ValueError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
@@ -129,6 +147,7 @@ def run_assessment(request: AssessmentRunRequest) -> AssessmentRunResponse:
                         hazardScore=e.hazard_score,
                         exposure=e.exposure,
                         zoneClass=e.zone_class,
+                        disasterHistoryBoost=e.disaster_history_boost,
                     )
                     for e in result.hazard_exposure
                 ],

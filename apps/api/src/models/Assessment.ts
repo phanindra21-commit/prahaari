@@ -7,6 +7,9 @@ export interface HazardExposureEntry {
   hazardScore: number;
   exposure: number;
   zoneClass: ZoneClass;
+  /** How much of `exposure` came from proximity to a recorded HazardEvent
+   * for this same hazard type (disaster_history.py) — 0 if none applied. */
+  disasterHistoryBoost: number;
 }
 
 export interface VulnerabilityDimensionScores {
@@ -67,6 +70,7 @@ const hazardExposureEntrySchema = new Schema<HazardExposureEntry>(
     hazardScore: { type: Number, required: true, min: 0, max: 1 },
     exposure: { type: Number, required: true, min: 0, max: 1 },
     zoneClass: { type: String, enum: ZONE_CLASSES, required: true },
+    disasterHistoryBoost: { type: Number, required: true, min: 0, max: 1, default: 0 },
   },
   { _id: false },
 );

@@ -102,6 +102,22 @@ def test_run_assessment_a_lone_red_zone_habitation_reaches_immediate():
     assert data["priorityBucket"] == "Immediate"
 
 
+def test_run_assessment_applies_disaster_history_boost_from_a_nearby_recorded_event():
+    plain_body = _request_body(76.0, 11.6, RED_ZONE_GEOJSON, 0.85, "Red")
+    plain = client.post("/assessment/run", json=plain_body).json()["assessments"][0]
+
+    with_history_body = {**plain_body, "hazardEvents": [
+        {"hazardType": "landslide", "lon": 76.0, "lat": 11.6, "date": "2024-07-30T00:00:00Z"}
+    ]}
+    with_history = client.post("/assessment/run", json=with_history_body).json()["assessments"][0]
+
+    plain_entry = plain["hazardExposure"][0]
+    boosted_entry = with_history["hazardExposure"][0]
+    assert boosted_entry["disasterHistoryBoost"] > 0
+    assert boosted_entry["exposure"] >= plain_entry["exposure"]
+    assert plain_entry["disasterHistoryBoost"] == 0.0
+
+
 def test_run_assessment_ranks_two_red_habitations_by_relative_risk():
     high_vi_attrs = {
         **HABITATION_ATTRS,

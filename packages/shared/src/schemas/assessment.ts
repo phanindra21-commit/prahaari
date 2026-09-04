@@ -13,6 +13,7 @@ export const hazardExposureEntrySchema = z.object({
   hazardScore: z.number().min(0).max(1),
   exposure: z.number().min(0).max(1),
   zoneClass: zoneClassSchema,
+  disasterHistoryBoost: z.number().min(0).max(1).default(0),
 });
 export type HazardExposureEntry = z.infer<typeof hazardExposureEntrySchema>;
 

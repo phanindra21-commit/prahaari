@@ -68,6 +68,7 @@ const hazardExposureOutSchema = z.object({
   hazardScore: z.number().min(0).max(1),
   exposure: z.number().min(0).max(1),
   zoneClass: zoneClassSchema,
+  disasterHistoryBoost: z.number().min(0).max(1).default(0),
 });
 
 const assessmentOutSchema = z.object({
@@ -106,6 +107,13 @@ export interface AssessmentRunHabitationInput {
   access: Record<string, unknown>;
   livelihood: Record<string, unknown>;
   copingCapacity: Record<string, unknown>;
+}
+
+export interface AssessmentRunHazardEventInput {
+  hazardType: HazardType;
+  lon: number;
+  lat: number;
+  date: string;
 }
 
 export interface MlServiceClientOptions {
@@ -174,10 +182,11 @@ export class MlServiceClient {
   async runAssessment(
     hazardZones: Partial<Record<HazardType, AssessmentRunZoneEntry[]>>,
     habitations: AssessmentRunHabitationInput[],
+    hazardEvents: AssessmentRunHazardEventInput[] = [],
   ): Promise<AssessmentRunResponse> {
     const raw = await this.postWithRetry(
       "/assessment/run",
-      JSON.stringify({ hazardZones, habitations }),
+      JSON.stringify({ hazardZones, habitations, hazardEvents }),
     );
     const parsed = assessmentRunResponseSchema.safeParse(raw);
     if (!parsed.success) {

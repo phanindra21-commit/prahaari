@@ -174,6 +174,19 @@ def load_blend_config() -> dict[str, Any]:
     return config
 
 
+def load_disaster_history() -> dict[str, Any]:
+    config = _load_json("disaster-history.json")
+    if not (0.0 <= config["maxBoost"] <= 1.0):
+        raise ValueError(
+            f"[ml/config] disaster-history.json maxBoost ({config['maxBoost']}) must be in [0, 1]"
+        )
+    if config["influenceRadiusKm"] <= 0 or config["halfLifeYears"] <= 0:
+        raise ValueError(
+            "[ml/config] disaster-history.json influenceRadiusKm and halfLifeYears must be positive"
+        )
+    return config
+
+
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
@@ -184,3 +197,4 @@ CAPACITY_NORMS = load_capacity_norms()
 EXCLUSION_CRITERIA = load_exclusion_criteria()
 FACTOR_RECLASSIFICATION = load_factor_reclassification()
 BLEND_CONFIG = load_blend_config()
+DISASTER_HISTORY = load_disaster_history()

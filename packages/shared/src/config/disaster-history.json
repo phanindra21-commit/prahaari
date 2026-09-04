@@ -1,0 +1,7 @@
+{
+  "modelVersion": "disaster-history-v1",
+  "note": "Recurrence at a previously-affected site is a well-established signal in hazard assessment: a location that has already experienced a hazard event is not equally likely, but MORE likely, to experience the same hazard type again (repeat landslides along the same destabilized slope, repeat cyclone landfall along the same coastal corridor) than an otherwise-identical location with no recorded history. This config controls how a recorded HazardEvent (data/seed/hazard-events.json, the HazardEvent collection) elevates the hazard exposure of nearby habitations for that SAME hazard type — services/ml/app/engine/disaster_history.py's compute_disaster_history_boost() — decaying with distance from the event's extent and with time since it occurred. See docs/METHODOLOGY.md's Disaster History section for the full rationale and docs/SCORING_PIPELINE.md for a worked example.",
+  "influenceRadiusKm": 8,
+  "halfLifeYears": 15,
+  "maxBoost": 0.3
+}

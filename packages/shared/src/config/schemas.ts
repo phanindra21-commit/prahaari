@@ -218,6 +218,15 @@ const roleKeysShape = Object.fromEntries(
   USER_ROLES.map((role) => [role, z.array(permissionStringSchema)]),
 ) as Record<(typeof USER_ROLES)[number], z.ZodArray<typeof permissionStringSchema>>;
 
+export const disasterHistoryConfigSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  influenceRadiusKm: z.number().positive(),
+  halfLifeYears: z.number().positive(),
+  maxBoost: z.number().min(0).max(1),
+});
+export type DisasterHistoryConfig = z.infer<typeof disasterHistoryConfigSchema>;
+
 export const permissionsConfigSchema = z.object({
   modelVersion: z.string(),
   note: z.string(),
