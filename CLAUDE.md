@@ -455,6 +455,64 @@ completed.
   regression from this track. Not fixed here (out of scope for Step 7);
   flagged for whoever picks up Step 14 (deployment hardening).
 
+  ### Step 8 (basemap fix + scenario simulator) — DONE
+
+  Not one of this roadmap's original 14 steps — a later session's own
+  two-part scope, using "Step 8" as its own name (same reused-numbering
+  situation as Steps 5/6/7 above).
+
+  **Part 1** (`6ec51fd`): fixed the CARTO "API KEY REQUIRED" watermark
+  flagged as a known issue in the Step 7 track above — CARTO's free
+  basemap tiles started requiring a key. Replaced with Esri's classic
+  public basemap REST services (`server.arcgisonline.com`, keyless for
+  over a decade): `Elevation/World_Hillshade_Dark` as the base layer
+  itself (real elevation relief baked in, not a flat color needing a
+  separate hillshade composited over it) plus `Canvas/World_Dark_Gray_Reference`
+  for labels/boundaries on top. Verified by direct tile fetch and then in
+  a real browser (screenshots, zero "API KEY REQUIRED" text in the DOM).
+
+  **Part 2** (`0872dfd` backend, `99f29ce` frontend): the scenario
+  simulator — `services/ml/app/engine/scenario.py` perturbs a hazard's
+  causative factors per a documented parameter mapping
+  (`packages/shared/src/config/scenario-parameters.json`: rainfall,
+  sea-level rise, cyclone category, every preset citing a real source —
+  the 2024 Wayanad event, Cyclone Phailin, IPCC AR5 RCP8.5) and re-runs
+  overlay → ML → blend → classify, training the XGBoost model exactly
+  ONCE per (district, hazard) and reusing it for the perturbed pass (the
+  key performance lever). Computes the delta against a same-call
+  baseline — cell class-transition counts, newly-Red cells, habitations
+  changing priority bucket, any habitation newly entering Immediate —
+  and persists it onto a new `ScenarioRun` document only; the district's
+  active zoning/assessment is never touched. `POST/GET/DELETE /api/v1/scenarios**`,
+  audited via the existing `autoAudit` middleware, `scenario:run`/`scenario:read`
+  already in the RBAC matrix.
+
+  Measured true runtime against full real district data (not synthetic
+  benchmarks): Wayanad (2793 cells × 3 hazards) 3.9-5.3s; Ganjam (8242
+  cells, the larger district) 4.8-8.7s depending on how many hazards the
+  parameters affect — all comfortably under the 10s target.
+
+  Found and fixed a real bug during live-stack verification, not caught
+  by mocked route tests: `explain.py`'s SHAP explainer cache keyed on
+  `id(trained.model)` (a memory address) — training several models
+  back-to-back in one process (exactly what a multi-hazard scenario run
+  does) let a garbage-collected model's freed address get reused by a
+  new, differently-shaped model, silently handing back the WRONG
+  explainer and crashing deep inside `shap_values()` with an opaque
+  XGBoost shape assertion. Reproduced against live Wayanad data, fixed at
+  the root (the cache now keys on the model object itself via a
+  `WeakKeyDictionary`, structurally immune to the collision and no longer
+  leaking indefinitely either), re-verified live afterward.
+
+  Frontend: a scenario panel on the map (sliders, presets with citation
+  tooltips, saved/reloadable runs), a scenario zone overlay that replaces
+  the live hazard layers while active (never both at once) with a dashed
+  "what changed" highlight, a baseline/scenario toggle, a delta summary
+  panel, and a persistent "hypothetical, not official" banner. Verified
+  in a real browser (Playwright, built production bundle) against the
+  live stack — kept as `apps/web/e2e/scenario-simulator.spec.ts` (same
+  `PUNARVAS_E2E_BACKEND=1`-gated pattern as the other standing e2e specs).
+
 ## Why Python Is a Separate Service
 
 See `docs/ARCHITECTURE.md` for the full rationale — in short: geospatial
