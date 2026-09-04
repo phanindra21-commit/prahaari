@@ -210,8 +210,12 @@ completed.
       job + `/api/v1/zones**` + `/api/v1/grid**` endpoints behind
       `requirePermission`+`requireScope`, audited on start and finish.
       See `docs/ZONING_PIPELINE.md`.
-- [ ] **Step 5 — Hazard zoning (web):** MapLibre rendering of hazard zones
+- [x] **Step 5 — Hazard zoning (web):** MapLibre rendering of hazard zones
       on the web map, consuming Step 4's `/api/v1/zones` and `/api/v1/grid`.
+      Done as part of Step 6's web-app build below (`apps/web/src/
+      components/map/`) — the map consumes `/api/v1/zones` (dissolved
+      polygons) rather than raw `/api/v1/grid` cells; see Step 6's status
+      block for why.
 
   **Note:** a separate, later work session also used the name "Step 5" for
   a different scope (fixing Step 4 issues, then vulnerability/coping-
@@ -277,14 +281,70 @@ completed.
   **Not done in this track (left for later steps):** the web UI — a
   MapLibre habitation/priority-list view consuming these new endpoints —
   is Step 7/8/11's remaining web half, not built here.
-- [ ] **Step 6 — Vulnerability assessment (ML):** Vulnerability index model
+
+  **Note:** the vulnerability/RPI ML+API work this block describes
+  already covers roadmap Steps 6 and 8's ML/API halves; their remaining
+  web halves (Steps 7/8) were built in the Step 6 track below (same
+  reused-name situation as Step 5 above — see that note).
+
+  ### Step 6 (calibration + web app) — DONE
+
+  A later work session used the name "Step 6" for its own scope:
+  calibrating the hazard model against the real 2024 Wayanad landslide
+  as ground truth, then building `apps/web` out from its Step 1
+  placeholder into a working map-first officer workbench.
+
+  **Commit 1** (`5331c13`): diagnosed and fixed three miscalibrations in
+  cloudburst's synthetic factor generation that let it govern Wayanad
+  habitations (including Chooralmala/Mundakkai) ahead of landslide;
+  wired disaster history into scoring for the first time
+  (`services/ml/app/engine/disaster_history.py`,
+  `packages/shared/src/config/disaster-history.json`); corrected
+  unrealistic seed data for Chooralmala/Mundakkai; fixed a live/offline
+  divergence in flood zoning (now bit-identical). Mundakkai now reaches
+  Immediate priority; Chooralmala rises to ShortTerm; both remain
+  cloudburst-governed for an honestly-diagnosed residual reason. Full
+  before/after numbers in `docs/METHODOLOGY.md`'s new Validation Against
+  Ground Truth section.
+
+  **Commit 2** (`d1d71de` + `a61b2ff`): while wiring the web app's
+  district switcher, found and fixed a critical pre-existing bug —
+  `requireScope()` passed the wrong shape to `buildScopeFilter()`, so
+  every non-SUPER_ADMIN role's scope filter silently matched nothing
+  (not "only their own district" — nothing at all) since Step 3; masked
+  because every existing scope test only asserted the negative case.
+  Added positive-case regression tests. Also added
+  `GET /api/v1/districts`, `/api/v1/hazard-events`,
+  `/api/v1/relocation-sites` (small, read-only, needed by the map).
+
+  **Commit 3** (`a61b2ff`): `apps/web` — React Router, a Zustand auth
+  store matching Step 3's refresh-rotation scheme, a login page, a
+  role-aware protected layout, a MapLibre map (dissolved hazard zones,
+  habitation points sized/colored by population/priority, relocation
+  site markers, per-hazard layer toggles, a legend, a real elevation
+  hillshade basemap — no API key), a habitation detail panel (risk
+  breakdown, VI dimension bars, plain-language top factors, a disaster-
+  history timeline, a provenance/advisory-only footer on every panel),
+  and a priorities worklist page. This is Step 5's MapLibre web view and
+  Step 7/8's remaining web halves, all done here rather than in those
+  slots, for the same reused-name reason as above.
+
+  **Not verified:** no browser automation was available in that session
+  — typecheck/lint/build/every-endpoint-hit-directly were all verified,
+  actual browser rendering was not. Flagged, not glossed over.
+- [x] **Step 6 — Vulnerability assessment (ML):** Vulnerability index model
       (demographic, socio-economic, structural, accessibility, coping
-      capacity components).
-- [ ] **Step 7 — Vulnerability assessment (API + web):** Endpoints + UI to
+      capacity components). Done in the Step 5 (fix Step 4 + vulnerability/
+      RPI) track above.
+- [x] **Step 7 — Vulnerability assessment (API + web):** Endpoints + UI to
       surface per-habitation vulnerability scores and component breakdown.
-- [ ] **Step 8 — Relocation Priority Index:** RPI computation combining
+      API in the Step 5 track above; web (VI dimension bars) in the
+      Step 6 (calibration + web app) track above.
+- [x] **Step 8 — Relocation Priority Index:** RPI computation combining
       risk + vulnerability, bucketed into Immediate/Short-term/Medium-term,
-      exposed via API and a prioritized list view in web.
+      exposed via API and a prioritized list view in web. API in the
+      Step 5 track above; the web priority list is the Step 6 (calibration
+      + web app) track's Priorities page.
 - [ ] **Step 9 — Candidate site discovery:** Exclusion-criteria filtering +
       AHP-weighted site suitability scoring in `services/ml`.
 - [ ] **Step 10 — Carrying capacity:** Land/water/education/health/access
