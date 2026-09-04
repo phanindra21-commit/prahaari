@@ -198,6 +198,30 @@ def load_compound_hazards() -> dict[str, Any]:
     return config
 
 
+def _assert_factor_exists(hazard: str, factor: str, rule_label: str) -> None:
+    hazard_config = HAZARD_WEIGHTS["hazards"].get(hazard)
+    if hazard_config is None or factor not in hazard_config["factors"]:
+        raise ValueError(
+            f"[ml/config] scenario-parameters.json {rule_label}: factor \"{factor}\" is not one "
+            f"of hazard-weights.json hazards.{hazard}.factors"
+        )
+
+
+def load_scenario_parameters() -> dict[str, Any]:
+    """Single source of truth for how a scenario parameter (Step 8 Part 2)
+    perturbs a causative factor — services/ml/app/engine/scenario.py loads
+    this instead of hardcoding the mapping. Mirrors
+    packages/shared/src/config/loader.ts::loadScenarioParameters()."""
+    config = _load_json("scenario-parameters.json")
+    for rule in config["rainfall"]["affects"]:
+        _assert_factor_exists(rule["hazard"], rule["factor"], f"rainfall.affects[hazard={rule['hazard']}]")
+    for rule in config["seaLevelRise"]["affects"]:
+        _assert_factor_exists(rule["hazard"], rule["factor"], f"seaLevelRise.affects[hazard={rule['hazard']}]")
+    for rule in config["cyclone"]["affects"]:
+        _assert_factor_exists(rule["hazard"], rule["factor"], f"cyclone.affects[hazard={rule['hazard']}]")
+    return config
+
+
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
@@ -210,3 +234,4 @@ FACTOR_RECLASSIFICATION = load_factor_reclassification()
 BLEND_CONFIG = load_blend_config()
 DISASTER_HISTORY = load_disaster_history()
 COMPOUND_HAZARDS = load_compound_hazards()
+SCENARIO_PARAMETERS = load_scenario_parameters()

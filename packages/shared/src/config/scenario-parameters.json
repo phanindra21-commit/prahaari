@@ -1,0 +1,76 @@
+{
+  "modelVersion": "scenario-parameters-v1",
+  "note": "Single source of truth for how a scenario parameter perturbs a causative factor (services/ml/app/engine/scenario.py must never hardcode this mapping). Every 'affects' entry names a hazard + a factor that must exist in hazard-weights.json for that hazard — validated at load time by both the TS and Python loaders. Every documented real-world value below (rainfall totals, cyclone classification, sea-level projection) cites its source; this is the demo's evidence trail, not an invented number.",
+  "rainfall": {
+    "baselineMmPer24h": 50,
+    "baselineNote": "50 mm/24h approximates a typical active-monsoon-day rainfall total for the Western Ghats and the Odisha coast. India Meteorological Department rainfall categories rate 64.5-115.5 mm/24h as 'Heavy Rain', so this baseline sits just below that — a normal wet-season day, not an extreme one. It is only the ratio-scaling reference point for this parameter (ratio = rainfallMmPer24h / baselineMmPer24h), not a claim about conditions on any specific date.",
+    "maxRatio": 12,
+    "affects": [
+      {
+        "hazard": "landslide",
+        "factor": "antecedentRainfallIndex",
+        "sensitivity": 0.6,
+        "note": "index0to1 factor (factor-reclassification.json); antecedentRainfallIndex' = clip(antecedentRainfallIndex + (ratio - 1) * sensitivity, 0, 1)."
+      },
+      {
+        "hazard": "flood",
+        "factor": "rainfallIntensity",
+        "sensitivity": 0.6,
+        "note": "index0to1 factor; same ratio-sensitivity formula as landslide's antecedentRainfallIndex above."
+      }
+    ]
+  },
+  "seaLevelRise": {
+    "maxMeters": 3,
+    "affects": [
+      {
+        "hazard": "coastalErosion",
+        "factor": "elevation",
+        "mode": "SUBTRACT_METERS",
+        "sensitivity": 1.0,
+        "note": "coastalErosion.elevation is in meters (factor-reclassification.json); elevation' = max(0, elevation - seaLevelRiseM * sensitivity) — a direct freeboard reduction, sensitivity 1.0 means a straight meter-for-meter subtraction."
+      },
+      {
+        "hazard": "coastalErosion",
+        "factor": "waveEnergy",
+        "mode": "ADD_INDEX",
+        "sensitivity": 0.15,
+        "note": "index0to1 factor; waveEnergy' = clip(waveEnergy + seaLevelRiseM * sensitivity, 0, 1) — deeper water lets wave energy reach further inland."
+      }
+    ]
+  },
+  "cyclone": {
+    "note": "Saffir-Simpson-scale category (1-5) drives a documented per-category delta rather than a first-principles wind/wave physics model — this is a SYNTHETIC_DEMO scenario tool, same transparency standard as derive_factors.py's synthetic-but-coherent factors. Deltas grow roughly with category to reflect increasing storm intensity; they are not a claim of measured storm-surge physics.",
+    "categories": {
+      "1": { "waveEnergyDelta": 0.15, "rainfallIntensityDelta": 0.2 },
+      "2": { "waveEnergyDelta": 0.25, "rainfallIntensityDelta": 0.3 },
+      "3": { "waveEnergyDelta": 0.4, "rainfallIntensityDelta": 0.45 },
+      "4": { "waveEnergyDelta": 0.55, "rainfallIntensityDelta": 0.6 },
+      "5": { "waveEnergyDelta": 0.7, "rainfallIntensityDelta": 0.75 }
+    },
+    "affects": [
+      { "hazard": "coastalErosion", "factor": "waveEnergy", "deltaKey": "waveEnergyDelta" },
+      { "hazard": "flood", "factor": "rainfallIntensity", "deltaKey": "rainfallIntensityDelta" }
+    ]
+  },
+  "presets": [
+    {
+      "id": "wayanad-2024",
+      "label": "2024 Wayanad event: 372 mm/24h",
+      "description": "372 mm of rainfall fell in the 24 hours preceding the 30 July 2024 landslides that struck Chooralmala and Mundakkai, Wayanad — among the deadliest landslide disasters in Indian history (India Meteorological Department / Kerala State Disaster Management Authority post-event reports).",
+      "parameters": { "rainfallMmPer24h": 372 }
+    },
+    {
+      "id": "phailin-2013",
+      "label": "Cyclone Phailin: Category 4",
+      "description": "Very Severe Cyclonic Storm Phailin made landfall near Gopalpur, Ganjam district, Odisha, on 12 October 2013, classified by IMD as Extremely Severe with sustained winds near 200 km/h — equivalent to a Category 4 storm on the Saffir-Simpson scale.",
+      "parameters": { "cycloneCategory": 4 }
+    },
+    {
+      "id": "rcp85-2050",
+      "label": "IPCC RCP 8.5 2050: +0.3 m sea level",
+      "description": "+0.3 m global mean sea-level rise — IPCC Fifth Assessment Report (2014), RCP 8.5 (high-emissions) scenario's medium-confidence central estimate for the mid-21st century relative to the 1986-2005 baseline.",
+      "parameters": { "seaLevelRiseM": 0.3 }
+    }
+  ]
+}

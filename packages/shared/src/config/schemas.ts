@@ -252,6 +252,75 @@ export const disasterHistoryConfigSchema = z.object({
 });
 export type DisasterHistoryConfig = z.infer<typeof disasterHistoryConfigSchema>;
 
+const rainfallAffectsRuleSchema = z.object({
+  hazard: hazardTypeEnum,
+  factor: z.string().min(1),
+  sensitivity: z.number().positive(),
+  note: z.string(),
+});
+
+const seaLevelAffectsRuleSchema = z.object({
+  hazard: hazardTypeEnum,
+  factor: z.string().min(1),
+  mode: z.enum(["SUBTRACT_METERS", "ADD_INDEX"]),
+  sensitivity: z.number().positive(),
+  note: z.string(),
+});
+
+const cycloneCategoryDeltaSchema = z.object({
+  waveEnergyDelta: z.number().min(0).max(1),
+  rainfallIntensityDelta: z.number().min(0).max(1),
+});
+
+const cycloneAffectsRuleSchema = z.object({
+  hazard: hazardTypeEnum,
+  factor: z.string().min(1),
+  deltaKey: z.enum(["waveEnergyDelta", "rainfallIntensityDelta"]),
+});
+
+const scenarioPresetSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  description: z.string().min(1),
+  parameters: z.object({
+    rainfallMmPer24h: z.number().positive().optional(),
+    seaLevelRiseM: z.number().positive().optional(),
+    cycloneCategory: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).optional(),
+  }),
+});
+
+/** Single source of truth for how a scenario parameter (Step 8 Part 2)
+ * perturbs a causative factor — services/ml/app/engine/scenario.py loads
+ * this instead of hardcoding the mapping. See scenario-parameters.json's
+ * own "note" field for the full rationale. */
+export const scenarioParametersConfigSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  rainfall: z.object({
+    baselineMmPer24h: z.number().positive(),
+    baselineNote: z.string(),
+    maxRatio: z.number().positive(),
+    affects: z.array(rainfallAffectsRuleSchema).min(1),
+  }),
+  seaLevelRise: z.object({
+    maxMeters: z.number().positive(),
+    affects: z.array(seaLevelAffectsRuleSchema).min(1),
+  }),
+  cyclone: z.object({
+    note: z.string(),
+    categories: z.object({
+      "1": cycloneCategoryDeltaSchema,
+      "2": cycloneCategoryDeltaSchema,
+      "3": cycloneCategoryDeltaSchema,
+      "4": cycloneCategoryDeltaSchema,
+      "5": cycloneCategoryDeltaSchema,
+    }),
+    affects: z.array(cycloneAffectsRuleSchema).min(1),
+  }),
+  presets: z.array(scenarioPresetSchema).min(1),
+});
+export type ScenarioParametersConfig = z.infer<typeof scenarioParametersConfigSchema>;
+
 export const permissionsConfigSchema = z.object({
   modelVersion: z.string(),
   note: z.string(),

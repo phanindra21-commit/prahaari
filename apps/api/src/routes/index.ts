@@ -9,6 +9,7 @@ import { relocationSiteRouter } from "./relocationSite.routes";
 import { sitesRouter } from "./sites.routes";
 import { recommendationRouter } from "./recommendation.routes";
 import { decisionRouter } from "./decision.routes";
+import { scenarioRouter } from "./scenario.routes";
 
 export const apiV1Router = Router();
 apiV1Router.use("/auth", authRouter);
@@ -21,3 +22,4 @@ apiV1Router.use(relocationSiteRouter);
 apiV1Router.use(sitesRouter);
 apiV1Router.use(recommendationRouter);
 apiV1Router.use(decisionRouter);
+apiV1Router.use(scenarioRouter);

@@ -73,3 +73,32 @@ def test_factor_reclassification_directions_are_declared():
 def test_blend_config_alpha_in_range_per_hazard():
     for hazard in ("landslide", "flood", "coastalErosion", "cloudburst"):
         assert 0.0 <= cfg.BLEND_CONFIG["hazards"][hazard]["alpha"] <= 1.0
+
+
+def test_scenario_parameters_rainfall_affects_landslide_and_flood_only():
+    hazards_affected = {rule["hazard"] for rule in cfg.SCENARIO_PARAMETERS["rainfall"]["affects"]}
+    assert hazards_affected == {"landslide", "flood"}
+
+
+def test_scenario_parameters_every_affects_rule_references_a_real_hazard_factor():
+    for section in ("rainfall", "seaLevelRise"):
+        for rule in cfg.SCENARIO_PARAMETERS[section]["affects"]:
+            assert rule["factor"] in cfg.HAZARD_WEIGHTS["hazards"][rule["hazard"]]["factors"]
+    for rule in cfg.SCENARIO_PARAMETERS["cyclone"]["affects"]:
+        assert rule["factor"] in cfg.HAZARD_WEIGHTS["hazards"][rule["hazard"]]["factors"]
+
+
+def test_scenario_parameters_cyclone_categories_1_through_5_defined():
+    categories = cfg.SCENARIO_PARAMETERS["cyclone"]["categories"]
+    assert set(categories.keys()) == {"1", "2", "3", "4", "5"}
+    for category, deltas in categories.items():
+        assert 0.0 <= deltas["waveEnergyDelta"] <= 1.0
+        assert 0.0 <= deltas["rainfallIntensityDelta"] <= 1.0
+
+
+def test_scenario_parameters_presets_cite_documented_real_values():
+    preset_ids = {p["id"] for p in cfg.SCENARIO_PARAMETERS["presets"]}
+    assert preset_ids == {"wayanad-2024", "phailin-2013", "rcp85-2050"}
+    for preset in cfg.SCENARIO_PARAMETERS["presets"]:
+        assert preset["description"], f"{preset['id']} must document its real-world source"
+        assert preset["parameters"], f"{preset['id']} must set at least one scenario parameter"

@@ -12,6 +12,7 @@ import exclusionCriteriaJson from "./exclusion-criteria.json";
 import permissionsJson from "./permissions.json";
 import disasterHistoryJson from "./disaster-history.json";
 import compoundHazardsJson from "./compound-hazards.json";
+import scenarioParametersJson from "./scenario-parameters.json";
 import {
   hazardWeightsSchema,
   zoneThresholdsSchema,
@@ -26,6 +27,7 @@ import {
   permissionsConfigSchema,
   disasterHistoryConfigSchema,
   compoundHazardsConfigSchema,
+  scenarioParametersConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
   type VulnerabilityWeightsConfig,
@@ -39,6 +41,7 @@ import {
   type PermissionsConfig,
   type DisasterHistoryConfig,
   type CompoundHazardsConfig,
+  type ScenarioParametersConfig,
 } from "./schemas";
 
 const WEIGHT_SUM_TOLERANCE = 1e-6;
@@ -243,6 +246,32 @@ function loadCompoundHazards(): CompoundHazardsConfig {
   return config;
 }
 
+function assertFactorExists(hazard: string, factor: string, ruleLabel: string): void {
+  const hazardConfig = hazardWeights.hazards[hazard as keyof typeof hazardWeights.hazards];
+  if (!hazardConfig || !(factor in hazardConfig.factors)) {
+    throw new Error(
+      `[shared/config] scenario-parameters.json ${ruleLabel}: factor "${factor}" is not one of ` +
+        `hazard-weights.json hazards.${hazard}.factors`,
+    );
+  }
+}
+
+function loadScenarioParameters(): ScenarioParametersConfig {
+  const config = parseConfig(scenarioParametersConfigSchema, scenarioParametersJson, "scenario-parameters.json");
+
+  for (const rule of config.rainfall.affects) {
+    assertFactorExists(rule.hazard, rule.factor, `rainfall.affects[hazard=${rule.hazard}]`);
+  }
+  for (const rule of config.seaLevelRise.affects) {
+    assertFactorExists(rule.hazard, rule.factor, `seaLevelRise.affects[hazard=${rule.hazard}]`);
+  }
+  for (const rule of config.cyclone.affects) {
+    assertFactorExists(rule.hazard, rule.factor, `cyclone.affects[hazard=${rule.hazard}]`);
+  }
+
+  return config;
+}
+
 function loadPermissions(): PermissionsConfig {
   const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
 
@@ -286,3 +315,4 @@ export const blendConfig: BlendConfig = loadBlendConfig();
 export const permissionsConfig: PermissionsConfig = loadPermissions();
 export const disasterHistoryConfig: DisasterHistoryConfig = loadDisasterHistory();
 export const compoundHazardsConfig: CompoundHazardsConfig = loadCompoundHazards();
+export const scenarioParametersConfig: ScenarioParametersConfig = loadScenarioParameters();

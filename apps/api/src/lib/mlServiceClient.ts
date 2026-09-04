@@ -15,6 +15,7 @@ import type {
   TerrainTier,
   RelocationSiteRawAttributes,
   RelocationPriorityBucket,
+  ScenarioParameters,
 } from "@punarvas/shared";
 import { env } from "./env";
 
@@ -200,6 +201,76 @@ export interface SiteScoringRunHabitationInput {
   relocationPriorityIndex: number;
 }
 
+const zoneCountsOutSchema = z.object({
+  Red: z.number().int().nonnegative(),
+  Orange: z.number().int().nonnegative(),
+  Yellow: z.number().int().nonnegative(),
+  Green: z.number().int().nonnegative(),
+});
+
+const hazardCellSummaryOutSchema = z.object({
+  hazard: hazardTypeSchema,
+  affected: z.boolean(),
+  baselineZoneCounts: zoneCountsOutSchema,
+  scenarioZoneCounts: zoneCountsOutSchema,
+  cellsChanged: z.number().int().nonnegative(),
+  newlyRedCells: z.number().int().nonnegative(),
+});
+
+const cellClassTransitionOutSchema = z.object({
+  hazard: hazardTypeSchema,
+  fromClass: zoneClassSchema,
+  toClass: zoneClassSchema,
+  cellCount: z.number().int().positive(),
+});
+
+const habitationDeltaOutSchema = z.object({
+  habitationId: z.string().min(1),
+  baselineOverallZoneClass: zoneClassSchema,
+  scenarioOverallZoneClass: zoneClassSchema,
+  baselinePriorityBucket: priorityBucketSchema.nullable(),
+  scenarioPriorityBucket: priorityBucketSchema.nullable(),
+  enteredImmediate: z.boolean(),
+  zoneClassWorsened: z.boolean(),
+});
+
+const hazardZoneGeometryOutSchema = z.object({
+  hazard: hazardTypeSchema,
+  baseline: z.record(z.string(), geoPolygonalSchema),
+  scenario: z.record(z.string(), geoPolygonalSchema),
+  changed: geoPolygonalSchema.nullable(),
+});
+
+const scenarioRunResponseSchema = z.object({
+  hazardSummaries: z.array(hazardCellSummaryOutSchema),
+  cellTransitions: z.array(cellClassTransitionOutSchema),
+  habitationDeltas: z.array(habitationDeltaOutSchema),
+  habitationsEnteringImmediate: z.array(z.string()),
+  zoneGeometries: z.array(hazardZoneGeometryOutSchema),
+  runtimeSeconds: z.number().nonnegative(),
+});
+export type ScenarioRunMlResponse = z.infer<typeof scenarioRunResponseSchema>;
+
+export interface ScenarioRunCellInput {
+  h3Index: string;
+  district: string;
+  lon: number;
+  lat: number;
+  factors: Record<string, number>;
+}
+
+export interface ScenarioRunHabitationInput {
+  habitationId: string;
+  lon: number;
+  lat: number;
+  households: number;
+  demographics: Record<string, number>;
+  structures: Record<string, unknown>;
+  access: Record<string, unknown>;
+  livelihood: Record<string, unknown>;
+  copingCapacity: Record<string, unknown>;
+}
+
 export interface MlServiceClientOptions {
   baseUrl?: string;
   timeoutMs?: number;
@@ -302,6 +373,36 @@ export class MlServiceClient {
     if (!parsed.success) {
       throw new Error(
         `[mlServiceClient] POST /sites/run response failed validation: ${parsed.error.toString()}`,
+      );
+    }
+    return parsed.data;
+  }
+
+  /**
+   * Step 8 Part 2D — POST /scenarios/run. `timeoutMs` defaults to this
+   * client's normal 30s, which already has headroom over the measured
+   * true runtime (Wayanad ~3.9s, Ganjam's larger grid ~4.8-6.8s
+   * depending on how many hazards the parameters affect — see
+   * docs/METHODOLOGY.md's scenario-simulator section for the full
+   * measurement). Not retried on failure by the caller — a scenario run
+   * is a synchronous, user-initiated action; retrying it silently could
+   * double-run an expensive computation for the same request.
+   */
+  async runScenario(
+    hazardCells: Partial<Record<HazardType, ScenarioRunCellInput[]>>,
+    hazardEventPoints: Partial<Record<HazardType, [number, number][]>>,
+    habitations: ScenarioRunHabitationInput[],
+    hazardEvents: AssessmentRunHazardEventInput[],
+    parameters: ScenarioParameters,
+  ): Promise<ScenarioRunMlResponse> {
+    const raw = await this.postWithRetry(
+      "/scenarios/run",
+      JSON.stringify({ hazardCells, hazardEventPoints, habitations, hazardEvents, parameters }),
+    );
+    const parsed = scenarioRunResponseSchema.safeParse(raw);
+    if (!parsed.success) {
+      throw new Error(
+        `[mlServiceClient] POST /scenarios/run response failed validation: ${parsed.error.toString()}`,
       );
     }
     return parsed.data;
