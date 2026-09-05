@@ -1,29 +1,44 @@
 import type { StyleSpecification } from "maplibre-gl";
 
 /**
- * Dark basemap, no API key, ever (Step 8 Part 1 — the previous CARTO
- * `basemaps.cartocdn.com` source started requiring a key and rendered an
- * "API KEY REQUIRED" watermark over every map in production, which reads
- * as a broken product to a judge). Esri's classic public basemap REST
- * services (`server.arcgisonline.com`) have been genuinely keyless for
- * over a decade — no token, no signup, no rate-limit wall — and are used
- * here instead:
+ * Post-Step-10 fix: the previous basemap (`Elevation/World_Hillshade_Dark`
+ * + `Canvas/World_Dark_Gray_Reference`) is pure greyscale relief with NO
+ * land/water colour distinction anywhere in the world — not a pilot-
+ * district-specific bug, the whole basemap has no coastline or water at
+ * all. For Ganjam, a coastal district whose entire hazard story is
+ * coastal erosion and cyclones, having no visible Bay of Bengal made the
+ * demo incoherent. Flagged in rehearsal, fixed here.
  *
- *  - `Elevation/World_Hillshade_Dark` IS the base layer, not an overlay
- *    over a flat color: it is itself a full dark-canvas raster baked
- *    from real elevation data, so the Western Ghats escarpment behind
- *    Chooralmala/Mundakkai is visible with no separate DEM/hillshade
- *    compositing needed (MapLibre raster layers have no blend-mode
- *    property, so a two-layer "flat base UNDER hillshade" composite
- *    like Esri's own Living Atlas authoring isn't reproducible here
- *    anyway — this single layer already reads as both).
- *  - `Canvas/World_Dark_Gray_Reference` is a transparent-background
- *    overlay of place labels, admin boundaries, and roads, tuned to sit
- *    on top of a dark base.
+ * `NatGeo_World_Map` (`server.arcgisonline.com`, same keyless Esri
+ * service family already in use since Step 8 Part 1 — no token, no
+ * signup, no rate-limit wall, verified over a decade) replaces both
+ * layers with a single raster source that already bakes in everything
+ * the old two-layer composite was missing: land/water colour, a crisp
+ * coastline, rivers and reservoirs, hillshaded terrain relief (the
+ * Western Ghats escarpment behind Chooralmala/Mundakkai reads clearly,
+ * down to individual ridgelines and named peaks), roads, and its own
+ * place/river/elevation labels. A three-layer composite (terrain base +
+ * hillshade-over-it-at-reduced-opacity + a separate reference/labels
+ * layer) was tried conceptually first, per the brief's suggested order,
+ * but NatGeo already delivers the full result in one layer with no
+ * compositing to get wrong two days before the hackathon — fewer moving
+ * parts, chosen deliberately for reliability over elaborateness.
  *
- * Verified keyless and watermark-free by direct tile fetch over both
- * pilot districts before wiring this in (not just "should work" —
- * checked the actual bytes).
+ * Verified over both pilot districts before wiring this in: fetched
+ * actual tile bytes (not "should work") over Wayanad and Ganjam at
+ * district-wide zoom (9) AND at habitation-level zoom (12, centred on
+ * Mundakkai/Chooralmala and on the Banasura Sagar reservoir) — confirmed
+ * a visible Bay of Bengal with a distinct coastline off Ganjam, the
+ * Western Ghats escarpment with contour/elevation labels, the Kabbani
+ * river and Banasura Sagar reservoir near Wayanad, and zero watermark
+ * text anywhere in the rendered tiles. Source/licence recorded in
+ * `docs/DATA_SOURCES.md`.
+ *
+ * Because the basemap is now light (not dark), every label layer and the
+ * district boundary line in `MapView.tsx`/`RecommendationMap.tsx` were
+ * flipped from light-text-on-dark-halo to dark-text-on-light-halo — the
+ * old scheme was tuned for a near-black basemap and would have been
+ * unreadable against NatGeo's cream/green terrain colour.
  */
 /**
  * Step 10 Part 2B: text-field symbol layers (habitation/block/panchayat/
@@ -42,29 +57,23 @@ export const baseMapStyle: StyleSpecification = {
   version: 8,
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {
-    "esri-hillshade-dark": {
+    "esri-natgeo": {
       type: "raster",
       tiles: [
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade_Dark/MapServer/tile/{z}/{y}/{x}",
+        "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
       ],
       tileSize: 256,
-      maxzoom: 18,
-      attribution: "Hillshade: Esri, Vantor, Airbus DS, USGS, NGA, NASA, and the GIS user community",
-    },
-    "esri-dark-gray-reference": {
-      type: "raster",
-      tiles: [
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-      ],
-      tileSize: 256,
+      // Esri's own service metadata (MapServer?f=json) lists 17 LODs,
+      // level 0-16 — verified z16 tiles resolve (HTTP 200) and z17 does
+      // not exist server-side; MapLibre oversamples the z16 raster for
+      // any deeper zoom the officer scrolls to, same as every slippy-map
+      // raster source behaves past its native max.
       maxzoom: 16,
-      attribution: "Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS user community",
+      attribution:
+        "National Geographic, Esri, Garmin, HERE, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, Increment P Corp.",
     },
   },
-  layers: [
-    { id: "esri-hillshade-dark-layer", type: "raster", source: "esri-hillshade-dark" },
-    { id: "esri-dark-gray-reference-layer", type: "raster", source: "esri-dark-gray-reference" },
-  ],
+  layers: [{ id: "esri-natgeo-layer", type: "raster", source: "esri-natgeo" }],
 };
 
 export const ZONE_COLORS: Record<string, string> = {

@@ -202,18 +202,25 @@ export function MapView({
       // dashed line on top, rather than the original single thin
       // `#5C6B78` line that read as barely-there against the dark basemap
       // and disappeared entirely under a Red/Orange zone fill.
+      //
+      // Post-Step-10 fix: `#DCE2E7` (pale) was tuned for the old dark
+      // basemap and nearly disappears against NatGeo's light cream/green
+      // terrain — switched to a solid administrative-boundary navy that
+      // reads clearly on light terrain colour and isn't already claimed
+      // by the zone/priority-bucket/signal-accent colour vocabulary
+      // elsewhere in this file.
       map.addSource("district-boundary", { type: "geojson", data: EMPTY_FC });
       map.addLayer({
         id: "district-boundary-glow",
         type: "line",
         source: "district-boundary",
-        paint: { "line-color": "#DCE2E7", "line-width": 6, "line-opacity": 0.18, "line-blur": 2 },
+        paint: { "line-color": "#1D3557", "line-width": 6, "line-opacity": 0.22, "line-blur": 2 },
       });
       map.addLayer({
         id: "district-boundary-line",
         type: "line",
         source: "district-boundary",
-        paint: { "line-color": "#DCE2E7", "line-width": 2, "line-dasharray": [3, 2] },
+        paint: { "line-color": "#1D3557", "line-width": 2, "line-dasharray": [3, 2] },
       });
 
       map.addSource("zones", { type: "geojson", data: EMPTY_FC });
@@ -393,13 +400,18 @@ export function MapView({
       });
 
       // Step 10 Part 2B: place names and context — the map was too sparse
-      // to orient by. Every label layer shares the same halo treatment
-      // (dark halo, light text) for legibility against both the dark
-      // basemap and the colored hazard-zone fills; `text-allow-overlap:
-      // false` (the default) is what actually declutters — MapLibre skips
-      // a label whose box would collide with a higher-priority one
-      // already placed, rather than every layer being forced to hand-pick
-      // non-overlapping zoom windows.
+      // to orient by. `text-allow-overlap: false` (the default) is what
+      // actually declutters — MapLibre skips a label whose box would
+      // collide with a higher-priority one already placed, rather than
+      // every layer being forced to hand-pick non-overlapping zoom
+      // windows.
+      //
+      // Post-Step-10 fix: every layer here originally paired light text
+      // with a dark halo, tuned for the old near-black basemap. NatGeo's
+      // light cream/green terrain colour made that combination nearly
+      // invisible, so every layer is flipped to dark text on a light
+      // halo — hierarchy is still carried by size and darkness (district
+      // is largest/darkest-accent, panchayat is smallest/lightest-dark).
       map.addSource("district-label", { type: "geojson", data: EMPTY_FC });
       map.addLayer({
         id: "district-label-layer",
@@ -413,9 +425,9 @@ export function MapView({
           "text-transform": "uppercase",
         },
         paint: {
-          "text-color": "#45C9BF",
-          "text-halo-color": "#0A0E13",
-          "text-halo-width": 2,
+          "text-color": "#1E6E68",
+          "text-halo-color": "#FFFFFF",
+          "text-halo-width": 2.5,
         },
       });
 
@@ -432,7 +444,7 @@ export function MapView({
           "text-transform": "uppercase",
           "text-letter-spacing": 0.03,
         },
-        paint: { "text-color": "#B7C0C9", "text-halo-color": "#0A0E13", "text-halo-width": 1.4 },
+        paint: { "text-color": "#141B23", "text-halo-color": "#FFFFFF", "text-halo-width": 1.8 },
       });
 
       map.addSource("panchayat-labels", { type: "geojson", data: EMPTY_FC });
@@ -446,7 +458,7 @@ export function MapView({
           "text-font": LABEL_FONT,
           "text-size": 11,
         },
-        paint: { "text-color": "#8A97A3", "text-halo-color": "#0A0E13", "text-halo-width": 1.2 },
+        paint: { "text-color": "#3A4753", "text-halo-color": "#FFFFFF", "text-halo-width": 1.6 },
       });
 
       map.addLayer({
@@ -463,7 +475,7 @@ export function MapView({
           "text-justify": "auto",
           "symbol-sort-key": ["-", 0, ["get", "population"]],
         },
-        paint: { "text-color": "#EEF1F4", "text-halo-color": "#0A0E13", "text-halo-width": 1.3 },
+        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 2 },
       });
 
       map.addLayer({
@@ -478,7 +490,7 @@ export function MapView({
           "text-variable-anchor": ["top", "bottom", "left", "right"],
           "text-radial-offset": 0.7,
         },
-        paint: { "text-color": "#DCE2E7", "text-halo-color": "#0A0E13", "text-halo-width": 1.3 },
+        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 2 },
       });
 
       map.on("mouseenter", "habitations-layer", () => {

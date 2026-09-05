@@ -74,7 +74,10 @@ export function RecommendationMap({
           "text-size": 10,
           "text-offset": [0, -1.4],
         },
-        paint: { "text-color": "#DCE2E7", "text-halo-color": "#0A0E13", "text-halo-width": 1 },
+        // Post-Step-10 basemap fix: flipped from light-text/dark-halo
+        // (tuned for the old near-black hillshade basemap) to dark-text/
+        // light-halo — legible against NatGeo's light cream/green terrain.
+        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 1.4 },
       });
 
       map.addSource("origin", { type: "geojson", data: EMPTY_FC });
