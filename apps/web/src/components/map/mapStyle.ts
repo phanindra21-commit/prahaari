@@ -25,8 +25,22 @@ import type { StyleSpecification } from "maplibre-gl";
  * pilot districts before wiring this in (not just "should work" —
  * checked the actual bytes).
  */
+/**
+ * Step 10 Part 2B: text-field symbol layers (habitation/block/panchayat/
+ * district/site names) render nothing without a glyphs URL — MapLibre GL
+ * needs a PBF font-glyph source even for a raster-tile base style. This is
+ * MapLibre's own public demo glyph server (keyless, no signup), the same
+ * one their official example styles use — verified reachable by direct
+ * fetch before wiring in. Only "Open Sans Semibold" is served here (a 404
+ * check ruled out Regular/Bold/other stacks), so every label layer uses
+ * that one font stack and differentiates hierarchy via size/color instead
+ * of weight.
+ */
+export const LABEL_FONT = ["Open Sans Semibold"];
+
 export const baseMapStyle: StyleSpecification = {
   version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   sources: {
     "esri-hillshade-dark": {
       type: "raster",
@@ -60,11 +74,18 @@ export const ZONE_COLORS: Record<string, string> = {
   Green: "#4C9F73",
 };
 
+/**
+ * Step 10 Part 2B: lowered from the original 0.55/0.45/0.3/0.15 — at those
+ * levels the Esri dark-gray reference layer's baked-in town/road labels
+ * underneath were unreadable through Red/Orange fills. Red still reads as
+ * clearly the most severe (highest opacity of the four), just not opaque
+ * enough to blot out the basemap underneath it.
+ */
 export const ZONE_OPACITY: Record<string, number> = {
-  Red: 0.55,
-  Orange: 0.45,
-  Yellow: 0.3,
-  Green: 0.15,
+  Red: 0.4,
+  Orange: 0.32,
+  Yellow: 0.22,
+  Green: 0.1,
 };
 
 export const BUCKET_COLORS: Record<string, string> = {

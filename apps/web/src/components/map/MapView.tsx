@@ -4,7 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { HazardType, RecommendationStatus } from "@punarvas/shared";
 import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite, ScenarioRun } from "../../lib/api";
 import type { ScenarioViewMode } from "../../stores/scenarioStore";
-import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR } from "./mapStyle";
+import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR, LABEL_FONT } from "./mapStyle";
 
 /** Step 7 Commit 3F: ring color for a habitation with a recorded decision
  * (a Recommendation whose status moved off PENDING_REVIEW) — independent
@@ -81,6 +81,77 @@ function scenarioZonesToFeatureCollection(
   return { type: "FeatureCollection", features };
 }
 
+/**
+ * Step 10 Part 2B/2C: a simple, dependency-free centroid — average of the
+ * outer ring's vertices of whichever sub-polygon has the most vertices
+ * (a proxy for "the mainland", so a MultiPolygon district like Ganjam
+ * — a few small Chilika Lake islands plus the main landmass — gets its
+ * label centered on the landmass, not dragged toward a tiny island by an
+ * unweighted average across all sub-polygons). Good enough for placing one
+ * label point; not a true area-weighted geometric centroid.
+ */
+function largestRingCentroid(geometry: GeoJSON.Geometry): [number, number] | null {
+  let rings: [number, number][][] = [];
+  if (geometry.type === "Polygon") {
+    rings = [geometry.coordinates[0] as [number, number][]];
+  } else if (geometry.type === "MultiPolygon") {
+    rings = geometry.coordinates.map((poly) => poly[0] as [number, number][]);
+  } else {
+    return null;
+  }
+  const outer = rings.filter(Boolean).sort((a, b) => b.length - a.length)[0];
+  if (!outer || outer.length === 0) return null;
+  let x = 0;
+  let y = 0;
+  for (const [lon, lat] of outer) {
+    x += lon;
+    y += lat;
+  }
+  return [x / outer.length, y / outer.length];
+}
+
+interface LabelPoint {
+  name: string;
+  lon: number;
+  lat: number;
+  count: number;
+}
+
+/** Groups habitation point features by a property (block/panchayat) and
+ * returns one centroid label point per distinct group. */
+function groupedLabelPoints(
+  features: Array<{ geometry: GeoJSON.Point; properties: { block: string; panchayat: string } }>,
+  key: "block" | "panchayat",
+): LabelPoint[] {
+  const groups = new Map<string, { sumLon: number; sumLat: number; count: number }>();
+  for (const f of features) {
+    const name = f.properties[key];
+    const [lon, lat] = f.geometry.coordinates as [number, number];
+    const g = groups.get(name) ?? { sumLon: 0, sumLat: 0, count: 0 };
+    g.sumLon += lon;
+    g.sumLat += lat;
+    g.count += 1;
+    groups.set(name, g);
+  }
+  return Array.from(groups.entries()).map(([name, g]) => ({
+    name,
+    lon: g.sumLon / g.count,
+    lat: g.sumLat / g.count,
+    count: g.count,
+  }));
+}
+
+function labelPointsToFeatureCollection(points: LabelPoint[]): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: points.map((p) => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+      properties: { name: p.name, count: p.count },
+    })),
+  };
+}
+
 function scenarioChangedToFeatureCollection(
   scenario: ScenarioRun,
   visibleHazards: Set<HazardType>,
@@ -126,12 +197,23 @@ export function MapView({
     mapRef.current = map;
 
     map.on("load", () => {
+      // Step 10 Part 2C: a distinct, legible outline for "this is the area
+      // of responsibility" — a soft wide glow underneath a crisp bright
+      // dashed line on top, rather than the original single thin
+      // `#5C6B78` line that read as barely-there against the dark basemap
+      // and disappeared entirely under a Red/Orange zone fill.
       map.addSource("district-boundary", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "district-boundary-glow",
+        type: "line",
+        source: "district-boundary",
+        paint: { "line-color": "#DCE2E7", "line-width": 6, "line-opacity": 0.18, "line-blur": 2 },
+      });
       map.addLayer({
         id: "district-boundary-line",
         type: "line",
         source: "district-boundary",
-        paint: { "line-color": "#5C6B78", "line-width": 1.5, "line-dasharray": [2, 2] },
+        paint: { "line-color": "#DCE2E7", "line-width": 2, "line-dasharray": [3, 2] },
       });
 
       map.addSource("zones", { type: "geojson", data: EMPTY_FC });
@@ -310,6 +392,95 @@ export function MapView({
         },
       });
 
+      // Step 10 Part 2B: place names and context — the map was too sparse
+      // to orient by. Every label layer shares the same halo treatment
+      // (dark halo, light text) for legibility against both the dark
+      // basemap and the colored hazard-zone fills; `text-allow-overlap:
+      // false` (the default) is what actually declutters — MapLibre skips
+      // a label whose box would collide with a higher-priority one
+      // already placed, rather than every layer being forced to hand-pick
+      // non-overlapping zoom windows.
+      map.addSource("district-label", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "district-label-layer",
+        type: "symbol",
+        source: "district-label",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": LABEL_FONT,
+          "text-size": 22,
+          "text-letter-spacing": 0.04,
+          "text-transform": "uppercase",
+        },
+        paint: {
+          "text-color": "#45C9BF",
+          "text-halo-color": "#0A0E13",
+          "text-halo-width": 2,
+        },
+      });
+
+      map.addSource("block-labels", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "block-labels-layer",
+        type: "symbol",
+        source: "block-labels",
+        minzoom: 9,
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": LABEL_FONT,
+          "text-size": 13,
+          "text-transform": "uppercase",
+          "text-letter-spacing": 0.03,
+        },
+        paint: { "text-color": "#B7C0C9", "text-halo-color": "#0A0E13", "text-halo-width": 1.4 },
+      });
+
+      map.addSource("panchayat-labels", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "panchayat-labels-layer",
+        type: "symbol",
+        source: "panchayat-labels",
+        minzoom: 11,
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": LABEL_FONT,
+          "text-size": 11,
+        },
+        paint: { "text-color": "#8A97A3", "text-halo-color": "#0A0E13", "text-halo-width": 1.2 },
+      });
+
+      map.addLayer({
+        id: "habitation-name-labels",
+        type: "symbol",
+        source: "habitations",
+        minzoom: 10,
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": LABEL_FONT,
+          "text-size": 12,
+          "text-variable-anchor": ["top", "bottom", "left", "right"],
+          "text-radial-offset": 0.8,
+          "text-justify": "auto",
+          "symbol-sort-key": ["-", 0, ["get", "population"]],
+        },
+        paint: { "text-color": "#EEF1F4", "text-halo-color": "#0A0E13", "text-halo-width": 1.3 },
+      });
+
+      map.addLayer({
+        id: "relocation-site-name-labels",
+        type: "symbol",
+        source: "relocation-sites",
+        minzoom: 10,
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": LABEL_FONT,
+          "text-size": 12,
+          "text-variable-anchor": ["top", "bottom", "left", "right"],
+          "text-radial-offset": 0.7,
+        },
+        paint: { "text-color": "#DCE2E7", "text-halo-color": "#0A0E13", "text-halo-width": 1.3 },
+      });
+
       map.on("mouseenter", "habitations-layer", () => {
         map.getCanvas().style.cursor = "pointer";
       });
@@ -341,6 +512,19 @@ export function MapView({
         geometry: district.boundary as GeoJSON.Geometry,
         properties: {},
       });
+
+      const labelSource = map.getSource("district-label") as maplibregl.GeoJSONSource | undefined;
+      const centroid = largestRingCentroid(district.boundary as GeoJSON.Geometry);
+      labelSource?.setData(
+        centroid
+          ? {
+              type: "Feature",
+              geometry: { type: "Point", coordinates: centroid },
+              properties: { name: district.name },
+            }
+          : EMPTY_FC,
+      );
+
       const coords: [number, number][] = [];
       const collect = (geom: GeoJSON.Geometry): void => {
         if (geom.type === "Polygon") geom.coordinates.forEach((ring) => ring.forEach((c) => coords.push(c as [number, number])));
@@ -403,15 +587,22 @@ export function MapView({
     else map.once("load", apply);
   }, [activeScenario, scenarioViewMode, visibleHazards]);
 
-  // Habitations.
+  // Habitations, plus the block/panchayat labels derived from them
+  // (Step 10 Part 2B — there is no separate block/panchayat boundary
+  // dataset, so one label per distinct name is placed at the centroid of
+  // the habitations that share it).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
     const apply = (): void => {
       const source = map.getSource("habitations") as maplibregl.GeoJSONSource | undefined;
+      const blockSource = map.getSource("block-labels") as maplibregl.GeoJSONSource | undefined;
+      const panchayatSource = map.getSource("panchayat-labels") as maplibregl.GeoJSONSource | undefined;
       if (!source) return;
       if (!showHabitations || !habitations) {
         source.setData(EMPTY_FC);
+        blockSource?.setData(EMPTY_FC);
+        panchayatSource?.setData(EMPTY_FC);
         return;
       }
       const features = habitations.features.map((f) => ({
@@ -427,6 +618,13 @@ export function MapView({
         },
       }));
       source.setData({ type: "FeatureCollection", features });
+
+      const pointFeatures = habitations.features.map((f) => ({
+        geometry: f.geometry as GeoJSON.Point,
+        properties: { block: f.properties.block, panchayat: f.properties.panchayat },
+      }));
+      blockSource?.setData(labelPointsToFeatureCollection(groupedLabelPoints(pointFeatures, "block")));
+      panchayatSource?.setData(labelPointsToFeatureCollection(groupedLabelPoints(pointFeatures, "panchayat")));
     };
     if (map.isStyleLoaded()) apply();
     else map.once("load", apply);
