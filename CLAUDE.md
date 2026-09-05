@@ -513,6 +513,88 @@ completed.
   live stack — kept as `apps/web/e2e/scenario-simulator.spec.ts` (same
   `PUNARVAS_E2E_BACKEND=1`-gated pattern as the other standing e2e specs).
 
+  ### Step 9 (authority dashboard, reports, demo hardening) — DONE
+
+  The final feature build before the hackathon; not one of this
+  roadmap's original 14 steps (same reused-numbering situation as Steps
+  5-8 above).
+
+  **Part 1** (`219768e` backend, `e1aeff4` frontend): `GET /api/v1/
+  dashboard/summary` — the officer landing page's data. Headline figures,
+  THE capacity shortfall (needs relocation / has a site / does not /
+  population with nowhere to go) in the most prominent position, priority-
+  bucket/hazard/binding-constraint charts (recharts — installed as an
+  actual dependency; it was described as "already available" but wasn't),
+  a top-10 needs-attention list, and recent decisions (sourced from the
+  already-scoped `Decision` collection, not the broad `auditLog:read`
+  permission). Every section beyond `habitation:read`-level figures is
+  computed only for a role that actually holds the matching permission —
+  a `FIELD_VOLUNTEER` gets real base counts and an explicit "requires X
+  access" note for everything else, never a blank panel. STATE_ADMIN/
+  SUPER_ADMIN with more than one district get a per-district breakdown
+  plus a summed total. `/dashboard` is now the landing page after login.
+
+  Found and fixed a real scope bug while building this: the route reused
+  a `districtId`-keyed scope filter to query the `District` collection
+  itself (keyed by its own `_id`), which either matched nothing or (for
+  STATE_ADMIN) silently ignored the state restriction — live-caught
+  before shipping (Kerala's STATE_ADMIN initially saw Ganjam, an Odisha
+  district).
+
+  **Part 2** (`5b9d9c3`): printable district situation reports and
+  per-habitation assessment sheets — print-optimized web pages
+  (`window.print()`, a global print stylesheet hiding app chrome) rather
+  than a server-side PDF generator, per this step's own "prefer the
+  simpler, more reliable option" instruction. The habitation sheet
+  reports absolute demographic counts (children under 5, residents over
+  60, women-headed households, persons with disability), not just
+  normalized scores. Download links from both the dashboard and the
+  map's habitation panel.
+
+  **SECURITY** (`c7ef988`): while adding a `districtId` filter to
+  `GET /decisions` for the district report, found that an explicit
+  `?districtId=` query param on THREE routes (`GET /recommendations`,
+  `GET /scenarios`, and the new `GET /decisions`) unconditionally
+  overwrote the row-level scope filter instead of being checked against
+  it — confirmed exploitable live (a Wayanad `DISTRICT_OFFICER` token
+  successfully listed Ganjam's recommendations). Two of the three were
+  pre-existing, not introduced this session. Fixed on all three using the
+  same `requireDistrictInScope()` pattern already used correctly
+  elsewhere (`habitation.routes.ts`, `sites.routes.ts`,
+  `dashboard.routes.ts`), with regression tests asserting the exploit
+  path specifically, not just the already-covered default-scope path.
+
+  **Part 3** (`763249b`, `fdb311f`, `5c09244`, `823cf0a`): demo hardening.
+  Replaced the ephemeral in-memory dev MongoDB with a real, persistent
+  `mongod` on an on-disk dbpath (`data/db/`, gitignored) — verified by
+  force-killing it mid-session and confirming data survived crash
+  recovery. Rewrote `README.md` (previously still describing "Step 1
+  scaffold only, no application logic") with one documented, verified
+  path from a clean machine to a full demo, adding
+  `npm run run-pipeline` to script what had been a hand-typed curl-and-
+  poll dance all session. Audited every route/component for the
+  `isLoading || !data` pattern — it renders correctly while loading but
+  spins forever if the query settles with an error instead of data; fixed
+  five real instances (`RecommendationDetailPage`, `HabitationReportPage`,
+  `DistrictReportPage`, `AuditTrailPanel`, `HabitationDetailPanel`).
+  Measured (not assumed) first-load performance: ~600-900ms on localhost,
+  ~2.8s for the first uncached load under emulated "Fast 3G" (bundle
+  code-splitting would likely help further but was judged too risky to
+  attempt this close to the hackathon — reported, not fixed). Verified
+  the literal demo path (login -> dashboard -> map -> habitation ->
+  recommendation -> approve -> chain-verified badge -> scenario -> delta)
+  as one continuous Playwright spec, `full-demo-path.spec.ts`, finding
+  and fixing a real bug in the process: `DecisionActionPanel` checked
+  "already decided" before checking its own mutation's success state, so
+  the query invalidation a successful decision triggers won the render
+  race and the officer never saw "Decision recorded." at all. Also found
+  and fixed a suite-reliability bug: `apps/api`'s login rate limiter (5
+  attempts/15min per IP+email) doesn't distinguish Playwright workers
+  from real users, so running the suite with its default parallelism let
+  concurrent workers logging in as the same seeded officer exhaust the
+  budget and fail with a spurious 429 — set `workers: 1` rather than
+  loosen a real anti-brute-force control.
+
 ## Why Python Is a Separate Service
 
 See `docs/ARCHITECTURE.md` for the full rationale — in short: geospatial
