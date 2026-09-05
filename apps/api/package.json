@@ -15,7 +15,8 @@
     "seed": "ts-node --transpile-only src/scripts/seed.ts",
     "seed:reset": "ts-node --transpile-only src/scripts/seed.ts --reset",
     "generate-grid": "ts-node --transpile-only src/scripts/generateGrid.ts",
-    "ingest-factors": "ts-node --transpile-only src/scripts/ingestFactors.ts"
+    "ingest-factors": "ts-node --transpile-only src/scripts/ingestFactors.ts",
+    "run-pipeline": "ts-node --transpile-only src/scripts/runDemoPipeline.ts"
   },
   "dependencies": {
     "@punarvas/shared": "^0.1.0",
