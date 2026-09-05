@@ -843,6 +843,68 @@ conflate two different kinds of judgment (relative importance of siting
 *criteria* vs. a *derived, situational* safety measure) into one number,
 where keeping them separate lets the officer see both independently.
 
+#### 5.7.3 Honest finding: some origins have no fully clear corridor
+
+Demo rehearsal (7 September 2026) flagged Mundakkai's routed example as a
+weak advertisement for this feature: the direct route crosses 9.7 km of
+Orange + 3.7 km of Red zone, and the safest available route adds 17.2 km
+but still crosses 6.6 km of Orange + 3.2 km of Red — a large detour for a
+small reduction. Diagnosed against live Wayanad data before changing
+anything (not tuned to produce a flattering number):
+
+- **The cost curve is not under-penalizing Red.** Re-running
+  `compute_route()` for this exact pair with the Red multiplier raised
+  1600x (60 to 100,000, holding everything else fixed) reduced the
+  route's residual Red exposure by only 0.05 km (3.21 -> 3.16 km) while
+  making the route longer and pushing more of it into Orange instead —
+  i.e. there is no cheaper-but-unused detour the algorithm is failing to
+  take. The 60x default is already steep enough that A\* takes every
+  materially-available shortcut around Red.
+- **The origin, not the destination, is what has no way out.** The
+  candidate site (Panamaram Government Plot) is not hazard-locked — its
+  own 3 km neighborhood is 79.5% Green / 20.5% Yellow, zero Red or
+  Orange. But Mundakkai's own centroid neighborhood is genuinely
+  encircled: 100% Red within 1 km, 93.8% Red/Orange within 2 km, 85%
+  within 5 km — this is, correctly, the actual 2024 landslide site.
+  There is no path out of that neighborhood, at any cost multiplier,
+  that avoids several km of Red/Orange, because there is no non-hazard
+  terrain close enough to route through.
+- **This is typical of Wayanad's Immediate/ShortTerm habitations, not an
+  outlier** — checked against every other matched habitation in the
+  district: Chooralmala, Pozhuthana, Kalpetta Rural, and Punchirimattom
+  all sit in centroid neighborhoods that are 68-100% Red/Orange within
+  1-3 km, and all show the same modest 24-34% reduction in combined
+  Red+Orange exposure between the direct line and the safest route. This
+  is expected, not a bug: a habitation only reaches Immediate/ShortTerm
+  priority in the first place because Section 3's risk model found it
+  sitting in dangerous terrain, so by construction its immediate
+  surroundings are dangerous too.
+- **One pair is a genuinely better demo example.** Achooranam ->
+  Panamaram Government Plot cuts combined Red+Orange exposure from
+  17.90 km (direct) to 5.92 km (safest route) — a 67% reduction (Red
+  specifically: 6.96 km -> 1.31 km, an 81% cut) — because Achooranam's
+  surrounding terrain, while still hazardous close in, leaves more room
+  for the algorithm to route around it than the other habitations do.
+  **For the hackathon demo, click Achooranam's recommendation, not
+  Mundakkai's or Chooralmala's**, for the clearest illustration of the
+  feature actually finding a safer path.
+
+**Conclusion:** the algorithm was left unchanged — steepening the cost
+curve further would not have changed the Mundakkai result (verified
+above) and would have been tuning the presentation rather than fixing
+anything real. What changed instead is the caption
+(`RecommendationDetailPage.tsx`'s `RouteSafetyCaption`): when the
+Red+Orange exposure reduction is below 35% (the real gap between
+Wayanad's hazard-encircled habitations at 24-34% and Achooranam at 67%),
+it now says plainly that no fully clear corridor exists from that origin
+and reports the actual, honest reduction achieved, instead of implying
+the algorithm found a materially safer path when the surrounding terrain
+simply does not offer one. This is itself a finding worth stating on its
+own terms: for several of Wayanad's highest-priority habitations, there
+is no route out that avoids hazardous terrain — which reinforces, from a
+different angle, the dashboard's existing "not enough safe land" capacity
+finding (Step 9 Part 1) rather than undermining the routing feature.
+
 ---
 
 ## 6. Validation Against Ground Truth

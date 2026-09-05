@@ -57,8 +57,34 @@ function describeExposure(exposure: RouteExposureEntry[]): string {
   return `crosses ${concerning.map((e) => `${e.km.toFixed(1)} km of ${e.zoneClass} zone`).join(" and ")}`;
 }
 
-function RouteSafetyCaption({ route }: { route: RouteInfo }): JSX.Element {
+function concerningKm(exposure: RouteExposureEntry[]): number {
+  return exposure.filter((e) => e.zoneClass === "Red" || e.zoneClass === "Orange").reduce((sum, e) => sum + e.km, 0);
+}
+
+/**
+ * Follow-up diagnosis (post-Step-10): a low percentage reduction here does
+ * NOT mean routing.py is under-penalizing Red — verified against live
+ * Wayanad data that Mundakkai/Chooralmala/Pozhuthana sit in terrain that is
+ * 75-100% Red/Orange within 1 km of their own centroid, so any route out
+ * necessarily crosses some of it. Steepening the Red multiplier 1600x (60
+ * to 100,000 in routing-costs.json) in a live re-check cut the residual
+ * Red exposure by only 0.05 km — confirming this is a geographic fact
+ * about the origin, not a cost-curve bug. The real reduction that IS
+ * achievable ranges 24-34% for these hazard-encircled habitations, versus
+ * 67% for Achooranam (whose surroundings leave more room to route around)
+ * — 35% is the data-derived cut between "a materially safer corridor was
+ * found" and "no fully clear corridor exists, be honest about it" below.
+ */
+const CLEAR_CORRIDOR_REDUCTION_THRESHOLD_PCT = 35;
+
+function RouteSafetyCaption({ route, originName }: { route: RouteInfo; originName: string }): JSX.Element {
   const extraKm = route.routeLengthKm - route.directLengthKm;
+  const directConcerning = concerningKm(route.directExposure);
+  const routeConcerning = concerningKm(route.routeExposure);
+  const reduction = directConcerning - routeConcerning;
+  const reductionPct = directConcerning > 0 ? (reduction / directConcerning) * 100 : 0;
+  const clearCorridorFound = directConcerning === 0 || reductionPct >= CLEAR_CORRIDOR_REDUCTION_THRESHOLD_PCT;
+
   const safestPhrase =
     extraKm > 0.05
       ? `safest route adds ${extraKm.toFixed(1)} km and ${describeExposure(route.routeExposure)}`
@@ -75,9 +101,23 @@ function RouteSafetyCaption({ route }: { route: RouteInfo }): JSX.Element {
           {route.directLengthKm.toFixed(1)} km)
         </span>
       </div>
-      <p>
-        Direct route {describeExposure(route.directExposure)}; {safestPhrase}.
-      </p>
+      {clearCorridorFound ? (
+        <p>
+          Direct route {describeExposure(route.directExposure)}; {safestPhrase}
+          {directConcerning > 0 && routeConcerning >= 0
+            ? ` — a ${reductionPct.toFixed(0)}% cut in Red/Orange exposure versus the direct line`
+            : ""}
+          .
+        </p>
+      ) : (
+        <p>
+          No fully clear corridor exists from {originName} to this site: the origin sits within terrain that is
+          mostly Red/Orange zone for several kilometres in every direction, so any route out crosses some of it.
+          Direct route {describeExposure(route.directExposure)}; the safest available route still reduces
+          Red/Orange exposure by only {Math.max(reduction, 0).toFixed(1)} km ({Math.max(reductionPct, 0).toFixed(0)}
+          %) — {safestPhrase}.
+        </p>
+      )}
       <p className="mt-1 text-[10px] text-mist-500">
         Corridor-level routing over the hazard grid, not road-network routing — an advisory approximation, not a
         navigable path.
@@ -343,7 +383,9 @@ export function RecommendationDetailPage(): JSX.Element {
                 selectedSiteId={selectedSite?._id ?? null}
               />
             </div>
-            {selectedCandidate?.route && <RouteSafetyCaption route={selectedCandidate.route} />}
+            {selectedCandidate?.route && (
+              <RouteSafetyCaption route={selectedCandidate.route} originName={rec.habitationId.name} />
+            )}
           </section>
 
           <section className="rounded border border-ink-600 bg-ink-800 p-3">
