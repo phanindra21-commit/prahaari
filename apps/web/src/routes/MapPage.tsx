@@ -21,7 +21,7 @@ import { ScenarioModeBanner } from "../components/scenario/ScenarioModeBanner";
 
 export function MapPage(): JSX.Element {
   const selectedDistrictId = useDistrictStore((s) => s.selectedDistrictId);
-  const { data: districtsData } = useDistricts();
+  const { data: districtsData, isLoading: districtsLoading, isError: districtsError } = useDistricts();
   const district = districtsData?.items.find((d) => d._id === selectedDistrictId);
 
   const { data: zonesData } = useZones(selectedDistrictId ?? undefined);
@@ -77,6 +77,32 @@ export function MapPage(): JSX.Element {
       else next.add(hazard);
       return next;
     });
+  }
+
+  if (districtsLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-sm text-mist-300">Loading districts…</p>
+      </div>
+    );
+  }
+
+  if (districtsError) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-sm text-zone-red">Could not load districts. Try reloading the page.</p>
+      </div>
+    );
+  }
+
+  if (!districtsData || districtsData.items.length === 0) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="max-w-md text-center text-sm text-mist-300">
+          No district is in your assigned scope yet. Contact your administrator to be assigned to a district.
+        </p>
+      </div>
+    );
   }
 
   return (

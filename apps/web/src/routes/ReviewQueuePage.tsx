@@ -32,7 +32,7 @@ export function ReviewQueuePage(): JSX.Element {
 
   const [bucket, setBucket] = useState<RelocationPriorityBucket | undefined>(undefined);
   const [status, setStatus] = useState<RecommendationStatus | undefined>(undefined);
-  const { data, isLoading } = useRecommendations({
+  const { data, isLoading, isError } = useRecommendations({
     districtId: selectedDistrictId ?? undefined,
     priorityBucket: bucket,
     status,
@@ -80,7 +80,15 @@ export function ReviewQueuePage(): JSX.Element {
         <DistrictCapacityBanner districtId={selectedDistrictId} districtName={district.name} />
       )}
 
+      {!selectedDistrictId && (
+        <p className="text-sm text-mist-300">
+          No district is in your assigned scope yet. Contact your administrator to be assigned to a district.
+        </p>
+      )}
+
       {isLoading && <p className="text-sm text-mist-300">Loading…</p>}
+
+      {isError && <p className="text-sm text-zone-red">Could not load the review queue.</p>}
 
       {data && (
         <div className="overflow-hidden rounded border border-ink-600">

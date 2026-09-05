@@ -50,7 +50,7 @@ interface HabitationDetailPanelProps {
 }
 
 export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetailPanelProps): JSX.Element {
-  const { data: habitation, isLoading } = useHabitation(habitationId);
+  const { data: habitation, isLoading, isError } = useHabitation(habitationId);
   const { data: explain } = useHabitationExplain(habitationId);
   const { data: events } = useHazardEvents(habitation?.districtId);
 
@@ -59,7 +59,9 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
   return (
     <div className="flex h-full w-96 flex-col border-l border-ink-600 bg-ink-900 shadow-panel">
       <div className="flex items-center justify-between border-b border-ink-600 px-4 py-3">
-        <h2 className="text-sm font-semibold text-mist-50">{habitation?.name ?? "Loading…"}</h2>
+        <h2 className="text-sm font-semibold text-mist-50">
+          {habitation?.name ?? (isError ? "Not found" : "Loading…")}
+        </h2>
         <div className="flex items-center gap-1">
           {habitation && (
             <Link
@@ -84,6 +86,8 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
 
       <div className="scrollbar-thin flex-1 overflow-y-auto px-4 py-3">
         {isLoading && <p className="text-sm text-mist-300">Loading habitation…</p>}
+
+        {isError && <p className="text-sm text-zone-red">Could not load this habitation.</p>}
 
         {habitation && (
           <>

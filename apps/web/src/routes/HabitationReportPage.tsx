@@ -30,7 +30,7 @@ function count(share: number | undefined, base: number): string {
  * DistrictReportPage.tsx. */
 export function HabitationReportPage(): JSX.Element {
   const { habitationId } = useParams<{ habitationId: string }>();
-  const { data: habitation, isLoading } = useHabitation(habitationId);
+  const { data: habitation, isLoading, isError } = useHabitation(habitationId);
   const { data: explain } = useHabitationExplain(habitationId);
   const { data: events } = useHazardEvents(habitation?.districtId);
   const { data: recommendations } = useRecommendations({ districtId: habitation?.districtId });
@@ -39,10 +39,20 @@ export function HabitationReportPage(): JSX.Element {
   const recommendation = recommendations?.items.find((r) => r.habitationId._id === habitationId);
   const demographics = habitation?.demographics ?? {};
 
-  if (isLoading || !habitation) {
+  if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center bg-white text-black">
         <p className="text-sm">Loading report…</p>
+      </div>
+    );
+  }
+
+  if (isError || !habitation) {
+    return (
+      <div className="flex h-full items-center justify-center bg-white text-black">
+        <p className="text-sm text-red-600">
+          Could not load this habitation — it may not exist, or may be out of your scope.
+        </p>
       </div>
     );
   }

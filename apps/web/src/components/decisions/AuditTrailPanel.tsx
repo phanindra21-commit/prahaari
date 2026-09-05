@@ -9,10 +9,14 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 export function AuditTrailPanel({ recommendationId }: { recommendationId: string }): JSX.Element {
-  const { data, isLoading } = useRecommendationAuditTrail(recommendationId);
+  const { data, isLoading, isError } = useRecommendationAuditTrail(recommendationId);
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <p className="text-xs text-mist-400">Loading audit trail…</p>;
+  }
+
+  if (isError || !data) {
+    return <p className="text-xs text-zone-red">Could not load the audit trail for this recommendation.</p>;
   }
 
   if (data.decisions.length === 0) {

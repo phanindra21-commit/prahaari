@@ -7,6 +7,7 @@ import { ProvenanceFooter } from "../components/ui/ProvenanceFooter";
 import { RecommendationMap } from "../components/decisions/RecommendationMap";
 import { DecisionActionPanel } from "../components/decisions/DecisionActionPanel";
 import { AuditTrailPanel } from "../components/decisions/AuditTrailPanel";
+import { ApiError } from "../lib/apiClient";
 import type { CarryingCapacity, RelocationSiteDetail } from "../lib/api";
 
 const HAZARD_LABELS: Record<string, string> = {
@@ -119,13 +120,27 @@ function SiteSuitabilityPanel({ site }: { site: RelocationSiteDetail }): JSX.Ele
 
 export function RecommendationDetailPage(): JSX.Element {
   const { id } = useParams<{ id: string }>();
-  const { data: rec, isLoading } = useRecommendation(id);
+  const { data: rec, isLoading, isError, error } = useRecommendation(id);
   const { data: habitation } = useHabitation(rec?.habitationId._id);
   const { data: explain } = useHabitationExplain(rec?.habitationId._id);
   const assessment = habitation?.latestAssessment;
 
-  if (isLoading || !rec) {
+  if (isLoading) {
     return <p className="p-4 text-sm text-mist-300">Loading recommendation…</p>;
+  }
+
+  if (isError || !rec) {
+    return (
+      <div className="p-4">
+        <Link to="/recommendations" className="mb-3 inline-block text-xs text-signal-bright hover:underline">
+          ← Back to review queue
+        </Link>
+        <p className="text-sm text-zone-red">
+          Could not load this recommendation
+          {error instanceof ApiError ? `: ${error.message}` : " — it may not exist, or may be out of your scope."}
+        </p>
+      </div>
+    );
   }
 
   const selectedSite = rec.selectedSiteId ?? rec.candidateSites[0]?.relocationSiteId ?? null;

@@ -23,7 +23,7 @@ const HAZARD_LABELS: Record<string, string> = {
 export function PrioritiesPage(): JSX.Element {
   const selectedDistrictId = useDistrictStore((s) => s.selectedDistrictId);
   const [bucket, setBucket] = useState<RelocationPriorityBucket | undefined>(undefined);
-  const { data, isLoading } = usePriorities(selectedDistrictId ?? undefined, bucket);
+  const { data, isLoading, isError } = usePriorities(selectedDistrictId ?? undefined, bucket);
   const navigate = useNavigate();
 
   return (
@@ -48,7 +48,15 @@ export function PrioritiesPage(): JSX.Element {
         </div>
       </div>
 
+      {!selectedDistrictId && (
+        <p className="text-sm text-mist-300">
+          No district is in your assigned scope yet. Contact your administrator to be assigned to a district.
+        </p>
+      )}
+
       {isLoading && <p className="text-sm text-mist-300">Loading…</p>}
+
+      {isError && <p className="text-sm text-zone-red">Could not load the priority worklist.</p>}
 
       {data && (
         <div className="overflow-hidden rounded border border-ink-600">

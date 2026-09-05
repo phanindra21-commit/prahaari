@@ -40,15 +40,15 @@ function SectionTitle({ children }: { children: React.ReactNode }): JSX.Element 
  * PDF, not a screen panel. */
 export function DistrictReportPage(): JSX.Element {
   const { districtId } = useParams<{ districtId: string }>();
-  const { data: districtsData } = useDistricts();
+  const { data: districtsData, isLoading: districtsLoading } = useDistricts();
   const district = districtsData?.items.find((d) => d._id === districtId);
-  const { data: summary, isLoading: summaryLoading } = useDashboardSummary(districtId);
+  const { data: summary, isLoading: summaryLoading, isError: summaryError } = useDashboardSummary(districtId);
   const { data: priorities, isLoading: prioritiesLoading } = usePriorities(districtId);
   const { data: habitationsGeo } = useHabitationsGeoJSON(districtId);
   const { data: recommendations } = useRecommendations({ districtId });
   const { data: decisions } = useDistrictDecisions(districtId);
 
-  const isLoading = summaryLoading || prioritiesLoading;
+  const isLoading = summaryLoading || prioritiesLoading || districtsLoading;
   const block = summary?.districts[0];
 
   const populationByHabitationId = new Map(
@@ -60,10 +60,20 @@ export function DistrictReportPage(): JSX.Element {
     : null;
   const recommendationModelVersion = recommendations?.items[0]?.modelVersion ?? null;
 
-  if (isLoading || !district || !block) {
+  if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center bg-white text-black">
         <p className="text-sm">Loading report…</p>
+      </div>
+    );
+  }
+
+  if (summaryError || !district || !block) {
+    return (
+      <div className="flex h-full items-center justify-center bg-white text-black">
+        <p className="text-sm text-red-600">
+          Could not load this district&apos;s report — it may not exist, or may be out of your scope.
+        </p>
       </div>
     );
   }
