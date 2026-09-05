@@ -26,6 +26,20 @@ const PRIMARY_OCCUPATIONS: PrimaryOccupation[] = [
 
 export interface HabitationDemographics {
   shareUnder5: number;
+  /**
+   * School-age (6-14) population share. Not an independent seed input: the
+   * Step 4/5 seed data only ever hand-set shareUnder5/shareOver60, and the
+   * residual between those two conflates school-age with working-age with
+   * no way to split it further. Derived at seed time as
+   * clamp(round(shareUnder5 * 1.8, 2), 0.08, 0.30) — under-5 spans a 5-year
+   * cohort, 6-14 spans 9 years, so under similar birth-rate assumptions
+   * school-age runs roughly 1.8x under-5 (discounted from the raw 9/5 for
+   * infant mortality); the clamp keeps it in a plausible range. Not used in
+   * vulnerability scoring (that stays exactly shareUnder5/shareOver60 per
+   * vulnerability-weights.json) — display-only, for Step 10 Part 1's
+   * demographic breakdown.
+   */
+  shareSchoolAge6to14: number;
   shareOver60: number;
   womenHeadedHouseholdShare: number;
   disabledPersonsShare: number;
@@ -86,6 +100,7 @@ export interface HabitationDoc extends Document {
 const demographicsSchema = new Schema<HabitationDemographics>(
   {
     shareUnder5: { type: Number, required: true, min: 0, max: 1 },
+    shareSchoolAge6to14: { type: Number, required: true, min: 0, max: 1 },
     shareOver60: { type: Number, required: true, min: 0, max: 1 },
     womenHeadedHouseholdShare: { type: Number, required: true, min: 0, max: 1 },
     disabledPersonsShare: { type: Number, required: true, min: 0, max: 1 },

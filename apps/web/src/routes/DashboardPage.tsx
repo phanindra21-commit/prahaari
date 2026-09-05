@@ -104,6 +104,38 @@ export function DashboardPage(): JSX.Element {
           />
         </section>
 
+        {/* Step 10 Part 1C: the vulnerable-cohort headline the earlier
+            "Immediate priority" tile's population/household totals didn't
+            break out — an officer reads "142 children under five" faster
+            than a normalized demographic score. */}
+        <section className="mb-4">
+          <div className="rounded border border-ink-600 bg-ink-800 p-3">
+            <p className="mb-2 text-[11px] font-medium text-mist-400">
+              Vulnerable cohorts facing relocation — Immediate priority, {headlineLabel}
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <p className="font-mono text-lg font-semibold text-mist-50">
+                  {headline.immediateDemographics.under5.toLocaleString("en-IN")}
+                </p>
+                <p className="text-[11px] text-mist-400">children under 5</p>
+              </div>
+              <div>
+                <p className="font-mono text-lg font-semibold text-mist-50">
+                  {headline.immediateDemographics.over60.toLocaleString("en-IN")}
+                </p>
+                <p className="text-[11px] text-mist-400">residents over 60</p>
+              </div>
+              <div>
+                <p className="font-mono text-lg font-semibold text-mist-50">
+                  {headline.immediateDemographics.disabled.toLocaleString("en-IN")}
+                </p>
+                <p className="text-[11px] text-mist-400">persons with disability</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {isMultiDistrict && (
           <section className="mb-4">
             <p className="mb-2 text-xs font-medium text-mist-300">District breakdown — select one for detail</p>

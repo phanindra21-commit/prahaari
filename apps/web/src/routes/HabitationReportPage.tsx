@@ -181,6 +181,28 @@ export function HabitationReportPage(): JSX.Element {
                   </td>
                 </tr>
                 <tr>
+                  <td className="border border-gray-400 px-2 py-1">School-age children (6-14)</td>
+                  <td className="border border-gray-400 px-2 py-1 text-right">
+                    {count(demographics.shareSchoolAge6to14, habitation.population)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-400 px-2 py-1">Working-age adults (15-59)</td>
+                  <td className="border border-gray-400 px-2 py-1 text-right">
+                    {demographics.shareUnder5 !== undefined &&
+                    demographics.shareSchoolAge6to14 !== undefined &&
+                    demographics.shareOver60 !== undefined
+                      ? count(
+                          Math.max(
+                            0,
+                            1 - demographics.shareUnder5 - demographics.shareSchoolAge6to14 - demographics.shareOver60,
+                          ),
+                          habitation.population,
+                        )
+                      : "—"}
+                  </td>
+                </tr>
+                <tr>
                   <td className="border border-gray-400 px-2 py-1">Residents over 60</td>
                   <td className="border border-gray-400 px-2 py-1 text-right">
                     {count(demographics.shareOver60, habitation.population)}

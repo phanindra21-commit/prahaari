@@ -620,6 +620,12 @@ export interface DashboardRecentDecision {
   recommendationId: string;
 }
 
+export interface DashboardImmediateDemographics {
+  under5: number;
+  over60: number;
+  disabled: number;
+}
+
 export interface DashboardDistrict {
   districtId: string;
   districtName: string;
@@ -630,6 +636,7 @@ export interface DashboardDistrict {
   bucketCounts: Record<RelocationPriorityBucket, number>;
   immediatePopulation: number;
   immediateHouseholds: number;
+  immediateDemographics: DashboardImmediateDemographics;
   pendingDecisions: number | null;
   capacityShortfall: DashboardCapacityShortfall | null;
   hazardDistribution: Array<{ hazardType: HazardType; count: number }> | null;

@@ -45,6 +45,114 @@ function Stat({ label, value }: { label: string; value: string }): JSX.Element {
   );
 }
 
+interface CohortRow {
+  label: string;
+  count: number;
+  share: number;
+  color: string;
+}
+
+/**
+ * Step 10 Part 1A/1B: absolute demographic counts alongside the normalized
+ * shares the vulnerability score already uses (vulnerability-weights.json's
+ * demographic indicators: shareUnder5 0.30, shareOver60 0.25,
+ * womenHeadedHouseholdShare 0.20, disabledPersonsShare 0.25). Working-age
+ * adults is the remainder once under-5/school-age/over-60 are accounted
+ * for — see shareSchoolAge6to14's derivation note in Habitation.ts.
+ *
+ * The visual is a stacked composition bar, not a true age pyramid: a
+ * pyramid needs a male/female split per age band, which this dataset does
+ * not carry (and inventing gender-disaggregated counts would be exactly
+ * the kind of unsupported synthetic data this project avoids fabricating
+ * — see CLAUDE.md's SYNTHETIC_DEMO conventions). A stacked bar shows the
+ * same four-cohort composition at a glance without that fabrication.
+ */
+function AgeCompositionSection({
+  population,
+  households,
+  demographics,
+}: {
+  population: number;
+  households: number;
+  demographics: Record<string, number>;
+}): JSX.Element {
+  const shareUnder5 = demographics.shareUnder5 ?? 0;
+  const shareSchoolAge = demographics.shareSchoolAge6to14 ?? 0;
+  const shareOver60 = demographics.shareOver60 ?? 0;
+  const shareWorkingAge = Math.max(0, 1 - shareUnder5 - shareSchoolAge - shareOver60);
+  const shareWomenHeaded = demographics.womenHeadedHouseholdShare ?? 0;
+  const shareDisabled = demographics.disabledPersonsShare ?? 0;
+
+  const ageBands: CohortRow[] = [
+    { label: "Under 5", count: Math.round(population * shareUnder5), share: shareUnder5, color: "bg-signal" },
+    {
+      label: "School-age (6–14)",
+      count: Math.round(population * shareSchoolAge),
+      share: shareSchoolAge,
+      color: "bg-sky-500",
+    },
+    {
+      label: "Working-age (15–59)",
+      count: Math.round(population * shareWorkingAge),
+      share: shareWorkingAge,
+      color: "bg-mist-300",
+    },
+    { label: "Over 60", count: Math.round(population * shareOver60), share: shareOver60, color: "bg-amber-500" },
+  ];
+
+  return (
+    <section className="mb-4">
+      <p className="mb-2 text-xs font-medium text-mist-200">Population composition</p>
+
+      <div className="mb-2 flex h-3 w-full overflow-hidden rounded-sm">
+        {ageBands.map((band) => (
+          <div
+            key={band.label}
+            className={band.color}
+            style={{ width: `${Math.max(0, band.share * 100)}%` }}
+            title={`${band.label}: ${(band.share * 100).toFixed(0)}%`}
+          />
+        ))}
+      </div>
+
+      <div className="mb-2 space-y-1">
+        {ageBands.map((band) => (
+          <div key={band.label} className="flex items-center justify-between text-xs">
+            <span className="flex items-center gap-1.5 text-mist-300">
+              <span className={`inline-block h-2 w-2 rounded-sm ${band.color}`} />
+              {band.label}
+            </span>
+            <span className="font-mono text-mist-100">
+              {band.count.toLocaleString("en-IN")} <span className="text-mist-400">({(band.share * 100).toFixed(0)}%)</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-1 border-t border-ink-700 pt-2">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-mist-300">Women-headed households</span>
+          <span className="font-mono text-mist-100">
+            {Math.round(households * shareWomenHeaded).toLocaleString("en-IN")}{" "}
+            <span className="text-mist-400">({(shareWomenHeaded * 100).toFixed(0)}% of households)</span>
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-mist-300">Persons with disability</span>
+          <span className="font-mono text-mist-100">
+            {Math.round(population * shareDisabled).toLocaleString("en-IN")}{" "}
+            <span className="text-mist-400">({(shareDisabled * 100).toFixed(0)}% of population)</span>
+          </span>
+        </div>
+      </div>
+      <p className="mt-1 text-[10px] text-mist-500">
+        Estimated by applying the recorded demographic share to total population/households — not an independent
+        headcount.
+      </p>
+    </section>
+  );
+}
+
 interface HabitationDetailPanelProps {
   habitationId: string;
   onClose: () => void;
@@ -102,6 +210,12 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
               <Stat label="Population" value={habitation.population.toLocaleString("en-IN")} />
               <Stat label="Households" value={habitation.households.toLocaleString("en-IN")} />
             </div>
+
+            <AgeCompositionSection
+              population={habitation.population}
+              households={habitation.households}
+              demographics={habitation.demographics}
+            />
 
             {assessment ? (
               <>

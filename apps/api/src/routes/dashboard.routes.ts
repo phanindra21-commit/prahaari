@@ -31,6 +31,21 @@ interface CapacityShortfall {
   populationWithNoSite: number;
 }
 
+/**
+ * Step 10 Part 1C: absolute counts (not normalized shares) for the
+ * demographic cohorts facing relocation, summed across every
+ * Immediate-priority habitation. Computed the same way as
+ * HabitationReportPage.tsx's per-habitation counts — a habitation's
+ * population/households times its recorded demographic share, rounded —
+ * summed at habitation grain before rounding averages out most of the
+ * per-habitation rounding error.
+ */
+interface ImmediateDemographics {
+  under5: number;
+  over60: number;
+  disabled: number;
+}
+
 interface NeedsAttentionItem {
   habitationId: string;
   habitationName: string;
@@ -61,6 +76,7 @@ interface DistrictDashboard {
   bucketCounts: Record<RelocationPriorityBucket, number>;
   immediatePopulation: number;
   immediateHouseholds: number;
+  immediateDemographics: ImmediateDemographics;
   pendingDecisions: number | null;
   capacityShortfall: CapacityShortfall | null;
   hazardDistribution: Array<{ hazardType: HazardType; count: number }> | null;
@@ -92,11 +108,36 @@ async function computeDistrictDashboard(
     Assessment.countDocuments({ districtId, validTo: null }),
     Assessment.countDocuments({ districtId, validTo: null, overallZoneClass: "Red" }),
     Assessment.countDocuments({ districtId, validTo: null, overallZoneClass: "Orange" }),
-    Assessment.aggregate<{ _id: null; population: number; households: number }>([
+    Assessment.aggregate<{
+      _id: null;
+      population: number;
+      households: number;
+      under5: number;
+      over60: number;
+      disabled: number;
+    }>([
       { $match: { districtId, validTo: null, priorityBucket: "Immediate" } },
       { $lookup: { from: "habitations", localField: "habitationId", foreignField: "_id", as: "h" } },
       { $unwind: "$h" },
-      { $group: { _id: null, population: { $sum: "$h.population" }, households: { $sum: "$h.households" } } },
+      {
+        $project: {
+          population: "$h.population",
+          households: "$h.households",
+          under5: { $round: [{ $multiply: ["$h.population", "$h.demographics.shareUnder5"] }, 0] },
+          over60: { $round: [{ $multiply: ["$h.population", "$h.demographics.shareOver60"] }, 0] },
+          disabled: { $round: [{ $multiply: ["$h.population", "$h.demographics.disabledPersonsShare"] }, 0] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          population: { $sum: "$population" },
+          households: { $sum: "$households" },
+          under5: { $sum: "$under5" },
+          over60: { $sum: "$over60" },
+          disabled: { $sum: "$disabled" },
+        },
+      },
     ]),
   ]);
 
@@ -119,6 +160,11 @@ async function computeDistrictDashboard(
     bucketCounts,
     immediatePopulation: immediateAgg[0]?.population ?? 0,
     immediateHouseholds: immediateAgg[0]?.households ?? 0,
+    immediateDemographics: {
+      under5: immediateAgg[0]?.under5 ?? 0,
+      over60: immediateAgg[0]?.over60 ?? 0,
+      disabled: immediateAgg[0]?.disabled ?? 0,
+    },
     pendingDecisions: null,
     capacityShortfall: null,
     hazardDistribution: null,
@@ -247,6 +293,7 @@ function sumDashboards(blocks: DistrictDashboard[]): Omit<DistrictDashboard, "di
   let orangeCount = 0;
   let immediatePopulation = 0;
   let immediateHouseholds = 0;
+  const immediateDemographics: ImmediateDemographics = { under5: 0, over60: 0, disabled: 0 };
   let pendingDecisions = 0;
   let hasPendingDecisions = false;
   let shortfall: CapacityShortfall | null = null;
@@ -260,6 +307,9 @@ function sumDashboards(blocks: DistrictDashboard[]): Omit<DistrictDashboard, "di
     orangeCount += block.orangeCount;
     immediatePopulation += block.immediatePopulation;
     immediateHouseholds += block.immediateHouseholds;
+    immediateDemographics.under5 += block.immediateDemographics.under5;
+    immediateDemographics.over60 += block.immediateDemographics.over60;
+    immediateDemographics.disabled += block.immediateDemographics.disabled;
     for (const bucket of Object.keys(bucketCounts) as RelocationPriorityBucket[]) {
       bucketCounts[bucket] += block.bucketCounts[bucket];
     }
@@ -296,6 +346,7 @@ function sumDashboards(blocks: DistrictDashboard[]): Omit<DistrictDashboard, "di
     bucketCounts,
     immediatePopulation,
     immediateHouseholds,
+    immediateDemographics,
     pendingDecisions: hasPendingDecisions ? pendingDecisions : null,
     capacityShortfall: hasShortfall ? shortfall : null,
     hazardDistribution: hasHazard

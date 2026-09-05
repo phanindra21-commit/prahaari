@@ -10,6 +10,8 @@ import {
 
 export const habitationDemographicsSchema = z.object({
   shareUnder5: z.number().min(0).max(1),
+  /** Derived at seed time from shareUnder5, not an independent input — see HabitationDemographics in apps/api/src/models/Habitation.ts. Display-only; not used in vulnerability scoring. */
+  shareSchoolAge6to14: z.number().min(0).max(1),
   shareOver60: z.number().min(0).max(1),
   womenHeadedHouseholdShare: z.number().min(0).max(1),
   disabledPersonsShare: z.number().min(0).max(1),

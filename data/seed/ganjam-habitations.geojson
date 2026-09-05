@@ -20,6 +20,7 @@
         "households": 138,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.09,
           "womenHeadedHouseholdShare": 0.15,
           "disabledPersonsShare": 0.06,
@@ -73,6 +74,7 @@
         "households": 50,
         "demographics": {
           "shareUnder5": 0.11,
+          "shareSchoolAge6to14": 0.20,
           "shareOver60": 0.12,
           "womenHeadedHouseholdShare": 0.16,
           "disabledPersonsShare": 0.02,
@@ -126,6 +128,7 @@
         "households": 74,
         "demographics": {
           "shareUnder5": 0.11,
+          "shareSchoolAge6to14": 0.20,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.24,
           "disabledPersonsShare": 0.04,
@@ -179,6 +182,7 @@
         "households": 128,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.21,
           "disabledPersonsShare": 0.03,
@@ -232,6 +236,7 @@
         "households": 115,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.12,
           "womenHeadedHouseholdShare": 0.26,
           "disabledPersonsShare": 0.06,
@@ -285,6 +290,7 @@
         "households": 243,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.18,
           "womenHeadedHouseholdShare": 0.29,
           "disabledPersonsShare": 0.07,
@@ -338,6 +344,7 @@
         "households": 60,
         "demographics": {
           "shareUnder5": 0.11,
+          "shareSchoolAge6to14": 0.20,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.23,
           "disabledPersonsShare": 0.06,
@@ -391,6 +398,7 @@
         "households": 42,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.1,
           "womenHeadedHouseholdShare": 0.28,
           "disabledPersonsShare": 0.03,
@@ -444,6 +452,7 @@
         "households": 81,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.22,
           "disabledPersonsShare": 0.07,
@@ -497,6 +506,7 @@
         "households": 210,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.11,
           "womenHeadedHouseholdShare": 0.28,
           "disabledPersonsShare": 0.04,
@@ -550,6 +560,7 @@
         "households": 38,
         "demographics": {
           "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.13,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.21,
           "disabledPersonsShare": 0.06,
@@ -603,6 +614,7 @@
         "households": 57,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.1,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.05,
@@ -656,6 +668,7 @@
         "households": 239,
         "demographics": {
           "shareUnder5": 0.09,
+          "shareSchoolAge6to14": 0.16,
           "shareOver60": 0.14,
           "womenHeadedHouseholdShare": 0.19,
           "disabledPersonsShare": 0.02,
@@ -709,6 +722,7 @@
         "households": 191,
         "demographics": {
           "shareUnder5": 0.09,
+          "shareSchoolAge6to14": 0.16,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.26,
           "disabledPersonsShare": 0.06,
@@ -762,6 +776,7 @@
         "households": 219,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.15,
           "womenHeadedHouseholdShare": 0.24,
           "disabledPersonsShare": 0.05,
@@ -815,6 +830,7 @@
         "households": 51,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.18,
           "disabledPersonsShare": 0.04,
@@ -868,6 +884,7 @@
         "households": 59,
         "demographics": {
           "shareUnder5": 0.11,
+          "shareSchoolAge6to14": 0.20,
           "shareOver60": 0.14,
           "womenHeadedHouseholdShare": 0.24,
           "disabledPersonsShare": 0.02,
@@ -921,6 +938,7 @@
         "households": 150,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.1,
           "womenHeadedHouseholdShare": 0.28,
           "disabledPersonsShare": 0.02,
@@ -974,6 +992,7 @@
         "households": 232,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.06,
@@ -1027,6 +1046,7 @@
         "households": 201,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.15,
           "womenHeadedHouseholdShare": 0.22,
           "disabledPersonsShare": 0.05,
@@ -1080,6 +1100,7 @@
         "households": 102,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.18,
           "womenHeadedHouseholdShare": 0.23,
           "disabledPersonsShare": 0.05,
@@ -1133,6 +1154,7 @@
         "households": 184,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.2,
           "disabledPersonsShare": 0.05,
@@ -1186,6 +1208,7 @@
         "households": 159,
         "demographics": {
           "shareUnder5": 0.09,
+          "shareSchoolAge6to14": 0.16,
           "shareOver60": 0.15,
           "womenHeadedHouseholdShare": 0.15,
           "disabledPersonsShare": 0.04,
@@ -1239,6 +1262,7 @@
         "households": 52,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.19,
           "disabledPersonsShare": 0.03,
@@ -1292,6 +1316,7 @@
         "households": 179,
         "demographics": {
           "shareUnder5": 0.09,
+          "shareSchoolAge6to14": 0.16,
           "shareOver60": 0.11,
           "womenHeadedHouseholdShare": 0.27,
           "disabledPersonsShare": 0.06,
@@ -1345,6 +1370,7 @@
         "households": 150,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.12,
           "womenHeadedHouseholdShare": 0.19,
           "disabledPersonsShare": 0.05,
@@ -1398,6 +1424,7 @@
         "households": 137,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.17,
           "womenHeadedHouseholdShare": 0.28,
           "disabledPersonsShare": 0.07,
@@ -1451,6 +1478,7 @@
         "households": 196,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.09,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.03,
@@ -1504,6 +1532,7 @@
         "households": 166,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.23,
           "disabledPersonsShare": 0.03,
@@ -1557,6 +1586,7 @@
         "households": 176,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.18,
           "disabledPersonsShare": 0.02,
@@ -1610,6 +1640,7 @@
         "households": 149,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.14,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.05,
@@ -1663,6 +1694,7 @@
         "households": 209,
         "demographics": {
           "shareUnder5": 0.12,
+          "shareSchoolAge6to14": 0.22,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.05,
@@ -1716,6 +1748,7 @@
         "households": 133,
         "demographics": {
           "shareUnder5": 0.13,
+          "shareSchoolAge6to14": 0.23,
           "shareOver60": 0.18,
           "womenHeadedHouseholdShare": 0.13,
           "disabledPersonsShare": 0.05,
@@ -1769,6 +1802,7 @@
         "households": 116,
         "demographics": {
           "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.13,
           "shareOver60": 0.1,
           "womenHeadedHouseholdShare": 0.19,
           "disabledPersonsShare": 0.04,
@@ -1822,6 +1856,7 @@
         "households": 235,
         "demographics": {
           "shareUnder5": 0.08,
+          "shareSchoolAge6to14": 0.14,
           "shareOver60": 0.16,
           "womenHeadedHouseholdShare": 0.3,
           "disabledPersonsShare": 0.06,
@@ -1875,6 +1910,7 @@
         "households": 152,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.13,
           "womenHeadedHouseholdShare": 0.26,
           "disabledPersonsShare": 0.05,
@@ -1928,6 +1964,7 @@
         "households": 219,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.15,
           "womenHeadedHouseholdShare": 0.26,
           "disabledPersonsShare": 0.03,
@@ -1981,6 +2018,7 @@
         "households": 176,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.14,
           "womenHeadedHouseholdShare": 0.15,
           "disabledPersonsShare": 0.07,
@@ -2034,6 +2072,7 @@
         "households": 171,
         "demographics": {
           "shareUnder5": 0.11,
+          "shareSchoolAge6to14": 0.20,
           "shareOver60": 0.12,
           "womenHeadedHouseholdShare": 0.16,
           "disabledPersonsShare": 0.06,
@@ -2087,6 +2126,7 @@
         "households": 57,
         "demographics": {
           "shareUnder5": 0.1,
+          "shareSchoolAge6to14": 0.18,
           "shareOver60": 0.12,
           "womenHeadedHouseholdShare": 0.16,
           "disabledPersonsShare": 0.02,

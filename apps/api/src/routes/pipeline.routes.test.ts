@@ -208,7 +208,7 @@ async function seedGridCells(districtId: Types.ObjectId, count = 3) {
 
 async function seedHabitations(districtId: Types.ObjectId, count = 2) {
   const demographics = {
-    shareUnder5: 0.1, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
+    shareUnder5: 0.1, shareSchoolAge6to14: 0.18, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
     disabledPersonsShare: 0.05, bplShare: 0.3, scStShare: 0.2, literacyRate: 0.7,
   };
   const structures = { kutchaHousingShare: 0.2, avgBuildingAgeYears: 20, predominantFoundationType: "STONE_MASONRY" };

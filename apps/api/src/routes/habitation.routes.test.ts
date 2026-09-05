@@ -38,7 +38,7 @@ async function seedHabitation(districtId: Types.ObjectId, code: string, name: st
     population: 500,
     households: 100,
     demographics: {
-      shareUnder5: 0.1, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
+      shareUnder5: 0.1, shareSchoolAge6to14: 0.18, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
       disabledPersonsShare: 0.05, bplShare: 0.3, scStShare: 0.2, literacyRate: 0.7,
     },
     structures: { kutchaHousingShare: 0.2, avgBuildingAgeYears: 20, predominantFoundationType: "STONE_MASONRY" },

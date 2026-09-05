@@ -77,7 +77,81 @@ function CapacityRow({ label, value, binding }: { label: string; value: number; 
   );
 }
 
-function SiteSuitabilityPanel({ site }: { site: RelocationSiteDetail }): JSX.Element {
+/**
+ * Step 10 Part 1D: names the demographic cohort driving an EDUCATION or
+ * HEALTH binding constraint, e.g. "education-bound: ~34 school-age
+ * children exceed nearby RTE headroom by ~9." Both `byEducation`/`byHealth`
+ * (services/ml/app/engine/capacity.py) and the moving population are
+ * expressed in households; this is a display-only conversion to persons
+ * via the origin habitation's own average household size
+ * (population / households) and its recorded demographic shares — it does
+ * not change the underlying capacity computation or its households-based
+ * binding-constraint decision, only how the shortfall is *described* to
+ * the officer. HEALTH's cohort is over-60 + disabled residents (the two
+ * demographic groups IPHS/IHPS health-facility norms are meant to serve),
+ * not a share the capacity model itself tracks separately.
+ */
+function CohortNote({
+  bindingConstraint,
+  byEducation,
+  byHealth,
+  estimatedHouseholdsToMove,
+  originPopulation,
+  originHouseholds,
+  demographics,
+}: {
+  bindingConstraint: CarryingCapacity["bindingConstraint"];
+  byEducation: number;
+  byHealth: number;
+  estimatedHouseholdsToMove: number;
+  originPopulation: number;
+  originHouseholds: number;
+  demographics: Record<string, number> | undefined;
+}): JSX.Element | null {
+  if (bindingConstraint !== "EDUCATION" && bindingConstraint !== "HEALTH") return null;
+  if (!demographics || originHouseholds === 0) return null;
+
+  const avgHouseholdSize = originPopulation / originHouseholds;
+  const movingPopulation = estimatedHouseholdsToMove * avgHouseholdSize;
+
+  const cohortShare =
+    bindingConstraint === "EDUCATION"
+      ? (demographics.shareSchoolAge6to14 ?? 0)
+      : (demographics.shareOver60 ?? 0) + (demographics.disabledPersonsShare ?? 0);
+  const cohortLabel = bindingConstraint === "EDUCATION" ? "school-age children" : "elderly and disabled residents";
+  const headroomLabel = bindingConstraint === "EDUCATION" ? "RTE" : "PHC";
+  const effectiveCapacity = bindingConstraint === "EDUCATION" ? byEducation : byHealth;
+
+  const cohortMoving = Math.round(movingPopulation * cohortShare);
+  const cohortHeadroom = Math.round(effectiveCapacity * avgHouseholdSize * cohortShare);
+  const shortfall = cohortMoving - cohortHeadroom;
+
+  if (cohortMoving <= 0) return null;
+
+  return (
+    <p className="mt-1.5 rounded border border-zone-orange/40 bg-zone-orange/10 px-2 py-1.5 text-[11px] leading-relaxed text-zone-orange">
+      {bindingConstraint === "EDUCATION" ? "Education-bound" : "Health-bound"}: approximately {cohortMoving}{" "}
+      {cohortLabel} in this move
+      {shortfall > 0
+        ? ` exceed nearby ${headroomLabel} headroom by approximately ${shortfall}.`
+        : ` are within nearby ${headroomLabel} headroom (approximately ${cohortHeadroom}).`}
+    </p>
+  );
+}
+
+function SiteSuitabilityPanel({
+  site,
+  estimatedHouseholdsToMove,
+  originPopulation,
+  originHouseholds,
+  demographics,
+}: {
+  site: RelocationSiteDetail;
+  estimatedHouseholdsToMove: number;
+  originPopulation: number;
+  originHouseholds: number;
+  demographics: Record<string, number> | undefined;
+}): JSX.Element {
   return (
     <div className="rounded border border-ink-600 bg-ink-800 p-3">
       <div className="mb-2 flex items-center justify-between">
@@ -108,6 +182,15 @@ function SiteSuitabilityPanel({ site }: { site: RelocationSiteDetail }): JSX.Ele
               binding={CONSTRAINT_KEY_FOR[site.carryingCapacity!.bindingConstraint] === key}
             />
           ))}
+          <CohortNote
+            bindingConstraint={site.carryingCapacity.bindingConstraint}
+            byEducation={site.carryingCapacity.byEducation}
+            byHealth={site.carryingCapacity.byHealth}
+            estimatedHouseholdsToMove={estimatedHouseholdsToMove}
+            originPopulation={originPopulation}
+            originHouseholds={originHouseholds}
+            demographics={demographics}
+          />
         </div>
       ) : (
         <p className="border-t border-ink-700 pt-2 text-[11px] text-mist-400">
@@ -240,7 +323,13 @@ export function RecommendationDetailPage(): JSX.Element {
                       #{c.rank} · selected
                     </span>
                   )}
-                  <SiteSuitabilityPanel site={c.relocationSiteId} />
+                  <SiteSuitabilityPanel
+                    site={c.relocationSiteId}
+                    estimatedHouseholdsToMove={rec.estimatedHouseholdsToMove}
+                    originPopulation={rec.habitationId.population}
+                    originHouseholds={rec.habitationId.households}
+                    demographics={habitation?.demographics}
+                  />
                 </div>
               ))}
               {rec.candidateSites.length === 0 && (

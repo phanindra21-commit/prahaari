@@ -41,7 +41,7 @@ async function seedHabitation(districtId: Types.ObjectId, code: string, populati
     population,
     households,
     demographics: {
-      shareUnder5: 0.1, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
+      shareUnder5: 0.1, shareSchoolAge6to14: 0.18, shareOver60: 0.1, womenHeadedHouseholdShare: 0.1,
       disabledPersonsShare: 0.05, bplShare: 0.3, scStShare: 0.2, literacyRate: 0.7,
     },
     structures: { kutchaHousingShare: 0.2, avgBuildingAgeYears: 20, predominantFoundationType: "STONE_MASONRY" },
@@ -200,6 +200,9 @@ describe("dashboard routes integration", () => {
     expect(d.bucketCounts).toEqual({ Immediate: 1, ShortTerm: 1, MediumTerm: 0 });
     expect(d.immediatePopulation).toBe(300);
     expect(d.immediateHouseholds).toBe(60);
+    // h1 (population 300) is the only Immediate-bucket habitation; shareUnder5/shareOver60 0.1,
+    // disabledPersonsShare 0.05 from seedHabitation's fixture demographics.
+    expect(d.immediateDemographics).toEqual({ under5: 30, over60: 30, disabled: 15 });
     expect(d.capacityShortfall).toEqual({
       needsRelocation: 2,
       hasViableSite: 1,
@@ -272,6 +275,8 @@ describe("dashboard routes integration", () => {
     expect(res.body.aggregate.redCount).toBe(1);
     expect(res.body.aggregate.orangeCount).toBe(1);
     expect(res.body.aggregate.immediatePopulation).toBe(100);
+    // Only d1's h1 (population 100) is Immediate-bucket; d2's h2 is ShortTerm and excluded.
+    expect(res.body.aggregate.immediateDemographics).toEqual({ under5: 10, over60: 10, disabled: 5 });
   });
 
   it("scopes a DISTRICT_OFFICER out of another district's dashboard (404, not a mismatched-filter 200)", async () => {
