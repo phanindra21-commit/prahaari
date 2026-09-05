@@ -395,4 +395,36 @@ describe("decision routes integration", () => {
     const updated = await Recommendation.findById(recommendation._id as Types.ObjectId);
     expect(updated!.status).toBe("REJECTED");
   });
+
+  it("SECURITY: GET /decisions?districtId= for another district is rejected (404), not silently substituted for the caller's own scope", async () => {
+    // Same class of bug as recommendation.routes.ts/scenario.routes.ts's
+    // identical fixes, caught before this new districtId query param
+    // (added for Step 9 Part 2's district situation report) ever shipped
+    // unchecked.
+    const own = await seedDistrict("DEC-RT-011A");
+    const other = await seedDistrict("DEC-RT-011B");
+    const habitation = await seedHabitation(other._id as Types.ObjectId, "DEC-RT-011-H1");
+    const site = await seedSite(other._id as Types.ObjectId, "Site B");
+    const recommendation = await seedRecommendation(
+      other._id as Types.ObjectId,
+      habitation._id as Types.ObjectId,
+      site._id as Types.ObjectId,
+    );
+    const otherToken = await tokenForRole("DISTRICT_OFFICER", other._id as Types.ObjectId);
+    await request(app)
+      .post("/api/v1/decisions")
+      .set("Authorization", `Bearer ${otherToken}`)
+      .send({
+        recommendationId: (recommendation._id as Types.ObjectId).toString(),
+        action: "REJECT",
+        justification: LONG_JUSTIFICATION,
+      });
+
+    const ownToken = await tokenForRole("DISTRICT_OFFICER", own._id as Types.ObjectId);
+    const res = await request(app)
+      .get(`/api/v1/decisions?districtId=${(other._id as Types.ObjectId).toString()}`)
+      .set("Authorization", `Bearer ${ownToken}`);
+
+    expect(res.status).toBe(404);
+  });
 });

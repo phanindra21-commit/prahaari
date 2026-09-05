@@ -79,7 +79,16 @@ scenarioRouter.get("/scenarios", authenticate, requirePermission(SCENARIO_READ),
     const query = listQuerySchema.parse(req.query);
     const filter: Record<string, unknown> = { ...req.scopeFilter };
     if (query.districtId) {
-      filter.districtId = new Types.ObjectId(query.districtId);
+      // SECURITY: verify against the caller's own scope before use — see
+      // recommendation.routes.ts's identical fix for why blindly trusting
+      // an explicit ?districtId= is a scope bypass.
+      const districtId = new Types.ObjectId(query.districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
+      if (!district) {
+        res.status(404).json({ error: "District not found or out of scope" });
+        return;
+      }
+      filter.districtId = districtId;
     }
     const scenarioRuns = await ScenarioRun.find(filter).sort({ createdAt: -1 });
     res.status(200).json({ items: scenarioRuns });

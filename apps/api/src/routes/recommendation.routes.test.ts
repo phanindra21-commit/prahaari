@@ -199,6 +199,28 @@ describe("recommendation routes integration", () => {
     expect(detailRes.status).toBe(404);
   });
 
+  it("SECURITY: an explicit ?districtId= for another district is rejected (404), not silently substituted for the caller's own scope", async () => {
+    // Regression test: this route used to build its filter as
+    // `{ ...req.scopeFilter, districtId: <query value> }` — the explicit
+    // query value unconditionally OVERWROTE the scope-derived districtId,
+    // so any single-district role could read ANY other district's
+    // recommendations just by passing its id. Verified exploitable live
+    // before this fix (a Wayanad DISTRICT_OFFICER token successfully
+    // listed Ganjam's recommendations).
+    const own = await seedDistrict("REC-RT-005A");
+    const other = await seedDistrict("REC-RT-005B");
+    const habitation = await seedHabitation(other._id as Types.ObjectId, "REC-RT-005-H1");
+    const site = await seedSite(other._id as Types.ObjectId);
+    await seedRecommendation(other._id as Types.ObjectId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+    const token = await tokenForRole("DISTRICT_OFFICER", own._id as Types.ObjectId);
+
+    const res = await request(app)
+      .get(`/api/v1/recommendations?districtId=${(other._id as Types.ObjectId).toString()}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(404);
+  });
+
   it("rejects a role without recommendation:read", async () => {
     const token = await tokenForRole("FIELD_VOLUNTEER");
     const res = await request(app).get("/api/v1/recommendations").set("Authorization", `Bearer ${token}`);

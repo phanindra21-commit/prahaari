@@ -242,6 +242,36 @@ describe("scenario routes integration", () => {
     expect(res.status).toBe(404);
   });
 
+  it("SECURITY: GET /scenarios?districtId= for another district is rejected (404), not silently substituted for the caller's own scope", async () => {
+    // Regression test: same class of bug as recommendation.routes.ts's
+    // identical fix — the list filter used to overwrite the
+    // scope-derived districtId with whatever the query string said,
+    // unchecked.
+    const own = await seedDistrict("SCN-RT-006A", ["landslide"], "Kerala");
+    const other = await seedDistrict("SCN-RT-006B", ["landslide"], "Kerala");
+    await ScenarioRun.create({
+      name: "Other district's run",
+      districtId: other._id,
+      hazardTypes: ["landslide"],
+      parameters: { rainfallMmPer24h: 300 },
+      hazardSummaries: [],
+      cellTransitions: [],
+      habitationDeltas: [],
+      habitationsEnteringImmediate: [],
+      zoneGeometries: [],
+      runtimeSeconds: 1,
+      modelVersion: "test-v1",
+      createdBy: new Types.ObjectId(),
+    });
+    const token = await tokenForRole("DISTRICT_OFFICER", own._id as Types.ObjectId);
+
+    const res = await request(app)
+      .get(`/api/v1/scenarios?districtId=${(other._id as Types.ObjectId).toString()}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.status).toBe(404);
+  });
+
   it("GET /scenarios lists saved runs for the district, and GET /scenarios/:id returns one", async () => {
     const district = await seedDistrict("SCN-RT-005", ["landslide"], "Kerala");
     await seedGridCells(district._id as Types.ObjectId, 4);

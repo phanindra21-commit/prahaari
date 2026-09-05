@@ -6,6 +6,7 @@ import type { DecisionAction } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
+import { requireDistrictInScope } from "../lib/districtScope";
 import { Decision } from "../models/Decision";
 import { Recommendation, type RecommendationDoc } from "../models/Recommendation";
 
@@ -212,17 +213,34 @@ decisionRouter.post(
   },
 );
 
-const listQuerySchema = z.object({ recommendationId: objectIdString.optional() });
+const listQuerySchema = z.object({
+  recommendationId: objectIdString.optional(),
+  districtId: objectIdString.optional(),
+});
 
 /** GET /api/v1/decisions — decisions for a recommendation (usually 0 or 1: a
- * PENDING_REVIEW recommendation accepts exactly one decision), scoped to
- * the caller's district(s). */
+ * PENDING_REVIEW recommendation accepts exactly one decision) or for a
+ * whole district (Step 9 Part 2A's situation report needs "every decision
+ * taken in this district", not just one recommendation's) — always scoped
+ * to the caller's district(s) first. */
 decisionRouter.get("/decisions", authenticate, requirePermission(DECISION_READ), requireScope(), (req, res, next) => {
   void (async () => {
     const query = listQuerySchema.parse(req.query);
     const filter: Record<string, unknown> = { ...req.scopeFilter };
     if (query.recommendationId) {
       filter.recommendationId = new Types.ObjectId(query.recommendationId);
+    }
+    if (query.districtId) {
+      // SECURITY: verify against the caller's own scope before use — see
+      // recommendation.routes.ts's identical fix for why blindly trusting
+      // an explicit ?districtId= is a scope bypass.
+      const districtId = new Types.ObjectId(query.districtId);
+      const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
+      if (!district) {
+        res.status(404).json({ error: "District not found or out of scope" });
+        return;
+      }
+      filter.districtId = districtId;
     }
     const decisions = await Decision.find(filter).populate("officerId", "name email role").sort({ decidedAt: -1 });
     res.status(200).json({ items: decisions });

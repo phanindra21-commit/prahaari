@@ -5,6 +5,7 @@ import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
+import { requireDistrictInScope } from "../lib/districtScope";
 import { Recommendation } from "../models/Recommendation";
 import { Decision } from "../models/Decision";
 import { AuditLog } from "../models/AuditLog";
@@ -39,7 +40,21 @@ recommendationRouter.get(
       const query = listQuerySchema.parse(req.query);
       const filter: Record<string, unknown> = { ...req.scopeFilter };
       if (query.districtId) {
-        filter.districtId = new Types.ObjectId(query.districtId);
+        // SECURITY: an explicit ?districtId= must be verified against the
+        // caller's OWN scope before use — blindly overwriting the filter
+        // built by requireScope() above let any single-district role
+        // (DISTRICT_OFFICER/ANALYST/FIELD_VOLUNTEER) read any OTHER
+        // district's recommendations just by passing its id. Found and
+        // fixed live (Step 9 Part 2): a Wayanad DISTRICT_OFFICER token
+        // successfully listed Ganjam's recommendations before this check
+        // existed.
+        const districtId = new Types.ObjectId(query.districtId);
+        const district = await requireDistrictInScope({ role: req.auth!.role, ...req.auth!.scope }, districtId);
+        if (!district) {
+          res.status(404).json({ error: "District not found or out of scope" });
+          return;
+        }
+        filter.districtId = districtId;
       }
       if (query.priorityBucket) {
         filter.priorityBucket = query.priorityBucket;
