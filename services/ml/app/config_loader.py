@@ -222,6 +222,25 @@ def load_scenario_parameters() -> dict[str, Any]:
     return config
 
 
+def load_routing_costs() -> dict[str, Any]:
+    """Step 10 Part 3A. Mirrors packages/shared/src/config/loader.ts::loadRoutingCosts()."""
+    config = _load_json("routing-costs.json")
+    m = config["zoneClassMultiplier"]
+    if not (m["Green"] < m["Yellow"] < m["Orange"] < m["Red"]):
+        raise ValueError(
+            "[ml/config] routing-costs.json zoneClassMultiplier must be strictly increasing "
+            f"Green<Yellow<Orange<Red, got Green={m['Green']}, Yellow={m['Yellow']}, "
+            f"Orange={m['Orange']}, Red={m['Red']}"
+        )
+    s = config["routeSafetyWeight"]
+    if not (s["Green"] >= s["Yellow"] >= s["Orange"] >= s["Red"]):
+        raise ValueError(
+            "[ml/config] routing-costs.json routeSafetyWeight must be non-increasing "
+            f"Green>=Yellow>=Orange>=Red, got {s}"
+        )
+    return config
+
+
 HAZARD_WEIGHTS = load_hazard_weights()
 ZONE_THRESHOLDS = load_zone_thresholds()
 VULNERABILITY_WEIGHTS = load_vulnerability_weights()
@@ -235,3 +254,4 @@ BLEND_CONFIG = load_blend_config()
 DISASTER_HISTORY = load_disaster_history()
 COMPOUND_HAZARDS = load_compound_hazards()
 SCENARIO_PARAMETERS = load_scenario_parameters()
+ROUTING_COSTS = load_routing_costs()

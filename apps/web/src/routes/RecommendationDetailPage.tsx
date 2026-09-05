@@ -8,7 +8,7 @@ import { RecommendationMap } from "../components/decisions/RecommendationMap";
 import { DecisionActionPanel } from "../components/decisions/DecisionActionPanel";
 import { AuditTrailPanel } from "../components/decisions/AuditTrailPanel";
 import { ApiError } from "../lib/apiClient";
-import type { CarryingCapacity, RelocationSiteDetail } from "../lib/api";
+import type { CarryingCapacity, RelocationSiteDetail, RouteExposureEntry, RouteInfo } from "../lib/api";
 
 const HAZARD_LABELS: Record<string, string> = {
   landslide: "Landslide",
@@ -46,6 +46,45 @@ const CONSTRAINT_KEY_FOR: Record<CarryingCapacity["bindingConstraint"], keyof ty
   HEALTH: "byHealth",
   ACCESS: "byAccess",
 };
+
+/** Step 10 Part 3D: "Direct route crosses 2.1 km of Red zone; safest route
+ * adds 3.4 km and stays clear" — the most visually memorable claim of the
+ * demo, so it needs a plain-language caption alongside the map, not just
+ * the two colored lines. */
+function describeExposure(exposure: RouteExposureEntry[]): string {
+  const concerning = exposure.filter((e) => e.zoneClass === "Red" || e.zoneClass === "Orange");
+  if (concerning.length === 0) return "stays clear of Red/Orange zones";
+  return `crosses ${concerning.map((e) => `${e.km.toFixed(1)} km of ${e.zoneClass} zone`).join(" and ")}`;
+}
+
+function RouteSafetyCaption({ route }: { route: RouteInfo }): JSX.Element {
+  const extraKm = route.routeLengthKm - route.directLengthKm;
+  const safestPhrase =
+    extraKm > 0.05
+      ? `safest route adds ${extraKm.toFixed(1)} km and ${describeExposure(route.routeExposure)}`
+      : `safest route ${describeExposure(route.routeExposure)}`;
+
+  return (
+    <div className="mt-2 rounded border border-ink-600 bg-ink-900 p-2.5 text-xs leading-relaxed text-mist-200">
+      <div className="mb-1.5 flex items-center gap-4 text-[11px]">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-4 bg-zone-green" /> Safest route ({route.routeLengthKm.toFixed(1)} km)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-4 border-t-2 border-dashed border-zone-red" /> Direct line (
+          {route.directLengthKm.toFixed(1)} km)
+        </span>
+      </div>
+      <p>
+        Direct route {describeExposure(route.directExposure)}; {safestPhrase}.
+      </p>
+      <p className="mt-1 text-[10px] text-mist-500">
+        Corridor-level routing over the hazard grid, not road-network routing — an advisory approximation, not a
+        navigable path.
+      </p>
+    </div>
+  );
+}
 
 function SuitabilityBar({ label, value }: { label: string; value: number }): JSX.Element {
   return (
@@ -227,6 +266,7 @@ export function RecommendationDetailPage(): JSX.Element {
   }
 
   const selectedSite = rec.selectedSiteId ?? rec.candidateSites[0]?.relocationSiteId ?? null;
+  const selectedCandidate = rec.candidateSites.find((c) => c.relocationSiteId._id === selectedSite?._id);
 
   return (
     <div className="scrollbar-thin h-full overflow-y-auto p-4">
@@ -294,13 +334,16 @@ export function RecommendationDetailPage(): JSX.Element {
             )}
           </section>
 
-          <section className="h-80 overflow-hidden rounded border border-ink-600">
-            <RecommendationMap
-              origin={rec.habitationId.centroid}
-              originName={rec.habitationId.name}
-              candidateSites={rec.candidateSites}
-              selectedSiteId={selectedSite?._id ?? null}
-            />
+          <section>
+            <div className="h-80 overflow-hidden rounded border border-ink-600">
+              <RecommendationMap
+                origin={rec.habitationId.centroid}
+                originName={rec.habitationId.name}
+                candidateSites={rec.candidateSites}
+                selectedSiteId={selectedSite?._id ?? null}
+              />
+            </div>
+            {selectedCandidate?.route && <RouteSafetyCaption route={selectedCandidate.route} />}
           </section>
 
           <section className="rounded border border-ink-600 bg-ink-800 p-3">

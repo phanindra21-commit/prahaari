@@ -1,6 +1,7 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES } from "@punarvas/shared";
-import type { RelocationPriorityBucket, RecommendationStatus } from "@punarvas/shared";
+import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ZONE_CLASSES } from "@punarvas/shared";
+import type { RelocationPriorityBucket, RecommendationStatus, ZoneClass, GeoLineString } from "@punarvas/shared";
+import { geoLineStringSchema } from "./geoSchemas";
 
 /**
  * `districtId` is denormalized from `habitationId`'s Habitation at
@@ -10,10 +11,34 @@ import type { RelocationPriorityBucket, RecommendationStatus } from "@punarvas/s
  * routes, RBAC), never only reached via its habitation.
  */
 
+export interface RouteExposureEntry {
+  zoneClass: ZoneClass;
+  km: number;
+  percent: number;
+}
+
+/** Step 10 Part 3B: the safest (A*-routed) corridor and a straight-line
+ * reference between this habitation and this candidate site — see
+ * services/ml/app/engine/routing.py and docs/METHODOLOGY.md's routing
+ * scope note (corridor-level over the hazard grid, not road-network
+ * routing). Null when routing could not be computed for this pair (no
+ * path found, or the pipeline run predates this feature). */
+export interface RouteInfo {
+  routeGeometry: GeoLineString;
+  directGeometry: GeoLineString;
+  routeLengthKm: number;
+  directLengthKm: number;
+  detourRatio: number;
+  routeExposure: RouteExposureEntry[];
+  directExposure: RouteExposureEntry[];
+}
+
 export interface RankedCandidateSite {
   relocationSiteId: Types.ObjectId;
   rank: number;
   suitabilityScore: number;
+  route?: RouteInfo | null;
+  routeSafetyScore?: number | null;
 }
 
 export interface PhasingPlanEntry {
@@ -45,11 +70,35 @@ export interface RecommendationDoc extends Document {
   updatedAt: Date;
 }
 
+const routeExposureEntrySchema = new Schema<RouteExposureEntry>(
+  {
+    zoneClass: { type: String, enum: ZONE_CLASSES, required: true },
+    km: { type: Number, required: true, min: 0 },
+    percent: { type: Number, required: true, min: 0, max: 100 },
+  },
+  { _id: false },
+);
+
+const routeInfoSchema = new Schema<RouteInfo>(
+  {
+    routeGeometry: { type: geoLineStringSchema, required: true },
+    directGeometry: { type: geoLineStringSchema, required: true },
+    routeLengthKm: { type: Number, required: true, min: 0 },
+    directLengthKm: { type: Number, required: true, min: 0 },
+    detourRatio: { type: Number, required: true, min: 0 },
+    routeExposure: { type: [routeExposureEntrySchema], required: true },
+    directExposure: { type: [routeExposureEntrySchema], required: true },
+  },
+  { _id: false },
+);
+
 const rankedCandidateSiteSchema = new Schema<RankedCandidateSite>(
   {
     relocationSiteId: { type: Schema.Types.ObjectId, ref: "RelocationSite", required: true },
     rank: { type: Number, required: true, min: 1 },
     suitabilityScore: { type: Number, required: true, min: 0, max: 1 },
+    route: { type: routeInfoSchema, default: null },
+    routeSafetyScore: { type: Number, min: 0, max: 1, default: null },
   },
   { _id: false },
 );

@@ -746,6 +746,103 @@ The officer decision workbench always displays, per candidate site:
   `C_access` values, so the officer can see how close the non-binding
   constraints are to also becoming limiting.
 
+### 5.7 Safe Route Corridors (Step 10 Part 3)
+
+A ranked candidate site's suitability score (Section 4) says nothing
+about how a household would actually get there during or after a hazard
+event — the most suitable site on paper can still be reached only by a
+road that itself crosses the Red zone it is meant to be an escape from.
+This section computes, for every (habitation, candidate site) pair, a
+**safest route** over the hazard grid and a **direct-line reference**,
+and reports the hazard exposure of both.
+
+**Scope, stated plainly:** this is **corridor-level routing over the H3
+hazard grid**, not road-network routing. The algorithm moves between H3
+cell centroids, not along an actual road. A production deployment would
+run the identical algorithm (Section 5.7.1's cost function unchanged)
+over the PMGSY/OSM road-network graph instead, with the hazard surface
+supplying each road edge's cost — the same "hazard surface as edge cost"
+idea, just on the graph a vehicle can actually drive. This demo does not
+have a seeded road-network dataset to route over, so it routes over the
+grid it does have, which is still enough to show whether a corridor
+exists that avoids the worst terrain, and by how much it costs to take
+it.
+
+#### 5.7.1 Cost function and A\* search
+
+Every district's H3 resolution-8 grid (Section 1) is treated as a graph:
+each cell is a node, and each cell shares an edge with its six (or five,
+at a pentagon) immediate neighbors. A cell's **governing** hazard is
+whichever of the district's hazards has the highest `blendedScore` at
+that cell (the same "governing hazard" concept Section 3 already uses
+per habitation, applied here per grid cell); that hazard's `zoneClass`
+sets the cost of entering the cell:
+
+```
+edgeCost(cell) = distance_km(from, to) * baseCostPerKm * zoneClassMultiplier[cell.zoneClass]
+```
+
+`zoneClassMultiplier` (`packages/shared/src/config/routing-costs.json`,
+same single-source-of-truth pattern as every other weight config in this
+project, TS and Python loaders both asserting it is strictly increasing
+Green < Yellow < Orange < Red) is currently `{Green: 1, Yellow: 3,
+Orange: 12, Red: 60}` — Red is not literally infinite (a route can still
+be found through solid Red terrain when no alternative exists, which is
+the honest answer for a habitation with no safe way out, rather than
+silently returning no route), but it is expensive enough that A\* will
+always prefer a materially-available detour. The search itself is
+standard A\* (`services/ml/app/engine/routing.py`) with an admissible
+heuristic (great-circle distance to the destination, costed at the
+cheapest possible multiplier — Green — so it never overestimates).
+
+The **direct-line reference** is the plain straight line between origin
+and destination, sampled roughly every 250 m to attribute each stretch to
+the zone class of its nearest grid cell — not routed, a reference only,
+so the safest route's benefit has something concrete to be measured
+against.
+
+#### 5.7.2 Route safety score and the post-AHP adjustment
+
+Both the safest route and the direct line get a per-zone-class exposure
+breakdown (km and % of total length in Red/Orange/Yellow/Green) and a
+single `routeSafetyScore` in `[0, 1]`:
+
+```
+routeSafetyScore = Σ(km_in_class * routeSafetyWeight[class]) / total_km
+```
+
+with `routeSafetyWeight = {Green: 1.0, Yellow: 0.7, Orange: 0.3, Red:
+0.0}` (also in `routing-costs.json`) — a route that is entirely Green
+scores 1.0, entirely Red scores 0.0, and a mixed route falls between the
+two in proportion to how much of it sits in each class.
+
+This score is fed into site ranking (Section 4) as a **documented
+post-AHP adjustment**, applied only to the top 5 sites a habitation's
+pure AHP suitability score already shortlisted (`site_matching.py`'s
+`_MAX_RANKED_SITES_RETURNED`) — a route-safety edge can reorder which of
+those already-shortlisted sites appears first; it can never pull in a
+site suitability alone would not already have shortlisted, and it never
+changes which site is actually allocated capacity (Section 4's greedy
+allocation still runs on the untouched pure-AHP order):
+
+```
+adjustedScore = overallSuitabilityScore * (1 - w + w * routeSafetyScore)
+```
+
+where `w` is `routeSafetyAdjustmentWeight` (currently `0.15`, also in
+`routing-costs.json`). Because `routeSafetyScore <= 1`, this factor is
+always `<= 1` — the adjustment can only ever **reduce** a site's
+effective score for a risky corridor, never boost one above its pure AHP
+score. `suitabilityScore` as reported to the officer is always the
+untouched pure-AHP number; `adjustedScore` exists only to decide display
+order among the shortlist. **The AHP pairwise comparison matrix itself
+(`suitability-ahp.json`, Section 4.2, consistency-validated at CR
+0.0061) is never touched by this** — a deliberate choice: re-deriving a
+validated AHP weight set to informally account for routing would
+conflate two different kinds of judgment (relative importance of siting
+*criteria* vs. a *derived, situational* safety measure) into one number,
+where keeping them separate lets the officer see both independently.
+
 ---
 
 ## 6. Validation Against Ground Truth

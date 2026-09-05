@@ -1,17 +1,39 @@
 import { Types } from "mongoose";
 import { capacityNorms } from "@punarvas/shared";
-import type { RelocationPriorityBucket } from "@punarvas/shared";
+import type { RelocationPriorityBucket, ZoneClass } from "@punarvas/shared";
 import { District } from "../../models/District";
 import { Habitation, type HabitationDoc } from "../../models/Habitation";
 import { RelocationSite } from "../../models/RelocationSite";
 import { Assessment } from "../../models/Assessment";
 import { Recommendation } from "../../models/Recommendation";
+import { GridCell } from "../../models/GridCell";
 import { getActiveZones } from "../zoneVersioning";
 import {
   mlServiceClient,
   type SiteScoringRunSiteInput,
   type SiteScoringRunHabitationInput,
+  type SiteScoringRunGridCellInput,
 } from "../mlServiceClient";
+
+/**
+ * Step 10 Part 3A/3B: reduces a GridCell's per-hazard `hazardScores` map to
+ * ONE scalar zone class/score per cell — whichever hazard has the highest
+ * blendedScore "governs" that cell for routing purposes, the same
+ * "governing hazard" concept assessment.py already uses per-habitation.
+ * routing.py and the /sites/run route only ever reason about this single
+ * combined figure; the multi-hazard combination logic lives here, once.
+ */
+function governingZoneAndScore(
+  hazardScores: Map<string, { blendedScore: number; zoneClass: ZoneClass }>,
+): { zoneClass: ZoneClass; score: number } | null {
+  let best: { zoneClass: ZoneClass; score: number } | null = null;
+  for (const entry of hazardScores.values()) {
+    if (!best || entry.blendedScore > best.score) {
+      best = { zoneClass: entry.zoneClass, score: entry.blendedScore };
+    }
+  }
+  return best;
+}
 
 const PHASE_1_LEAD_TIME_DAYS = 90;
 const MATCHABLE_BUCKETS: RelocationPriorityBucket[] = ["Immediate", "ShortTerm"];
@@ -126,12 +148,33 @@ export async function scoreDistrictSites(districtId: Types.ObjectId): Promise<Si
     })
     .filter((input): input is SiteScoringRunHabitationInput => input !== null);
 
+  // Step 10 Part 3B: the district's full grid, reduced to one governing
+  // zone class/score per cell, is what routing.py builds its A* graph
+  // from. Skipped (empty array — route computation is then skipped
+  // entirely, matching pre-Step-10 behavior) if zoning hasn't run for
+  // this district yet, rather than failing the whole site-scoring stage
+  // over a feature that degrades gracefully.
+  const gridCellDocs = await GridCell.find({ districtId }, { h3Index: 1, centroid: 1, hazardScores: 1 });
+  const gridCellInputs: SiteScoringRunGridCellInput[] = [];
+  for (const cell of gridCellDocs) {
+    const governing = governingZoneAndScore(cell.hazardScores);
+    if (!governing) continue;
+    gridCellInputs.push({
+      h3Index: cell.h3Index,
+      lon: cell.centroid.coordinates[0],
+      lat: cell.centroid.coordinates[1],
+      zoneClass: governing.zoneClass,
+      score: governing.score,
+    });
+  }
+
   const response = await mlServiceClient.runSiteScoring(
     district.state,
     terrainTier,
     redOrangeZoneGeometries,
     siteInputs,
     habitationInputs,
+    gridCellInputs,
   );
 
   const modelVersion = `sites-v1-${Date.now()}`;
@@ -209,6 +252,8 @@ export async function scoreDistrictSites(districtId: Types.ObjectId): Promise<Si
         relocationSiteId: new Types.ObjectId(r.siteId),
         rank: r.rank,
         suitabilityScore: r.suitabilityScore,
+        route: r.route,
+        routeSafetyScore: r.routeSafetyScore,
       })),
       selectedSiteId: new Types.ObjectId(topRankedSite.siteId),
       priorityBucket: assessment.priorityBucket,

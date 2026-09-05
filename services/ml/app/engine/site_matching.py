@@ -15,6 +15,19 @@ habitation already exhausted.
 This module does not talk to a database — apps/api resolves habitations
 and sites to plain inputs first, matching services/ml's "stateless engine"
 convention used throughout (see disaster_history.py's docstring).
+
+Step 10 Part 3C adds an optional route-safety re-rank: when `grid_cells`
+is supplied, the top `_MAX_RANKED_SITES_RETURNED` sites by pure AHP
+suitability (already the exact list returned to the caller) are re-sorted
+by `overall_score * (1 - w + w * route_safety_score)` — a documented
+post-AHP adjustment (`routing-costs.json`'s `routeSafetyAdjustmentWeight`,
+w) that can only ever reduce a site's effective score for a risky
+corridor, never boost one above its pure AHP score. The AHP pairwise
+matrix (suitability-ahp.json) and every `suitability_score` reported to
+the caller are never touched by this. `grid_cells` is optional and
+defaults to `None`, in which case behavior is byte-for-byte identical to
+before this feature existed (no route computed, no re-rank) — every
+caller that doesn't yet supply grid cells keeps working exactly as before.
 """
 
 from __future__ import annotations
@@ -22,6 +35,8 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
+from app.config_loader import ROUTING_COSTS
+from app.engine.routing import GridCellForRouting, RouteResult, compute_route
 from app.engine.suitability import SuitabilityResult, compute_site_suitability
 
 _PRIORITY_ORDER = {"Immediate": 0, "ShortTerm": 1}
@@ -71,6 +86,18 @@ class RankedSite:
     rank: int
     suitability_score: float
     sub_scores: dict[str, float]
+    # Step 10 Part 3B/3C. `suitability_score` above is always the pure AHP
+    # score, untouched — `route` and `route_safety_score` are the routing
+    # engine's output for this (habitation, site) pair (None when no
+    # `grid_cells` were supplied to `match_habitations_to_sites`, or when
+    # no path could be found), and `rank` reflects the post-AHP adjustment
+    # (see this module's docstring) only among the top
+    # `_MAX_RANKED_SITES_RETURNED` sites already selected by suitability —
+    # a route-safety edge can reorder which of those already-shortlisted
+    # sites appears first, never pull in a site that suitability alone
+    # would not already have shortlisted.
+    route: RouteResult | None = None
+    route_safety_score: float | None = None
 
 
 @dataclass
@@ -87,6 +114,7 @@ _MAX_RANKED_SITES_RETURNED = 5
 def match_habitations_to_sites(
     habitations: list[HabitationInput],
     sites: list[ScoredSiteInput],
+    grid_cells: list[GridCellForRouting] | None = None,
 ) -> list[MatchResult]:
     sorted_habitations = sorted(
         habitations,
@@ -112,14 +140,35 @@ def match_habitations_to_sites(
             scored.append((site.site_id, suitability))
         scored.sort(key=lambda pair: pair[1].overall_score, reverse=True)
 
+        shortlist = scored[:_MAX_RANKED_SITES_RETURNED]
+        sites_by_id = {s.site_id: s for s in sites}
+        adjustment_weight = ROUTING_COSTS["routeSafetyAdjustmentWeight"]
+
+        routed: list[tuple[str, SuitabilityResult, RouteResult | None, float]] = []
+        for site_id, suitability in shortlist:
+            route: RouteResult | None = None
+            if grid_cells:
+                site = sites_by_id[site_id]
+                route = compute_route(habitation.lon, habitation.lat, site.lon, site.lat, grid_cells)
+            if route is not None:
+                adjusted = suitability.overall_score * (
+                    1 - adjustment_weight + adjustment_weight * route.route_safety_score
+                )
+            else:
+                adjusted = suitability.overall_score
+            routed.append((site_id, suitability, route, adjusted))
+        routed.sort(key=lambda entry: entry[3], reverse=True)
+
         ranked_sites = [
             RankedSite(
                 site_id=site_id,
                 rank=index + 1,
                 suitability_score=suitability.overall_score,
                 sub_scores=suitability.sub_scores,
+                route=route,
+                route_safety_score=route.route_safety_score if route is not None else None,
             )
-            for index, (site_id, suitability) in enumerate(scored)
+            for index, (site_id, suitability, route, _adjusted) in enumerate(routed)
         ]
 
         allocated_site_id: str | None = None

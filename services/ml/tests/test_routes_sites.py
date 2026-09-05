@@ -1,3 +1,4 @@
+import h3
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -123,6 +124,50 @@ def test_mediumterm_habitations_are_excluded_from_matching():
     response = client.post("/sites/run", json=body)
     assert response.status_code == 200
     assert response.json()["matches"] == []
+
+
+def test_matching_includes_a_route_when_grid_cells_are_supplied():
+    hab_lon, hab_lat = 78.001, 13.001
+    site_lon, site_lat = 78.0, 13.0
+    center = h3.latlng_to_cell(hab_lat, hab_lon, 8)
+    grid_cells = [
+        {"h3Index": cell, "lon": lon, "lat": lat, "zoneClass": "Green", "score": 0.1}
+        for cell, (lat, lon) in ((c, h3.cell_to_latlng(c)) for c in h3.grid_disk(center, 4))
+    ]
+
+    body = {
+        "state": "Odisha",
+        "terrainTier": "PLAINS",
+        "redOrangeZoneGeometries": [],
+        "sites": [_safe_site("safe", site_lon, site_lat)],
+        "habitations": [_habitation("hab1", hab_lon, hab_lat, "Immediate")],
+        "gridCells": grid_cells,
+    }
+    response = client.post("/sites/run", json=body)
+    assert response.status_code == 200
+    [match] = response.json()["matches"]
+    [ranked] = match["rankedSites"]
+    assert ranked["routeSafetyScore"] == 1.0
+    assert ranked["route"] is not None
+    assert ranked["route"]["routeLengthKm"] > 0
+    assert ranked["route"]["directLengthKm"] > 0
+    assert all(e["zoneClass"] == "Green" for e in ranked["route"]["routeExposure"])
+
+
+def test_matching_without_grid_cells_field_omits_route_as_before():
+    body = {
+        "state": "Odisha",
+        "terrainTier": "PLAINS",
+        "redOrangeZoneGeometries": [],
+        "sites": [_safe_site("safe", 78.0, 13.0)],
+        "habitations": [_habitation("hab1", 78.001, 13.001, "Immediate")],
+    }
+    response = client.post("/sites/run", json=body)
+    assert response.status_code == 200
+    [match] = response.json()["matches"]
+    [ranked] = match["rankedSites"]
+    assert ranked["route"] is None
+    assert ranked["routeSafetyScore"] is None
 
 
 def test_invalid_geometry_returns_422():

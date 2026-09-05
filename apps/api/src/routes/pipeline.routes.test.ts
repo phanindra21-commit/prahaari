@@ -148,6 +148,8 @@ function startMockMlServer(): void {
             rank: i + 1,
             suitabilityScore: 0.8,
             subScores: { hazardSafety: 0.9 },
+            route: null,
+            routeSafetyScore: null,
           })),
           allocatedSiteId: firstSiteId,
           allocatedHouseholds: h.households,

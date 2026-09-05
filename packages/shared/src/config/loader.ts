@@ -13,6 +13,7 @@ import permissionsJson from "./permissions.json";
 import disasterHistoryJson from "./disaster-history.json";
 import compoundHazardsJson from "./compound-hazards.json";
 import scenarioParametersJson from "./scenario-parameters.json";
+import routingCostsJson from "./routing-costs.json";
 import {
   hazardWeightsSchema,
   zoneThresholdsSchema,
@@ -28,6 +29,7 @@ import {
   disasterHistoryConfigSchema,
   compoundHazardsConfigSchema,
   scenarioParametersConfigSchema,
+  routingCostsConfigSchema,
   type HazardWeightsConfig,
   type ZoneThresholdsConfig,
   type VulnerabilityWeightsConfig,
@@ -42,6 +44,7 @@ import {
   type DisasterHistoryConfig,
   type CompoundHazardsConfig,
   type ScenarioParametersConfig,
+  type RoutingCostsConfig,
 } from "./schemas";
 
 const WEIGHT_SUM_TOLERANCE = 1e-6;
@@ -272,6 +275,23 @@ function loadScenarioParameters(): ScenarioParametersConfig {
   return config;
 }
 
+function loadRoutingCosts(): RoutingCostsConfig {
+  const config = parseConfig(routingCostsConfigSchema, routingCostsJson, "routing-costs.json");
+  const { Green, Yellow, Orange, Red } = config.zoneClassMultiplier;
+  if (!(Green < Yellow && Yellow < Orange && Orange < Red)) {
+    throw new Error(
+      `[shared/config] routing-costs.json zoneClassMultiplier must be strictly increasing Green<Yellow<Orange<Red, got Green=${Green}, Yellow=${Yellow}, Orange=${Orange}, Red=${Red}`,
+    );
+  }
+  const safety = config.routeSafetyWeight;
+  if (!(safety.Green >= safety.Yellow && safety.Yellow >= safety.Orange && safety.Orange >= safety.Red)) {
+    throw new Error(
+      `[shared/config] routing-costs.json routeSafetyWeight must be non-increasing Green>=Yellow>=Orange>=Red, got ${JSON.stringify(safety)}`,
+    );
+  }
+  return config;
+}
+
 function loadPermissions(): PermissionsConfig {
   const config = parseConfig(permissionsConfigSchema, permissionsJson, "permissions.json");
 
@@ -316,3 +336,4 @@ export const permissionsConfig: PermissionsConfig = loadPermissions();
 export const disasterHistoryConfig: DisasterHistoryConfig = loadDisasterHistory();
 export const compoundHazardsConfig: CompoundHazardsConfig = loadCompoundHazards();
 export const scenarioParametersConfig: ScenarioParametersConfig = loadScenarioParameters();
+export const routingCostsConfig: RoutingCostsConfig = loadRoutingCosts();

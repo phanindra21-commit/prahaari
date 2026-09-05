@@ -23,6 +23,7 @@ from shapely.geometry.base import BaseGeometry
 
 from app.engine.capacity import compute_carrying_capacity
 from app.engine.exclusions import evaluate_exclusions
+from app.engine.routing import GridCellForRouting
 from app.engine.site_matching import HabitationInput as MatchHabitationInput
 from app.engine.site_matching import ScoredSiteInput, match_habitations_to_sites
 from app.engine.suitability import compute_hazard_safety, compute_site_suitability
@@ -75,12 +76,33 @@ class HabitationForMatchingRequest(BaseModel):
     relocationPriorityIndex: float = Field(ge=0, le=1)
 
 
+ZoneClass = Literal["Red", "Orange", "Yellow", "Green"]
+
+
+class GridCellForRoutingRequest(BaseModel):
+    """Step 10 Part 3A/3B: one H3 cell's GOVERNING hazard zone class/score
+    (whichever of the district's hazards has the highest blendedScore at
+    that cell — apps/api's siteStage.ts combines the per-hazard scores
+    before sending them here; this route and services/ml/app/engine/
+    routing.py only ever reason about one scalar per cell)."""
+
+    h3Index: str
+    lon: float = Field(ge=-180, le=180)
+    lat: float = Field(ge=-90, le=90)
+    zoneClass: ZoneClass
+    score: float = Field(ge=0, le=1)
+
+
 class SiteScoringRunRequest(BaseModel):
     state: str
     terrainTier: TerrainTier
     redOrangeZoneGeometries: list[dict] = Field(default_factory=list)
     sites: list[SiteRequest] = Field(min_length=1)
     habitations: list[HabitationForMatchingRequest] = Field(default_factory=list)
+    # Optional and empty by default: when omitted, route-safety re-ranking
+    # is skipped entirely and behavior is identical to before this field
+    # existed (see site_matching.py's docstring).
+    gridCells: list[GridCellForRoutingRequest] = Field(default_factory=list)
 
 
 class ExclusionsOut(BaseModel):
@@ -107,11 +129,29 @@ class SiteOut(BaseModel):
     carryingCapacity: CapacityOut | None
 
 
+class RouteExposureOut(BaseModel):
+    zoneClass: ZoneClass
+    km: float
+    percent: float
+
+
+class RouteOut(BaseModel):
+    routeGeometry: dict
+    directGeometry: dict
+    routeLengthKm: float
+    directLengthKm: float
+    detourRatio: float
+    routeExposure: list[RouteExposureOut]
+    directExposure: list[RouteExposureOut]
+
+
 class RankedSiteOut(BaseModel):
     siteId: str
     rank: int
     suitabilityScore: float
     subScores: dict[str, float]
+    route: RouteOut | None = None
+    routeSafetyScore: float | None = None
 
 
 class MatchOut(BaseModel):
@@ -232,14 +272,42 @@ def run_site_scoring(request: SiteScoringRunRequest) -> SiteScoringRunResponse:
         )
         for h in eligible_habitations
     ]
-    match_results = match_habitations_to_sites(match_inputs, scored_sites_for_matching)
+    grid_cells_for_routing = [
+        GridCellForRouting(h3_index=g.h3Index, lon=g.lon, lat=g.lat, zone_class=g.zoneClass, score=g.score)
+        for g in request.gridCells
+    ]
+    match_results = match_habitations_to_sites(
+        match_inputs, scored_sites_for_matching, grid_cells_for_routing or None
+    )
+
+    def _route_out(route) -> RouteOut | None:  # noqa: ANN001 - app.engine.routing.RouteResult | None
+        if route is None:
+            return None
+        return RouteOut(
+            routeGeometry=route.route_geometry,
+            directGeometry=route.direct_geometry,
+            routeLengthKm=route.route_length_km,
+            directLengthKm=route.direct_length_km,
+            detourRatio=route.detour_ratio,
+            routeExposure=[
+                RouteExposureOut(zoneClass=e.zone_class, km=e.km, percent=e.percent) for e in route.route_exposure
+            ],
+            directExposure=[
+                RouteExposureOut(zoneClass=e.zone_class, km=e.km, percent=e.percent) for e in route.direct_exposure
+            ],
+        )
 
     matches_out = [
         MatchOut(
             habitationId=m.habitation_id,
             rankedSites=[
                 RankedSiteOut(
-                    siteId=r.site_id, rank=r.rank, suitabilityScore=r.suitability_score, subScores=r.sub_scores
+                    siteId=r.site_id,
+                    rank=r.rank,
+                    suitabilityScore=r.suitability_score,
+                    subScores=r.sub_scores,
+                    route=_route_out(r.route),
+                    routeSafetyScore=r.route_safety_score,
                 )
                 for r in m.ranked_sites
             ],

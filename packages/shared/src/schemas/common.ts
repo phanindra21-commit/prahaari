@@ -70,6 +70,15 @@ export type GeoMultiPolygon = z.infer<typeof geoMultiPolygonSchema>;
 export const geoPolygonalSchema = z.union([geoPolygonSchema, geoMultiPolygonSchema]);
 export type GeoPolygonal = z.infer<typeof geoPolygonalSchema>;
 
+/** Step 10 Part 3B: a route's geometry — a LineString through H3 cell
+ * centroids for the safest route, or a plain 2-point line for the direct
+ * reference. */
+export const geoLineStringSchema = z.object({
+  type: z.literal("LineString"),
+  coordinates: z.array(positionSchema).min(2),
+});
+export type GeoLineString = z.infer<typeof geoLineStringSchema>;
+
 /** Mandatory officer justification text — enforced repo-wide per CLAUDE.md. */
 export const justificationSchema = z.string().trim().min(30, {
   message: "Justification must be at least 30 characters — officer actions are never silent.",

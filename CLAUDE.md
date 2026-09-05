@@ -595,6 +595,96 @@ completed.
   budget and fail with a spurious 429 — set `workers: 1` rather than
   loosen a real anti-brute-force control.
 
+  ### Step 10 (demo-rehearsal fixes: demographics, real boundaries, safe routing) — DONE
+
+  Three issues found in demo rehearsal (hackathon 7 September 2026), fixed
+  as three parts, each committed separately, "Step 10" per this session's
+  own naming (same reused-numbering situation as Steps 5-9 above).
+
+  **Part 1 (demographic breakdown):** age composition already drove the
+  vulnerability score (`shareUnder5`/`shareOver60` in
+  `vulnerability-weights.json`) but was never shown as real numbers. Added
+  `shareSchoolAge6to14` to `Habitation.demographics` — a genuinely new seed
+  field (the existing under-5/over-60 pair can't be split further into
+  school-age vs. working-age), derived at seed time as
+  `clamp(round(shareUnder5*1.8, 2), 0.08, 0.30)` and documented as such,
+  not a new independent hand-picked value; display-only, never fed into
+  vulnerability scoring. Habitation panel gained a "Population
+  composition" section (a stacked composition bar — not a true age
+  pyramid, which would need gender-disaggregated age data this dataset
+  doesn't have and was not fabricated to get one) with absolute counts and
+  shares for every demographic cohort; the dashboard gained a headline
+  tile summing children under 5/over 60/persons with disability across a
+  district's Immediate-priority habitations; the recommendation detail
+  view now names the cohort driving an EDUCATION/HEALTH binding
+  constraint (e.g. "Education-bound: approximately 114 school-age children
+  ... exceed nearby RTE headroom by approximately 23" — a display-side
+  conversion of the existing households-based capacity numbers via the
+  habitation's own household size, not a change to the capacity model);
+  the habitation report sheet gained school-age/working-age rows.
+
+  **Part 2 (map accuracy and legibility):** the Wayanad/Ganjam district
+  boundaries were hand-drawn placeholder polygons, not real administrative
+  boundaries, as flagged in rehearsal. Replaced both with real GADM v2.8
+  district polygons (source + licence in `DATA_SOURCES.md`; Ganjam's real
+  boundary is a MultiPolygon — mainland plus a few small Chilika Lake
+  islands — already supported end-to-end with no code changes needed).
+  8 of 80 seeded habitations (all near Chilika Lake, where the old
+  boundary was more generous than the real one) fell outside the real
+  boundary; moved them 1-11 km each rather than distorting the boundary,
+  per instruction. Regenerated the full pipeline against the real
+  boundaries (grid: Wayanad 2793->2883 cells, Ganjam 8242->10457 cells);
+  confirmed Chooralmala/Mundakkai still score correctly (ShortTerm/
+  Immediate, RPI essentially unchanged). Added district/block/panchayat/
+  habitation/relocation-site name labels (MapLibre symbol layers — block/
+  panchayat labels are computed as centroids of the habitations sharing
+  each name, since there is no separate boundary dataset for either);
+  lowered hazard-zone fill opacity so the Esri basemap's own town/road
+  labels stay legible underneath (verified: Sulthanbathery, Bhubaneswar,
+  Khordha, Nayagarh basemap labels visible through the fill); redrew the
+  district boundary as a glow-plus-crisp-dashed-line pair. Needed adding a
+  `glyphs` PBF font URL to the base MapLibre style (MapLibre's own public
+  demo glyph server) — text-field symbol layers render nothing without one.
+
+  **Part 3 (safe route corridors):** `services/ml/app/engine/routing.py`
+  — A* over the H3 hazard grid as a weighted graph, cost rising with each
+  cell's governing hazard's zone class (`routing-costs.json`: Green 1x,
+  Yellow 3x, Orange 12x, Red 60x — Red is expensive, not literally
+  infinite, so a route is still found when there is no real alternative).
+  For every (habitation, top-5-shortlisted candidate site) pair: safest
+  route geometry, direct-line reference, lengths/detour ratio, per-zone-
+  class hazard exposure, and a `routeSafetyScore` in [0,1], all persisted
+  on `Recommendation.candidateSites[]`. Fed into site ranking as a
+  documented post-AHP adjustment (`routeSafetyAdjustmentWeight` 0.15 —
+  can only ever reduce a site's effective score for a risky corridor,
+  never boost one above its pure AHP score; the AHP pairwise matrix itself
+  is never touched) — see `docs/METHODOLOGY.md` §5.7 for the full formula
+  and the honest "corridor-level over the hazard grid, not road-network
+  routing" scope note. Wired end-to-end (`sites.py`'s `/sites/run`,
+  `siteStage.ts` supplying the district's grid reduced to one governing
+  zone class/score per cell) behind an optional, empty-by-default
+  `gridCells` request field, so every caller/test that predates this
+  feature behaves identically to before — verified live against real
+  Wayanad data (Mundakkai: direct route crosses 9.7 km Orange + 3.7 km
+  Red; safest route adds 17.2 km and crosses only 6.6 km Orange + 3.2 km
+  Red). Workbench map draws both routes (safest in green, direct in red)
+  with a plain-language exposure caption. 12 new Python tests (5 routing
+  unit tests build a real local H3 patch with a hand-placed Red/Orange
+  wall to force and verify detours; 3 site-matching tests, including one
+  that lets whichever site naturally wins on pure AHP suitability get
+  outranked by placing a Red wall behind it, so the "outranks an
+  equally-suitable site" claim is actually exercised, not assumed; 2
+  FastAPI route tests; 2 pre-existing-behavior-unchanged regression
+  tests), all additive — zero existing test files needed behavior changes
+  beyond adding the new (nullable) `route`/`routeSafetyScore` fields to
+  mock fixtures.
+
+  All three parts verified in a real browser (Playwright, built
+  production bundle) against the live stack; the standing full-demo-path,
+  decision-workbench, and scenario-simulator e2e specs all still pass end
+  to end. 180 Python tests (was 171), 246 TS tests, typecheck and lint
+  clean throughout.
+
 ## Why Python Is a Separate Service
 
 See `docs/ARCHITECTURE.md` for the full rationale — in short: geospatial

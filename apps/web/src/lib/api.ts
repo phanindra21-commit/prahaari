@@ -5,6 +5,7 @@ import type {
   ExplanationDirection,
   GeoPoint,
   GeoPolygonal,
+  GeoLineString,
   UserRole,
   RecommendationStatus,
   DecisionAction,
@@ -378,10 +379,29 @@ export interface PhasingPlanEntry {
   targetDate: string;
 }
 
+/** Step 10 Part 3B. */
+export interface RouteExposureEntry {
+  zoneClass: ZoneClass;
+  km: number;
+  percent: number;
+}
+
+export interface RouteInfo {
+  routeGeometry: GeoLineString;
+  directGeometry: GeoLineString;
+  routeLengthKm: number;
+  directLengthKm: number;
+  detourRatio: number;
+  routeExposure: RouteExposureEntry[];
+  directExposure: RouteExposureEntry[];
+}
+
 export interface RankedCandidateSiteDetail {
   relocationSiteId: RelocationSiteDetail;
   rank: number;
   suitabilityScore: number;
+  route: RouteInfo | null;
+  routeSafetyScore: number | null;
 }
 
 export interface RecommendationItem {

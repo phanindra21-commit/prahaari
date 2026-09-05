@@ -89,6 +89,26 @@ export function RecommendationMap({
           "circle-stroke-color": "#0A0E13",
         },
       });
+
+      // Step 10 Part 3D: the selected candidate's safest (A*-routed)
+      // corridor in green over its direct-line reference in red — drawn
+      // on top of everything else added so far so neither is obscured by
+      // the generic dashed origin-to-site connectors.
+      map.addSource("direct-route", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "direct-route-line",
+        type: "line",
+        source: "direct-route",
+        paint: { "line-color": "#C6483C", "line-width": 2.5, "line-dasharray": [2, 1.5], "line-opacity": 0.9 },
+      });
+
+      map.addSource("safest-route", { type: "geojson", data: EMPTY_FC });
+      map.addLayer({
+        id: "safest-route-line",
+        type: "line",
+        source: "safest-route",
+        paint: { "line-color": "#4C9F73", "line-width": 3.5, "line-opacity": 0.95 },
+      });
     });
 
     return () => {
@@ -106,7 +126,22 @@ export function RecommendationMap({
       const originSource = map.getSource("origin") as maplibregl.GeoJSONSource | undefined;
       const sitesSource = map.getSource("sites") as maplibregl.GeoJSONSource | undefined;
       const connectorsSource = map.getSource("connectors") as maplibregl.GeoJSONSource | undefined;
-      if (!originSource || !sitesSource || !connectorsSource) return;
+      const directRouteSource = map.getSource("direct-route") as maplibregl.GeoJSONSource | undefined;
+      const safestRouteSource = map.getSource("safest-route") as maplibregl.GeoJSONSource | undefined;
+      if (!originSource || !sitesSource || !connectorsSource || !directRouteSource || !safestRouteSource) return;
+
+      const selectedCandidate = candidateSites.find((c) => c.relocationSiteId._id === selectedSiteId);
+      const selectedRoute = selectedCandidate?.route ?? null;
+      directRouteSource.setData(
+        selectedRoute
+          ? { type: "Feature", geometry: selectedRoute.directGeometry as GeoJSON.Geometry, properties: {} }
+          : EMPTY_FC,
+      );
+      safestRouteSource.setData(
+        selectedRoute
+          ? { type: "Feature", geometry: selectedRoute.routeGeometry as GeoJSON.Geometry, properties: {} }
+          : EMPTY_FC,
+      );
 
       originSource.setData({
         type: "Feature",
@@ -126,14 +161,21 @@ export function RecommendationMap({
       }));
       sitesSource.setData({ type: "FeatureCollection", features: siteFeatures });
 
-      const connectorFeatures = candidateSites.map((c) => ({
-        type: "Feature" as const,
-        geometry: {
-          type: "LineString" as const,
-          coordinates: [origin.coordinates, c.relocationSiteId.centroid.coordinates],
-        },
-        properties: { isSelected: c.relocationSiteId._id === selectedSiteId },
-      }));
+      // The selected candidate's dashed connector is replaced by the two
+      // dedicated route lines above when route data exists — skip it here
+      // to avoid drawing both on top of each other. Every other candidate
+      // (and the selected one too, as a fallback when no route could be
+      // computed for it) still gets the plain connector.
+      const connectorFeatures = candidateSites
+        .filter((c) => !(selectedRoute && c.relocationSiteId._id === selectedSiteId))
+        .map((c) => ({
+          type: "Feature" as const,
+          geometry: {
+            type: "LineString" as const,
+            coordinates: [origin.coordinates, c.relocationSiteId.centroid.coordinates],
+          },
+          properties: { isSelected: c.relocationSiteId._id === selectedSiteId },
+        }));
       connectorsSource.setData({ type: "FeatureCollection", features: connectorFeatures });
 
       const allCoords: [number, number][] = [

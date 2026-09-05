@@ -1,0 +1,18 @@
+{
+  "modelVersion": "routing-costs-v1",
+  "note": "Edge traversal cost for A* routing over the H3 hazard grid (services/ml/app/engine/routing.py, Step 10 Part 3). Cost of entering a cell = distance(km) * baseCostPerKm * zoneClassMultiplier[cell's governing zone class] — Red is near-impassable relative to Green (not literally infinite, so a route can still be found through solid Red terrain when no alternative exists), Orange is costly, Green is cheap. routeSafetyWeight turns a route's per-class km breakdown into one routeSafetyScore in [0,1] (a weighted average of km spent in each class). routeSafetyAdjustmentWeight is the POST-AHP nudge applied in site_matching.py: adjustedScore = overallSuitabilityScore * (1 - routeSafetyAdjustmentWeight + routeSafetyAdjustmentWeight * routeSafetyScore) — this can only ever REDUCE a site's score for a risky corridor, never boost it above what the AHP suitability score alone produced, and the AHP pairwise matrix itself (suitability-ahp.json) is never touched.",
+  "baseCostPerKm": 1.0,
+  "zoneClassMultiplier": {
+    "Green": 1.0,
+    "Yellow": 3.0,
+    "Orange": 12.0,
+    "Red": 60.0
+  },
+  "routeSafetyWeight": {
+    "Green": 1.0,
+    "Yellow": 0.7,
+    "Orange": 0.3,
+    "Red": 0.0
+  },
+  "routeSafetyAdjustmentWeight": 0.15
+}

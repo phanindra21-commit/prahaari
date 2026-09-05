@@ -22,3 +22,12 @@ export const geoPolygonalSchema = new Schema(
   },
   { _id: false },
 );
+
+/** Step 10 Part 3B: a route's geometry. */
+export const geoLineStringSchema = new Schema(
+  {
+    type: { type: String, enum: ["LineString"], required: true },
+    coordinates: { type: [[Number]], required: true },
+  },
+  { _id: false },
+);

@@ -321,6 +321,32 @@ export const scenarioParametersConfigSchema = z.object({
 });
 export type ScenarioParametersConfig = z.infer<typeof scenarioParametersConfigSchema>;
 
+const zoneClassMultiplierSchema = z.object({
+  Green: z.number().positive(),
+  Yellow: z.number().positive(),
+  Orange: z.number().positive(),
+  Red: z.number().positive(),
+});
+
+const routeSafetyWeightSchema = z.object({
+  Green: z.number().min(0).max(1),
+  Yellow: z.number().min(0).max(1),
+  Orange: z.number().min(0).max(1),
+  Red: z.number().min(0).max(1),
+});
+
+/** Step 10 Part 3A — see routing-costs.json's own "note" field for the full
+ * cost-curve/post-AHP-adjustment rationale. */
+export const routingCostsConfigSchema = z.object({
+  modelVersion: z.string(),
+  note: z.string(),
+  baseCostPerKm: z.number().positive(),
+  zoneClassMultiplier: zoneClassMultiplierSchema,
+  routeSafetyWeight: routeSafetyWeightSchema,
+  routeSafetyAdjustmentWeight: z.number().min(0).max(1),
+});
+export type RoutingCostsConfig = z.infer<typeof routingCostsConfigSchema>;
+
 export const permissionsConfigSchema = z.object({
   modelVersion: z.string(),
   note: z.string(),

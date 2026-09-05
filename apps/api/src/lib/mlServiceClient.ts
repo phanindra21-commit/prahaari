@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   explanationEntrySchema,
   geoPolygonalSchema,
+  geoLineStringSchema,
   hazardTypeSchema,
   zoneClassSchema,
   priorityBucketSchema,
@@ -160,11 +161,31 @@ const siteOutSchema = z.object({
 });
 export type MlSiteScoringResult = z.infer<typeof siteOutSchema>;
 
+/** Step 10 Part 3B: a route's per-zone-class distance/share breakdown. */
+const routeExposureOutSchema = z.object({
+  zoneClass: zoneClassSchema,
+  km: z.number().nonnegative(),
+  percent: z.number().min(0).max(100),
+});
+
+const routeOutSchema = z.object({
+  routeGeometry: geoLineStringSchema,
+  directGeometry: geoLineStringSchema,
+  routeLengthKm: z.number().nonnegative(),
+  directLengthKm: z.number().nonnegative(),
+  detourRatio: z.number().nonnegative(),
+  routeExposure: z.array(routeExposureOutSchema),
+  directExposure: z.array(routeExposureOutSchema),
+});
+export type MlRoute = z.infer<typeof routeOutSchema>;
+
 const rankedSiteOutSchema = z.object({
   siteId: z.string().min(1),
   rank: z.number().int().positive(),
   suitabilityScore: z.number().min(0).max(1),
   subScores: z.record(z.string(), z.number()),
+  route: routeOutSchema.nullable(),
+  routeSafetyScore: z.number().min(0).max(1).nullable(),
 });
 
 const matchOutSchema = z.object({
@@ -199,6 +220,18 @@ export interface SiteScoringRunHabitationInput {
   households: number;
   priorityBucket: RelocationPriorityBucket;
   relocationPriorityIndex: number;
+}
+
+/** Step 10 Part 3A/3B: one H3 cell's GOVERNING hazard zone class/score
+ * (whichever of the district's hazards has the highest blendedScore at
+ * that cell) — the slim shape siteStage.ts sends for route computation,
+ * derived from the district's full GridCell documents. */
+export interface SiteScoringRunGridCellInput {
+  h3Index: string;
+  lon: number;
+  lat: number;
+  zoneClass: ZoneClass;
+  score: number;
 }
 
 const zoneCountsOutSchema = z.object({
@@ -358,6 +391,7 @@ export class MlServiceClient {
     redOrangeZoneGeometries: GeoPolygonal[],
     sites: SiteScoringRunSiteInput[],
     habitations: SiteScoringRunHabitationInput[],
+    gridCells: SiteScoringRunGridCellInput[] = [],
   ): Promise<SiteScoringRunResponse> {
     const raw = await this.postWithRetry(
       "/sites/run",
@@ -367,6 +401,7 @@ export class MlServiceClient {
         redOrangeZoneGeometries,
         sites,
         habitations,
+        gridCells,
       }),
     );
     const parsed = siteScoringRunResponseSchema.safeParse(raw);
