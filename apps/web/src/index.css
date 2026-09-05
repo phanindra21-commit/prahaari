@@ -68,3 +68,34 @@
   border-top-color: theme("colors.ink.800") !important;
   border-bottom-color: theme("colors.ink.800") !important;
 }
+
+/* Step 9 Part 2: print-optimized reports (district situation report,
+ * habitation assessment sheet). The app itself is dark-themed, but a
+ * report printed on paper (or saved as PDF via the browser's native
+ * print dialog — no server-side PDF generator, per this project's
+ * "prefer the simpler, more reliable option" instruction) should read
+ * as a normal light document, not a dark screenshot. `.print-report` is
+ * applied to the report page's own root element; `.no-print` marks
+ * screen-only chrome (the TopBar, the print button itself) that must
+ * never appear in the printed/saved output. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body:has(.print-report) {
+    background: #ffffff !important;
+  }
+  .print-report {
+    background: #ffffff !important;
+    color: #111111 !important;
+    position: absolute;
+    inset: 0;
+    overflow: visible !important;
+  }
+  .print-report * {
+    color: #111111;
+  }
+  .print-page-break {
+    page-break-before: always;
+  }
+}

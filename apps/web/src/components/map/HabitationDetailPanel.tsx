@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useHabitation, useHabitationExplain, useHazardEvents } from "../../hooks/useApi";
 import { ZoneBadge } from "../ui/ZoneBadge";
 import { PriorityBadge } from "../ui/PriorityBadge";
@@ -59,14 +60,26 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
     <div className="flex h-full w-96 flex-col border-l border-ink-600 bg-ink-900 shadow-panel">
       <div className="flex items-center justify-between border-b border-ink-600 px-4 py-3">
         <h2 className="text-sm font-semibold text-mist-50">{habitation?.name ?? "Loading…"}</h2>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded px-1.5 text-mist-400 hover:bg-ink-700 hover:text-mist-100"
-          aria-label="Close"
-        >
-          ✕
-        </button>
+        <div className="flex items-center gap-1">
+          {habitation && (
+            <Link
+              to={`/reports/habitation/${habitationId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded border border-ink-500 px-2 py-1 text-[11px] text-mist-300 hover:border-signal-bright/60 hover:text-signal-bright"
+            >
+              Download report
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded px-1.5 text-mist-400 hover:bg-ink-700 hover:text-mist-100"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="scrollbar-thin flex-1 overflow-y-auto px-4 py-3">

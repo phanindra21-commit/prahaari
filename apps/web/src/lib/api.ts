@@ -497,8 +497,11 @@ export function createDecision(body: CreateDecisionRequest): Promise<CreateDecis
   return apiRequest("/decisions", { method: "POST", body });
 }
 
-export function listDecisions(recommendationId?: string): Promise<{ items: DecisionRecord[] }> {
-  return apiRequest("/decisions", { query: { recommendationId } });
+export function listDecisions(params: {
+  recommendationId?: string;
+  districtId?: string;
+}): Promise<{ items: DecisionRecord[] }> {
+  return apiRequest("/decisions", { query: params });
 }
 
 // --- Step 8 Part 2: scenario simulator ---

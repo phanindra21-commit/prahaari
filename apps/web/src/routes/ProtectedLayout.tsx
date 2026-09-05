@@ -19,7 +19,9 @@ export function ProtectedLayout(): JSX.Element {
 
   return (
     <div className="flex h-screen flex-col bg-ink-950">
-      <TopBar />
+      <div className="no-print">
+        <TopBar />
+      </div>
       <div className="min-h-0 flex-1">
         <Outlet />
       </div>

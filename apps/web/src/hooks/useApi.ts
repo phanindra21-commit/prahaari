@@ -129,8 +129,16 @@ export function useCreateDecision() {
 export function useDecisions(recommendationId: string | undefined) {
   return useQuery({
     queryKey: ["decisions", recommendationId],
-    queryFn: () => api.listDecisions(recommendationId),
+    queryFn: () => api.listDecisions({ recommendationId }),
     enabled: !!recommendationId,
+  });
+}
+
+export function useDistrictDecisions(districtId: string | undefined) {
+  return useQuery({
+    queryKey: ["decisions", "district", districtId],
+    queryFn: () => api.listDecisions({ districtId }),
+    enabled: !!districtId,
   });
 }
 

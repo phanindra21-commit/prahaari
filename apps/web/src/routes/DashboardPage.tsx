@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useDashboardSummary } from "../hooks/useApi";
 import { CapacityShortfallPanel } from "../components/dashboard/CapacityShortfallPanel";
@@ -72,6 +73,14 @@ export function DashboardPage(): JSX.Element {
             </h1>
             <p className="text-xs text-mist-400">{headlineLabel}</p>
           </div>
+          <Link
+            to={`/reports/district/${selected.districtId}`}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded border border-ink-500 px-3 py-1.5 text-xs text-mist-200 transition-colors hover:border-signal-bright/60 hover:text-signal-bright"
+          >
+            Download {selected.districtName} situation report
+          </Link>
         </div>
 
         <section className="mb-4">
