@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { useHabitation, useHabitationExplain, useHazardEvents } from "../../hooks/useApi";
+import { useHabitation, useHabitationExplain, useHazardEvents, useRecommendations } from "../../hooks/useApi";
 import { ZoneBadge } from "../ui/ZoneBadge";
 import { PriorityBadge } from "../ui/PriorityBadge";
+import { RecommendationStatusBadge } from "../ui/RecommendationStatusBadge";
 import { ProvenanceFooter } from "../ui/ProvenanceFooter";
 
 const HAZARD_LABELS: Record<string, string> = {
@@ -53,8 +54,10 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
   const { data: habitation, isLoading, isError } = useHabitation(habitationId);
   const { data: explain } = useHabitationExplain(habitationId);
   const { data: events } = useHazardEvents(habitation?.districtId);
+  const { data: recommendations } = useRecommendations({ districtId: habitation?.districtId });
 
   const assessment = habitation?.latestAssessment;
+  const recommendation = recommendations?.items.find((r) => r.habitationId._id === habitationId);
 
   return (
     <div className="flex h-full w-96 flex-col border-l border-ink-600 bg-ink-900 shadow-panel">
@@ -111,6 +114,16 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
                     </span>
                   )}
                 </div>
+
+                {recommendation && (
+                  <Link
+                    to={`/recommendations/${recommendation._id}`}
+                    className="mb-4 flex items-center justify-between rounded border border-signal-bright/50 bg-signal/10 px-3 py-2 text-xs text-signal-bright hover:bg-signal/20"
+                  >
+                    <span>View recommendation</span>
+                    <RecommendationStatusBadge status={recommendation.status} />
+                  </Link>
+                )}
 
                 {assessment.compoundHazard && (
                   <section className="mb-4 rounded border border-signal-bright/50 bg-signal/10 p-3">

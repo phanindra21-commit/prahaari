@@ -36,8 +36,12 @@ test.describe("officer decision workbench (requires the dev backend stack runnin
 
     // Filter to a still-undecided recommendation so this test is safe to
     // re-run against a database where an earlier run already decided one.
+    // Excludes Chooralmala specifically — full-demo-path.spec.ts always
+    // decides that one by name, and the two specs share one persistent
+    // database (Step 9 Part 3A), so picking a different row here keeps
+    // both specs independent of execution order.
     await page.getByRole("button", { name: "Pending review" }).click();
-    const firstRow = page.locator("table tbody tr").first();
+    const firstRow = page.locator("table tbody tr", { hasNotText: "Chooralmala" }).first();
     await expect(firstRow).toBeVisible({ timeout: 10_000 });
     await firstRow.click();
 

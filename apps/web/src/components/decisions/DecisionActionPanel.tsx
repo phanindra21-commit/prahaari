@@ -58,6 +58,23 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
     );
   }
 
+  // Checked BEFORE the "already decided" branch below: submitting a
+  // decision changes `recommendation.status` away from PENDING_REVIEW,
+  // and useCreateDecision()'s onSuccess invalidates the query this
+  // component's `recommendation` prop is fed from — so on the very
+  // re-render right after a successful submit, the status check below
+  // would otherwise win the race and show "Already decided" instead of
+  // ever showing the success message at all. `isSuccess` reflects THIS
+  // mutation instance, not the recommendation's current status, so it
+  // correctly stays true across that refetch-driven re-render.
+  if (isSuccess) {
+    return (
+      <div className="rounded border border-zone-green/40 bg-zone-green/10 p-3 text-xs text-zone-green">
+        Decision recorded. The recommendation status and audit trail below now reflect it.
+      </div>
+    );
+  }
+
   if (recommendation.status !== "PENDING_REVIEW") {
     return (
       <div className="rounded border border-ink-600 bg-ink-800 p-3 text-xs text-mist-300">
@@ -108,14 +125,6 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
       justification: justification.trim(),
       overriddenFields: overrides,
     });
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="rounded border border-zone-green/40 bg-zone-green/10 p-3 text-xs text-zone-green">
-        Decision recorded. The recommendation status and audit trail below now reflect it.
-      </div>
-    );
   }
 
   return (

@@ -15,6 +15,15 @@ export default defineConfig({
   testDir: "./e2e",
   timeout: 30_000,
   retries: 0,
+  // Step 9 Part 3E: several specs log in as the same seeded officer
+  // account. apps/api's login rate limiter is keyed by IP+email (5
+  // attempts per 15 minutes) — every Playwright worker shares this
+  // machine's one IP, so running specs across multiple parallel workers
+  // can exhaust that budget and fail logins with a spurious 429, not a
+  // real app bug. Serializing the suite avoids the concurrency entirely
+  // rather than loosening a real anti-brute-force control. This is a
+  // small, deliberately serial e2e suite; the runtime cost is minor.
+  workers: 1,
   reporter: [["list"]],
   use: {
     baseURL: "http://localhost:4173",
