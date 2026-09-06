@@ -15,7 +15,7 @@ import { env } from "../lib/env";
 import { GridCell, type GridCellDoc } from "../models";
 
 const PROCESSED_DIR = join(__dirname, "..", "..", "..", "..", "data", "processed");
-const DISTRICT_SLUGS = ["wayanad", "ganjam"];
+const DISTRICT_SLUGS = ["wayanad", "ganjam", "chamoli"];
 
 type FactorsFile = Record<string, Record<string, Record<string, number>>>;
 

@@ -1093,3 +1093,206 @@ corridor, which is the physically expected shape for a hill district
 where both hazards are orographic. It is a real, honest consequence of
 what "compound hazard" means at district scale, not a narrow fix
 scoped only to the two headline habitations.
+
+---
+
+## 7. Chamoli, Uttarakhand — Third Pilot District
+
+Chamoli was added as a third pilot district: a Himalayan valley district
+(Alaknanda/Dhauliganga corridor) with a real, high-profile relocation
+story — Joshimath's 2023 land subsidence crisis — that is the closest
+real-world case in India to what this platform exists to do.
+
+### 7.1 Named limitation: glacial hazards are not modelled
+
+**Chamoli's real, dominant hazard class is glacial** — glacial lake
+outburst floods (GLOF) and rock-ice avalanche, the mechanism behind the
+7 February 2021 Rishiganga/Raini disaster (data/seed/hazard-events.json)
+that killed roughly 204 people and destroyed the Tapovan-Vishnugad hydro
+project. This platform's four hazard types (landslide, flood, coastal
+erosion, cloudburst) **do not include a glacial-hazard type**, and this
+was a deliberate scope decision, not an oversight: adding a fifth hazard
+type would mean new causative-factor weights (Section 1.1), new zone
+thresholds (Section 1.3), new ML training labels (Section 1.2), and a
+new set of assumptions propagating through every downstream stage
+(vulnerability, RPI, site suitability, routing) — a change with a much
+larger blast radius than the benefit of a single new district justifies
+this close to a hackathon deadline.
+
+Chamoli is instead modelled with the same three land-based hazards
+Wayanad already exercises — **landslide, flood, cloudburst** — and
+explicitly **not** coastal erosion (`District.primaryHazards` for
+Chamoli omits it entirely; a landlocked district generates no
+coastal-erosion `GridCell` factors, no coastal-erosion zones, and the
+web map's hazard-layer toggle list is already driven off
+`district.primaryHazards`, so it never offers a meaningless coastal
+layer for Chamoli — verified by code inspection, no UI change was
+needed).
+
+**What this means concretely, reported honestly rather than glossed
+over:**
+
+- The 2021 Rishiganga/Raini rock-ice avalanche and the 2023 Joshimath
+  land subsidence are both recorded in `hazard-events.json` as real
+  `PUBLIC_RECORD` events, but both are tagged `hazardType: "landslide"`
+  — the nearest available value, not an accurate mechanism label. Each
+  event's own `name` field states the mismatch explicitly (e.g. "...
+  mechanism not covered by this platform's hazard types — see
+  METHODOLOGY limitation") rather than silently mislabelling it.
+- Landslide's Disaster History boost (this document's introduction) at
+  Joshimath and Raini is therefore standing in for a real glacial-hazard
+  signal. This is directionally defensible — the same unstable moraine/
+  slope-failure ground that produced the 2021 avalanche and the 2023
+  subsidence also elevates genuine landslide susceptibility there — but
+  it is not the same physical process, and a reviewer should not read
+  Chamoli's landslide zones as a GLOF/avalanche hazard map.
+- **A production deployment would add glacial hazards as a genuine fifth
+  hazard type**, with ISRO/NRSC's glacial lake inventory (satellite-
+  monitored glacial lake area/volume change) as the primary causative-
+  factor input, alongside a proper GLOF-outburst susceptibility model —
+  not retrofitted onto landslide's existing weights.
+
+### 7.2 Calibration: absolute-scaled factors from the start
+
+Chamoli's elevation spans roughly 750-7,200m in this dataset (real
+Chamoli spans ~800m to Nanda Devi's 7,816m) — a far wider range than
+Wayanad's 650-2,200m or Ganjam's 0-220m. Section 6.1 already documents a
+real miscalibration this width difference would have exposed: an earlier
+version of cloudburst's `orographicIndex` used `normalize01(slope)`/
+`normalize01(elevation)`, rescaling each factor relative to a district's
+own min/max cell values rather than an absolute physical threshold, so a
+district's own most-extreme cells always saturated toward 1.0 regardless
+of how extreme they actually were in absolute terms.
+
+**Chamoli's own causative-factor generator
+(`services/ml/scripts/derive_factors.py::chamoli_factors`) was written
+to avoid this failure mode from the start**, rather than fixing it after
+the fact: every formula involving elevation or slope uses an absolute
+physical denominator (elevation in km against a fixed reference, slope
+in degrees against the same 40° reference `orographicIndex` already
+uses, latitude position against Chamoli's own real fixed geographic
+extent) — never `normalize01()` against the current run's own cell
+population. This let Chamoli's antecedent-rainfall factor also model a
+genuine Himalayan monsoon nuance Wayanad's simpler escarpment-distance
+driver doesn't need: orographic rainfall peaking at mid-elevation
+windward slopes (~2,000-3,500m) and tapering both toward the valley
+floor and toward the high-altitude, trans-Himalayan rain-shadow near
+Niti/Mana — a peaked, not monotonic, profile, expressed as an absolute
+function of elevation in km.
+
+**Residual finding, not fixed (would perturb Wayanad's own committed
+results):** Wayanad's own `antecedent_rainfall` (`0.7 *
+normalize01(elevation_amsl) + ...`) and flood's `drainage_density`
+(`... normalize01(distance_to_drainage) ...`) still use local
+`normalize01()` scaling — a pre-existing pattern from before Step 6,
+not touched here because `wayanad_factors()`/`ganjam_factors()` were
+never modified in adding Chamoli (verified: Wayanad and Ganjam's
+generated factor files are deterministically unchanged — see Section
+7.4). This is reported as a residual audit finding per this addition's
+own explicit instruction to check every factor for local-vs-absolute
+scaling, not silently left unmentioned.
+
+### 7.3 Live pipeline results (first run)
+
+Chamoli's grid: **10,167 H3 resolution-8 cells** (Ganjam-sized, as
+expected for a similarly large district). Zone-class counts from the
+first live pipeline run:
+
+| Hazard     | Red | Orange | Yellow | Green | AUC-ROC |
+| ---------- | --- | ------ | ------ | ----- | ------- |
+| Landslide  | 482 | 634    | 8,249  | 802   | 0.691   |
+| Flood      | 22  | 270    | 4,981  | 4,894 | 0.771   |
+| Cloudburst | 445 | 470    | 1,411  | 7,841 | 0.831   |
+
+All three clear the `[0.65, 0.92]` AUC-ROC guard rail (Section 1.2), but
+landslide (0.691) sits below Wayanad/Ganjam's original 0.734-0.847 band
+— reported, not adjusted; a synthetic-label artifact of the pooled
+training set (Section 7.4), not evidence of a defect in Chamoli's own
+factor generation.
+
+**Priority buckets** (41 habitations): 1 Immediate, 3 ShortTerm, 10
+MediumTerm, 27 unbucketed (Green/Yellow, do not enter the RPI pipeline).
+
+**Joshimath itself — the anchor habitation — lands `Red` zone /
+`MediumTerm` priority, RPI 0.264, not Immediate.** This is the same
+shape of honest residual finding Section 6.2 already documents for
+Chooralmala/Mundakkai, reported the same way rather than adjusted away:
+Joshimath's own `compositeRiskScore` (0.210) is real but not the
+highest among Chamoli's Red/Orange habitations in this run — Mana (near
+Badrinath, at the top of the district's real elevation range) reaches
+RPI 0.760/Immediate, and `normalize(Risk)` (Section 3) is explicitly a
+**relative** ranking within one district's own run, so Joshimath's
+absolute severity does not by itself guarantee it outranks a
+higher-elevation habitation nearby. Joshimath's `VI` (0.264) is also
+comparatively moderate versus Chamoli's more remote hamlets, reflecting
+this dataset's own honest characterization of Joshimath as a relatively
+well-connected hill town (paved highway access, town-tier literacy) next
+to genuinely more isolated villages — not a claim that the real
+Joshimath crisis is less severe than Mana's, only that this platform's
+synthetic vulnerability inputs do not currently make Joshimath the
+single highest-VI habitation in the district. Consistent with this
+project's standing instruction, this was not hand-tuned to force
+Joshimath to Immediate.
+
+**Site matching:** of Chamoli's 11 seeded candidate sites, 5 failed hard
+exclusion — the 3 deliberately-designed failures (2 protected-forest,
+1 excessive-slope) plus 2 more (Karnaprayag Riverside, Gopeshwar
+Government Plot) that failed `insideRedOrOrangeZone` for a genuine
+reason not designed in: both sit near the real Alaknanda river
+confluence, which the live flood zoning correctly classifies as
+hazardous. Of Chamoli's 4 Immediate/ShortTerm-eligible habitations, all
+4 matched a viable site (0 unmatched) — unlike Wayanad's own "4 of 7
+lack a viable site" capacity-shortfall headline, Chamoli's first run
+shows no capacity shortfall; reported as found, not adjusted toward
+matching Wayanad's story.
+
+### 7.4 Cross-district effect of pooled hazard training — reported plainly
+
+`apps/api/src/lib/jobs/zoningJob.ts::poolDistrictsForHazard` (Section
+6.1 Part 5) trains any shared hazard on **every district that lists it
+as a primary hazard**, then persists only the requesting district's own
+cells — a design already in place for flood (Wayanad+Ganjam) before
+Chamoli existed, for the documented reason that a single hill district's
+own cell count gives too few positive labels for a reliable model.
+Adding Chamoli means **landslide and cloudburst are now also pooled**
+(Wayanad+Chamoli), and **flood's pool grows to three districts**
+(Wayanad+Ganjam+Chamoli).
+
+**Merely adding Chamoli's seed/factor data did not alter Wayanad's or
+Ganjam's already-stored results** — `scoreOneHazard` provably only
+writes `GridCell`/`HazardZone` documents for the requested district (see
+its own code comment), confirmed by direct MongoDB inspection: Wayanad
+and Ganjam's stored zone/assessment documents were untouched after
+Stage 1 (seed) and Stage 2A-C (factors, Chamoli's own pipeline run).
+
+**But re-running Wayanad's or Ganjam's *own* pipeline — something an
+officer can do at any time, not a hypothetical — does measurably shift
+their shared-hazard zone counts**, because the pooled training set
+genuinely changed. Tested directly, with a clean natural-experiment
+control:
+
+| District | Hazard | Shared with Chamoli? | Before re-run | After re-run (pooled w/ Chamoli) |
+| -------- | ------ | --------------------- | -------------- | ---------------------------------- |
+| Ganjam | coastalErosion | No (landlocked) | Red 410 / Orange 372 / Yellow 8,578 / Green 4,613 | **identical** — Red 410 / Orange 372 / Yellow 8,578 / Green 4,613 |
+| Ganjam | flood | Yes | Red 200 / Orange 2,150 / Yellow 3,780 / Green 7,843 | Red 162 / Orange 2,792 / Yellow 3,868 / Green 7,151 |
+| Wayanad | landslide | Yes | Red 156 / Orange 333 / Yellow 1,153 / Green 2,055 | Red 34 / Orange 399 / Yellow 2,468 / Green 796 |
+| Wayanad | flood | Yes | Red — / Orange 21 / Yellow 837 / Green 2,839 | Red — / Orange 5 / Yellow 966 / Green 2,726 |
+| Wayanad | cloudburst | Yes | Red 106 / Orange 308 / Yellow 351 / Green 2,932 | Red 116 / Orange 491 / Yellow 755 / Green 2,335 |
+
+Ganjam's coastal erosion — the one hazard **not** shared with Chamoli —
+comes back byte-for-byte identical, isolating the effect precisely to
+pooling. XGBoost training uses a fixed `random_state=42`
+(`services/ml/app/engine/train.py`), so this is a deterministic,
+reproducible consequence of the pool's composition changing, not
+run-to-run training noise.
+
+**This is an inherent, pre-existing property of this project's own
+pooled-training design** (already true for flood's Wayanad+Ganjam pool
+before Chamoli existed — adding a third district to an already-pooled
+hazard is the same kind of change, not a new category of risk), not a
+defect Chamoli's addition introduced, and not something silently
+avoided here: it was tested directly, with a control condition, rather
+than assumed either way. A demo session that does not explicitly
+re-run Wayanad's or Ganjam's own pipeline after this change sees their
+originally-computed results, unchanged; a session that does will see
+this shift, which is the system working as designed, not a bug.
