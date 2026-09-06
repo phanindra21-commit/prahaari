@@ -2,8 +2,11 @@
 
 Human-in-the-Loop AI + GIS decision-support platform for proactive hazard
 zoning and relocation of vulnerable habitations in India. Built for Smart
-India Hackathon. Pilot districts: **Wayanad, Kerala** (landslide) and
-**Ganjam, Odisha** (cyclone / coastal erosion).
+India Hackathon. Pilot districts: **Wayanad, Kerala** (landslide),
+**Ganjam, Odisha** (cyclone / coastal erosion), and **Chamoli,
+Uttarakhand** (landslide / flood / cloudburst — see `docs/METHODOLOGY.md`
+§7.1 for the named glacial-hazard limitation this district's real
+dominant hazard class is not yet modelled against).
 
 See `CLAUDE.md` for the full domain summary, tech stack, coding
 conventions, and build roadmap. See `docs/ARCHITECTURE.md` and
@@ -114,8 +117,10 @@ never reuse these anywhere real):
 | --- | --- | --- |
 | Super Admin | `superadmin@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | State Admin (Kerala) | `stateadmin.kerala@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| State Admin (Uttarakhand) | `stateadmin.uttarakhand@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | District Officer (Wayanad) | `officer.wayanad@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | District Officer (Ganjam) | `officer.ganjam@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| District Officer (Chamoli) | `officer.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | Analyst | `analyst@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | Field Volunteer (Ganjam) | `volunteer.ganjam@punarvas.gov.in` | `PunarVas@DevDefault123` |
 

@@ -47,6 +47,12 @@ formula never divides by zero and Risk is never negative — see
 
 - **Wayanad, Kerala** — primary hazard: landslide
 - **Ganjam, Odisha** — primary hazard: cyclone / coastal erosion
+- **Chamoli, Uttarakhand** — primary hazard: landslide (modelled hazards:
+  landslide, flood, cloudburst — NOT coastal erosion, landlocked; and NOT
+  a glacial-hazard type, a deliberate scope decision documented as a
+  named limitation in `docs/METHODOLOGY.md` §7.1, since Chamoli's real
+  dominant hazard class — GLOF / rock-ice avalanche — is not one of this
+  platform's four hazard types)
 
 Full formulas, thresholds, and index definitions live in
 `docs/METHODOLOGY.md`. System design and data flow live in
@@ -375,8 +381,9 @@ completed.
       (Step 7 track below) — nothing further planned here without a new
       ML-driven score that needs it.
 - [ ] **Step 14 — Deployment & demo hardening:** Production build/deploy
-      config, seeded demo dataset for Wayanad + Ganjam, walkthrough script
-      for the hackathon presentation.
+      config, seeded demo dataset for Wayanad + Ganjam (+ Chamoli, added
+      later — see the Step 11 track below), walkthrough script for the
+      hackathon presentation.
 
   ### Step 7 (relocation sites + decision workbench) — DONE
 
@@ -684,6 +691,107 @@ completed.
   decision-workbench, and scenario-simulator e2e specs all still pass end
   to end. 180 Python tests (was 171), 246 TS tests, typecheck and lint
   clean throughout.
+
+  ### Step 11 (Chamoli, Uttarakhand — third pilot district) — DONE
+
+  Not one of this roadmap's original 14 steps; "Step 11" per this
+  session's own naming (same reused-numbering situation as Steps 5-10
+  above). Adds Chamoli as a third pilot district, in three staged
+  commits.
+
+  **Stage 1 (seed data):** Chamoli's REAL GADM v2.8 boundary (same
+  github.com/geohacker/india source used for Wayanad/Ganjam since Step
+  10 Part 2, extracted fresh — `NAME_2 == "Chamoli"`), 41 habitations
+  across all 9 of Chamoli's real blocks (Joshimath, Dasholi, Ghat,
+  Karnaprayag, Pokhri, Gairsain, Narayanbagar, Tharali, Dewal), 3 real
+  `PUBLIC_RECORD` hazard events (2021 Rishiganga/Raini rock-ice
+  avalanche, 2013 Uttarakhand floods, 2023 Joshimath land subsidence —
+  the latter two tagged `landslide` as the nearest available
+  `hazardType`, with the mismatch stated in the event's own name, not
+  glossed over), 11 relocation sites (3 deliberately failing exclusion —
+  2 protected-forest against Nanda Devi National Park / Valley of
+  Flowers National Park, 1 excessive slope), a Chamoli
+  `DISTRICT_OFFICER` and an Uttarakhand `STATE_ADMIN`. Joshimath itself
+  is seeded as the anchor habitation — the closest real-world case in
+  India to what this platform exists to do — the way Chooralmala/
+  Mundakkai anchors Wayanad. All habitations verified inside the real
+  boundary via `validateSeedGeometry` (one, Maikoti, needed its anchor
+  moved ~2.2km, never the boundary).
+
+  **Scope decision, made explicitly and not reopened:** Chamoli is
+  modelled with landslide, flood, and cloudburst — deliberately **not**
+  a fifth glacial-hazard type (GLOF, rock-ice avalanche — Chamoli's real
+  dominant hazard class), and **not** coastal erosion (landlocked). The
+  glacial-hazard gap is documented as a named limitation in
+  `docs/METHODOLOGY.md` §7.1, stated plainly rather than implying the
+  four existing hazards cover the district completely; a production
+  deployment would add it as a genuine fifth hazard type with ISRO/NRSC
+  glacial lake inventory data, not retrofitted onto landslide.
+
+  **Stage 2 (factors/pipeline):** `chamoli_factors()` added to
+  `derive_factors.py` — Himalayan terrain (elevation 750-7,200m,
+  slope steepest at the Alaknanda/Dhauliganga gorge walls, forest cover
+  falling off above the real treeline, orographic rainfall peaking at
+  mid-elevation and tapering in the high-altitude rain-shadow near
+  Niti/Mana) — every elevation/slope formula uses an ABSOLUTE physical
+  denominator, never `normalize01()` against the run's own cell
+  population, deliberately avoiding the exact local-vs-absolute
+  miscalibration Step 6 fixed for cloudburst, checked for up front given
+  Chamoli's much wider elevation range than Wayanad/Ganjam's. Live
+  pipeline run: 10,167 cells; landslide/flood/cloudburst all clear the
+  AUC-ROC guard rail; 1 Immediate / 3 ShortTerm / 10 MediumTerm of 41
+  habitations. **Joshimath itself lands Red zone / MediumTerm / RPI
+  0.264 — not Immediate** — an honest residual finding in the same
+  shape as Section 6.2's Chooralmala/Mundakkai finding (Mana, near
+  Badrinath, is the district's actual highest-RPI habitation in this
+  run), not hand-tuned toward Immediate. All 4 eligible habitations
+  matched a viable site; 5 of 11 sites failed exclusion (3 by design, 2
+  more — Karnaprayag Riverside, Gopeshwar — for genuinely sitting in the
+  live flood zone near the real river confluence, not designed in).
+
+  Two findings reported plainly rather than smoothed over:
+  **Performance** — Chamoli's scenario run measures 15.4s, over the 10s
+  target; NOT Chamoli-specific, since Ganjam's own current scenario
+  runtime (measured the same way) is 17.0s — Ganjam already exceeded the
+  target before Chamoli existed, a pre-existing regression from Step 10
+  Part 2's real-boundary cell-count growth (8,242 -> 10,457) never
+  re-measured until now; not fixed here, out of scope for adding a
+  district. **Pooled-training cross-district effect** — tested directly
+  with a control rather than assumed: adding Chamoli's data alone does
+  not touch Wayanad's/Ganjam's already-stored results (`scoreOneHazard`
+  provably writes only the requested district's cells), but re-running
+  Wayanad's or Ganjam's own pipeline afterward measurably shifts their
+  SHARED-hazard zone counts (landslide/flood/cloudburst for Wayanad,
+  flood for Ganjam) while their one hazard NOT shared with Chamoli
+  (Ganjam's coastalErosion) comes back byte-identical — full before/
+  after table in `docs/METHODOLOGY.md` §7.4. An inherent, pre-existing
+  property of this project's own pooled-training design (already true
+  for flood's Wayanad+Ganjam pool before Chamoli existed), not a defect
+  Chamoli's addition introduced, but a real caveat on "unchanged" worth
+  stating plainly.
+
+  **Stage 3 (UI/docs):** every place checked for a hardcoded
+  two-district/two-state assumption (district switcher, dashboard,
+  map centering/labels, hazard-layer toggle list, IPHS plains/hilly
+  terrain-tier lookup, `ingestFactors.ts`'s `DISTRICT_SLUGS`, `seed.ts`'s
+  three file lists) — almost everything was already N-district-generic
+  by construction (map `fitBounds` off `district.boundary`, hazard-layer
+  list off `district.primaryHazards`, terrain-tier off
+  `capacity-norms.json`'s state-keyed map); the only genuine hardcoding
+  found was `ingestFactors.ts`'s `DISTRICT_SLUGS` array and `seed.ts`'s
+  file lists (both extended) and `capacity-norms.json`'s missing
+  Uttarakhand entries (added: `HILLY_TRIBAL`, household size 4.7).
+  Verified live: a Uttarakhand `STATE_ADMIN` sees only Chamoli
+  everywhere (districts, habitations, dashboard), and the exact
+  historical `?districtId=` scope-bypass pattern (Step 9 Part 2's fixed
+  bug) is correctly rejected (404) on `/recommendations`, `/scenarios`,
+  and `/decisions` when attempted against Wayanad/Ganjam.
+
+  Verified: full API test suite (246 tests), full Python test suite (180
+  tests), full TypeScript typecheck, all pass unchanged. Full e2e suite
+  re-run including `full-demo-path.spec.ts`. Logged in as the Chamoli
+  officer in a real browser: dashboard, map, a habitation, and a
+  recommendation all render real Chamoli data.
 
 ## Why Python Is a Separate Service
 
