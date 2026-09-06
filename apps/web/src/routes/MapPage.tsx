@@ -140,7 +140,7 @@ export function MapPage(): JSX.Element {
             onToggleSites={() => setShowSites((v) => !v)}
           />
           <ZoneLegend showDecisionRing={Object.keys(recommendationStatusByHabitationId).length > 0} />
-          {selectedDistrictId && <ScenarioPanel districtId={selectedDistrictId} />}
+          {selectedDistrictId && <ScenarioPanel districtId={selectedDistrictId} hazards={availableHazards} />}
           {activeScenario && (
             <div className="w-72 rounded border border-ink-600 bg-ink-800/95 p-3 shadow-panel backdrop-blur-sm">
               <ScenarioSummary scenario={activeScenario} />

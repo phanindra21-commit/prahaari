@@ -19,6 +19,8 @@ more hazards independently classify as Orange.
 
 from __future__ import annotations
 
+from functools import lru_cache
+
 import h3
 from shapely.geometry import MultiPolygon, Polygon, mapping
 from shapely.ops import unary_union
@@ -44,10 +46,26 @@ def classify_zone(blended_score: float, hazard: str) -> str:
     return "Green"
 
 
+@lru_cache(maxsize=None)
 def cell_polygon(h3_index: str) -> Polygon:
     """Regenerates a cell's boundary polygon from its h3Index. h3-py's
     cell_to_boundary returns an OPEN ring of (lat, lng) tuples — shapely
-    and GeoJSON both want a CLOSED ring of (lng, lat)."""
+    and GeoJSON both want a CLOSED ring of (lng, lat).
+
+    `cell_polygon(h3_index)` is a pure function of `h3_index` alone (no
+    hazard/district/zone-class dependence — the same physical grid cell
+    has the same boundary regardless of which hazard's zones it's being
+    dissolved for), yet `dissolve_zone_class` was calling it on the SAME
+    h3Index up to ~6x per scenario run (once per baseline/scenario/
+    changed-geometry dissolve pass, per hazard) before this cache was
+    added — profiled at ~6.1s of a Chamoli scenario run's ~21s engine
+    time (58,206 calls for what should be ~10,167 unique cells; see
+    docs/METHODOLOGY.md's performance note). `lru_cache` is safe here
+    because shapely geometries are immutable — every caller sharing the
+    same cached `Polygon` object can never see another caller's mutation,
+    because there isn't one. Unbounded (`maxsize=None`) is safe too: the
+    key space is every H3 resolution-8 cell across this deployment's
+    pilot districts, a few tens of thousands at most, not user input."""
     boundary = h3.cell_to_boundary(h3_index)
     ring = [(lng, lat) for lat, lng in boundary]
     ring.append(ring[0])

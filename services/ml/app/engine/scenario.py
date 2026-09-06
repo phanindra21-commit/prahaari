@@ -154,7 +154,11 @@ def run_scenario_for_hazard(
     scores come straight from it; the scenario pass, if this hazard is
     affected, reuses `baseline.trained.model` for prediction only, never
     retraining."""
-    baseline: HazardScoring = score_cells(hazard, cells, event_points)
+    # compute_explanations=False: a scenario run never reads
+    # HazardScoring.top_factors (see pipeline.py's docstring) — skipping
+    # SHAP here saved ~21% of a scenario run's engine time, profiled
+    # against live Chamoli data (docs/METHODOLOGY.md's performance note).
+    baseline: HazardScoring = score_cells(hazard, cells, event_points, compute_explanations=False)
 
     affected = is_hazard_affected(hazard, params)
     if not affected:
@@ -191,13 +195,35 @@ def run_scenario_for_hazard(
 
 def _zone_geoms_and_scores(
     cell_results: list[ScenarioCellResult], use_scenario: bool
-) -> tuple[dict[str, BaseGeometry], dict[str, float]]:
+) -> tuple[dict[str, BaseGeometry], dict[str, BaseGeometry], dict[str, float]]:
     """Dissolves one hazard's cells into per-zone-class geometry, plus
     each class's mean blended score — the exact shape
     `assessment.assess_habitations_batch` expects (mirrors
     assessmentStage.ts's TypeScript mean-aggregation, done here in Python
     since scenario.py owns the whole district-level orchestration for a
-    scenario run, not split across a process boundary)."""
+    scenario run, not split across a process boundary).
+
+    Returns (full_geoms, simplified_geoms, scores). `dissolve_zone_class`
+    computes both variants regardless (the simplified one used to be
+    computed and silently discarded here) — `full_geoms` MUST keep being
+    used for `assess_habitations_batch`'s point-in-polygon spatial join
+    (a habitation very close to a zone boundary could otherwise be
+    misclassified by the ~50m simplification tolerance); `simplified_geoms`
+    is for the map-rendering response only, where that tolerance is
+    visually imperceptible at district scale — see run_district_scenario's
+    own docstring note on why only the response uses it.
+
+    A "reuse baseline geometry when a zone class's cell membership is
+    byte-identical between baseline and scenario" variant was tried and
+    measured here, not just reasoned about: for a realistic
+    demo-magnitude perturbation (400mm/24h rainfall), essentially no zone
+    class ends up with fully-identical membership (SOME cell moves in or
+    out of nearly every class), so the set-equality check paid its cost on
+    every call while the dissolve it was meant to skip almost never
+    actually got skipped — measured 0.5-0.6s SLOWER across three runs, not
+    faster. Reverted; not shipped. Kept as a documented example of why
+    this file profiles before optimizing rather than trusting a plausible-
+    sounding hypothesis."""
     h3_by_class: dict[str, list[str]] = {}
     score_sum_by_class: dict[str, float] = {}
     for c in cell_results:
@@ -206,13 +232,15 @@ def _zone_geoms_and_scores(
         h3_by_class.setdefault(zone_class, []).append(c.h3_index)
         score_sum_by_class[zone_class] = score_sum_by_class.get(zone_class, 0.0) + score
 
-    geoms: dict[str, BaseGeometry] = {}
+    full_geoms: dict[str, BaseGeometry] = {}
+    simplified_geoms: dict[str, BaseGeometry] = {}
     scores: dict[str, float] = {}
     for zone_class, h3_indexes in h3_by_class.items():
-        full, _simplified = dissolve_zone_class(h3_indexes)
-        geoms[zone_class] = full
+        full, simplified = dissolve_zone_class(h3_indexes)
+        full_geoms[zone_class] = full
+        simplified_geoms[zone_class] = simplified
         scores[zone_class] = score_sum_by_class[zone_class] / len(h3_indexes)
-    return geoms, scores
+    return full_geoms, simplified_geoms, scores
 
 
 @dataclass
@@ -294,12 +322,12 @@ def run_district_scenario(
     zone_geometries: list[HazardZoneGeometries] = []
 
     for hazard, result in hazard_results.items():
-        b_geoms, b_scores = _zone_geoms_and_scores(result.cells, use_scenario=False)
+        b_geoms, b_geoms_simplified, b_scores = _zone_geoms_and_scores(result.cells, use_scenario=False)
         baseline_geoms[hazard], baseline_scores[hazard] = b_geoms, b_scores
         if result.affected:
-            s_geoms, s_scores = _zone_geoms_and_scores(result.cells, use_scenario=True)
+            s_geoms, s_geoms_simplified, s_scores = _zone_geoms_and_scores(result.cells, use_scenario=True)
         else:
-            s_geoms, s_scores = b_geoms, b_scores
+            s_geoms, s_geoms_simplified, s_scores = b_geoms, b_geoms_simplified, b_scores
         scenario_geoms[hazard], scenario_scores[hazard] = s_geoms, s_scores
 
         baseline_counts = dict.fromkeys(ZONE_CLASSES, 0)
@@ -332,10 +360,16 @@ def run_district_scenario(
                 CellClassTransition(hazard=hazard, from_class=from_class, to_class=to_class, cell_count=count)
             )
 
+        # Simplified geometry for the response — see _zone_geoms_and_scores's
+        # docstring: full-resolution stays reserved for the assessment
+        # spatial join above/below, never sent over the wire. `changed_geom`
+        # is response-only (a map overlay highlight), same treatment.
         changed_h3_indexes = [c.h3_index for c in result.cells if c.baseline_zone_class != c.scenario_zone_class]
-        changed_geom = dissolve_zone_class(changed_h3_indexes)[0] if changed_h3_indexes else None
+        changed_geom = dissolve_zone_class(changed_h3_indexes)[1] if changed_h3_indexes else None
         zone_geometries.append(
-            HazardZoneGeometries(hazard=hazard, baseline=b_geoms, scenario=s_geoms, changed=changed_geom)
+            HazardZoneGeometries(
+                hazard=hazard, baseline=b_geoms_simplified, scenario=s_geoms_simplified, changed=changed_geom
+            )
         )
 
     baseline_assessments = assess_habitations_batch(habitations, baseline_geoms, baseline_scores, hazard_events, as_of)

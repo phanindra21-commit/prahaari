@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { scenarioParametersConfig } from "@punarvas/shared";
+import type { HazardType } from "@punarvas/shared";
 import { useRunScenario, useScenarios, useDeleteScenario } from "../../hooks/useApi";
 import { useScenarioStore } from "../../stores/scenarioStore";
 import { ApiError } from "../../lib/apiClient";
 import type { ScenarioParameters } from "../../lib/api";
+import { useScenarioProgress, ScenarioProgressBar } from "./ScenarioProgress";
 
 interface ScenarioPanelProps {
   districtId: string;
+  hazards: HazardType[];
 }
 
 function summarizeParameters(p: ScenarioParameters): string {
@@ -17,7 +20,7 @@ function summarizeParameters(p: ScenarioParameters): string {
   return parts.join(" · ") || "No parameters";
 }
 
-export function ScenarioPanel({ districtId }: ScenarioPanelProps): JSX.Element {
+export function ScenarioPanel({ districtId, hazards }: ScenarioPanelProps): JSX.Element {
   const [rainfallEnabled, setRainfallEnabled] = useState(false);
   const [rainfall, setRainfall] = useState(372);
   const [seaLevelEnabled, setSeaLevelEnabled] = useState(false);
@@ -29,6 +32,10 @@ export function ScenarioPanel({ districtId }: ScenarioPanelProps): JSX.Element {
   const { data: scenariosData } = useScenarios(districtId);
   const runScenario = useRunScenario();
   const deleteScenario = useDeleteScenario();
+  const { label: progressLabel, fraction: progressFraction } = useScenarioProgress(
+    runScenario.isPending,
+    hazards,
+  );
   const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
   const setActiveScenario = useScenarioStore((s) => s.setActiveScenario);
 
@@ -158,13 +165,15 @@ export function ScenarioPanel({ districtId }: ScenarioPanelProps): JSX.Element {
         </p>
       )}
 
+      {runScenario.isPending && <ScenarioProgressBar label={progressLabel} fraction={progressFraction} />}
+
       <button
         type="button"
         disabled={!hasAnyParam || runScenario.isPending}
         onClick={submit}
         className="mb-3 w-full rounded border border-signal-bright/60 bg-signal/10 py-1.5 text-xs font-medium text-signal-bright transition-colors hover:bg-signal/20 disabled:cursor-not-allowed disabled:border-ink-600 disabled:bg-transparent disabled:text-mist-500"
       >
-        {runScenario.isPending ? "Running… (a few seconds)" : "Run scenario"}
+        {runScenario.isPending ? "Running…" : "Run scenario"}
       </button>
 
       {scenariosData && scenariosData.items.length > 0 && (

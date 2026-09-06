@@ -1296,3 +1296,172 @@ than assumed either way. A demo session that does not explicitly
 re-run Wayanad's or Ganjam's own pipeline after this change sees their
 originally-computed results, unchanged; a session that does will see
 this shift, which is the system working as designed, not a bug.
+
+---
+
+## 8. Scenario Simulator Performance
+
+Demo rehearsal flagged scenario-run latency as unacceptable on stage:
+Ganjam measured 17.0s and Chamoli 15.4s (Section 7's larger, ~10,000-
+cell districts) against a 10s target; Wayanad (2,883-3,697 cells,
+depending on which pre-existing-cruft snapshot of `GridCell` a session
+happens to have) was fine at 3.2-6.7s. Profiled first, in the literal
+sense — cProfile against a direct in-process call to
+`run_district_scenario` with live Chamoli data (bypassing HTTP entirely,
+to isolate engine compute from transport) — before changing anything,
+per this project's own standing instruction not to guess.
+
+### 8.1 What the profile actually showed
+
+21.4s of profiled engine time (15.0s unprofiled — cProfile's own
+instrumentation overhead is non-trivial for code that makes tens of
+thousands of small calls, which this did), broken down by cumulative
+time:
+
+| Cost | Share | What it was |
+| ---- | ----- | ----------- |
+| `zones.py::dissolve_zone_class` (shapely `unary_union` + `cell_polygon`) | 54% (11.5s) | Zone-boundary dissolve, called once per (hazard, baseline/scenario, zone class) |
+| `explain.py::top_contributions_batch` (SHAP) | 21% (4.5s) | Per-cell SHAP explanations — computed inside `score_cells()`, **never read anywhere in `scenario.py`** |
+| XGBoost train + predict | 17% (3.7s) | Inherent — already trained once per hazard and reused for the perturbed pass (Step 8 Part 2C's original design) |
+| `overlay.py`/`reclassify.py` (per-cell Python loops) | 8% (1.7s) | The task's own "likely candidate" — real, but the smallest of the four |
+
+None of the two largest costs were what a plausible guess would have
+named first. The task's own suggested candidates (per-cell loops needing
+vectorization, model inference per cell, redundant API round trips) were
+each checked and were real but minor next to these two.
+
+### 8.2 Fixes shipped, each measured before and after
+
+1. **Skip SHAP entirely for a scenario run** (`pipeline.py::score_cells`
+   gained a `compute_explanations: bool = True` parameter; the scenario
+   call site passes `False`). `top_factors` was computed and silently
+   discarded on every scenario run — confirmed by grep that nothing in
+   `scenario.py` ever reads `HazardScoring.top_factors`. The live zoning
+   pipeline (which DOES need per-cell SHAP for the officer-facing map)
+   keeps the default. Zero correctness risk: the field simply isn't
+   computed for a caller that never used it.
+
+2. **Cache `cell_polygon(h3_index)`** (`zones.py`, `functools.lru_cache`).
+   A pure function of `h3_index` alone — the same physical grid cell has
+   the same boundary regardless of hazard, zone class, or baseline vs.
+   scenario pass — yet was being regenerated from scratch up to ~6x per
+   run (58,206 calls measured for what should be ~10,167 unique cells).
+   Shapely geometries are immutable, so sharing a cached `Polygon` object
+   across every caller carries no mutation risk. This absorbed almost
+   all of the 6.1s `cell_polygon` cost.
+
+3. **Use the already-computed simplified geometry for the response,
+   never the full-resolution one** (`scenario.py::_zone_geoms_and_scores`
+   now returns both variants; `dissolve_zone_class` already computed the
+   simplified variant on every call and silently discarded it before this
+   fix). Full-resolution geometry is still — and must still be — used for
+   `assess_habitations_batch`'s point-in-polygon spatial join (a
+   habitation near a zone boundary could otherwise be misclassified by
+   the ~50m simplification tolerance); only the outbound
+   `zoneGeometries` response field (map-rendering only, confirmed the
+   sole consumer via grep across `apps/web`) switched to simplified.
+   Measured directly: this alone was NOT the response-payload villain it
+   looked like on paper (full-resolution `zoneGeometries` build+serialize
+   was already only 0.39s, 2.78MB) — shipped anyway since it was free
+   (already computed) and strictly smaller for the map to render.
+
+4. **Project + `.lean()` the `GridCell.find()` query**
+   (`apps/api/src/lib/scenarioRunner.ts`). This was the single largest
+   remaining cost once the ML-engine fixes above landed, and it was
+   entirely on the Node/Mongoose side, not the ML engine — the exact
+   "redundant round trip" category the task asked to check, just not the
+   one guessed (it wasn't an extra HTTP call; it was over-fetching one
+   query). `GridCell.find({ districtId })` hydrated every field —
+   including a per-cell `boundary` polygon and two `Map` fields
+   (`hazardScores`, `explanations`, the live pipeline's own SHAP output)
+   — none of which a scenario run reads (only `h3Index`/`centroid`/
+   `factors`). Measured directly against live Chamoli data (10,167
+   cells): 3.7s unprojected/hydrated vs. 0.4s projected + `.lean()`
+   (which skips Mongoose's schema-cast/Map-hydration entirely, returning
+   plain JS objects). The raw MongoDB driver itself was never the
+   bottleneck (997ms unprojected) — Mongoose's own document-casting layer
+   was.
+
+### 8.3 One optimization tried, measured, and reverted
+
+A fifth idea — reuse a zone class's already-dissolved baseline geometry
+for the scenario pass when that class's cell membership is byte-identical
+between baseline and scenario (provably correct: `dissolve_zone_class` is
+a pure function of its input set, so an identical set can only ever
+produce an identical output) — was implemented and measured, not just
+reasoned about. For a realistic, demo-magnitude perturbation (400mm/24h
+rainfall against Chamoli), it was **0.5-0.6s SLOWER** across three
+repeated runs, not faster: a large-magnitude perturbation moves at least
+one cell across nearly every zone class, so almost no class ever actually
+qualified for reuse, while the set-equality check (building and comparing
+sets of up to thousands of h3Indexes) paid its cost on every call
+regardless. Reverted before shipping. Kept as a documented example, not
+because a clever-sounding idea is embarrassing to have tried, but because
+this project's standing rule is to profile before optimizing AND to
+re-measure after — a hypothesis that fails the second check gets dropped
+just as readily as one that fails the first.
+
+### 8.4 Final numbers, and an honest one that's still borderline
+
+All measured against the live stack, real Chamoli/Ganjam/Wayanad data,
+after every fix in 8.2 landed:
+
+| District | Before | After | Target met? |
+| -------- | ------ | ----- | ----------- |
+| Wayanad | 3.2-6.7s | 3.2-3.4s (engine) | Yes, comfortably |
+| Ganjam (both hazards affected) | 17.0-24.0s | 8.6-9.5s | Yes, comfortably |
+| Chamoli (2 of 3 hazards affected) | 15.4-22.2s | ~8.0-8.6s engine, 10.0-11.3s wall-clock | **Borderline** — some runs land just under 10s, some just over |
+
+Chamoli is reported honestly as borderline rather than rounded up to "met
+target": engine time alone is comfortably under 10s (8.0-8.6s), but total
+wall-clock (which includes Pydantic request/response overhead on the ML
+side and the remaining Node-side request-building cost) sits right at the
+10s line with natural run-to-run variance. The dominant remaining cost is
+`shapely.unary_union` itself (~4.7s, genuine geometric computation over
+Chamoli's ~10,000-cell grid, not overhead) — reducing it further would
+mean either an algorithmic change (e.g. GEOS's `coverage_union_all`,
+which requires cell polygons to form a strict topological coverage — a
+property this pipeline does not currently verify, and getting that wrong
+would silently produce gapped or self-intersecting geometry) or the
+reuse-by-membership idea Section 8.3 already tried and reverted for lack
+of a measured benefit. Per this project's explicit standing instruction
+not to risk correctness for speed this close to the hackathon, neither
+was attempted; Section 9's client-side staged progress indicator is the
+mitigation actually shipped for the residual wait.
+
+### 8.5 Correctness verification
+
+Every fix in 8.2 was verified to produce byte-identical `hazardSummaries`,
+`cellTransitions`, `habitationDeltas`, and `habitationsEnteringImmediate`
+against the pre-optimization code, for all three districts, using the
+exact same scenario parameters (`git stash` to capture a clean "before"
+run of the live stack, then "after" — not a unit-test mock). Only
+`zoneGeometries`' coordinate precision differs (full-resolution vs.
+simplified, Section 8.2 item 3, an intentional and visually-imperceptible
+change) — every zone class present in the full-resolution baseline is
+still present in the simplified response, for every hazard, in every
+district. Full API test suite (246 tests), full Python test suite (180
+tests), and the full Playwright e2e suite (including
+`scenario-simulator.spec.ts` and `full-demo-path.spec.ts`) all pass
+unchanged against the optimized code.
+
+## 9. Scenario Progress Indicator
+
+`POST /api/v1/scenarios/run` is deliberately one synchronous request, not
+a polled job like the zoning/pipeline runs (`scenario.routes.ts`'s own
+docstring) — so there is no server-push channel for the frontend to learn
+which real stage is underway. `apps/web/src/components/scenario/
+ScenarioProgress.tsx` estimates it instead: a client-side timer advances
+through a labelled stage sequence ("Scoring `<hazard>` susceptibility
+(i/N)" per hazard, "Computing hazard zone boundaries", "Assessing
+habitation risk changes", "Finalizing results") whose relative weights are
+calibrated against the Section 8.1 profile (per-hazard scoring ~a quarter
+of total time combined, zone-boundary dissolve about half, the remainder
+split between assessment and finalization) — not evenly spaced, and not
+guessed. The progress bar is capped at 94% while the request is still in
+flight and never claims completion before the real response arrives; if a
+run takes longer than the pacing estimate, the label simply holds on
+"Finalizing results…" rather than displaying a dishonest 100%. This is a
+UX affordance only — it plays no part in the actual result, which always
+comes from the real HTTP response regardless of where the estimated bar
+happened to be sitting.

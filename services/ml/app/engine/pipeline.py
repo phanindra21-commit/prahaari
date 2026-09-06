@@ -89,9 +89,19 @@ def score_cells(
     hazard: str,
     cells: list[CellInput],
     event_points: list[tuple[float, float]] | None = None,
+    compute_explanations: bool = True,
 ) -> HazardScoring:
     """The request-driven scoring core — no file-system access. `cells` must
-    all carry factor values for `hazard` (the caller filters)."""
+    all carry factor values for `hazard` (the caller filters).
+
+    `compute_explanations=False` skips `top_contributions_batch` (SHAP)
+    entirely — profiled at ~21% of a scenario run's total engine time
+    (services/ml/app/engine/scenario.py) for a `top_factors` value
+    scenario.py never reads (it only uses `blended_scores`, `h3_indexes`/
+    `districts`, and `trained.model` for the perturbed-prediction pass).
+    The live zoning pipeline (zoningJob.ts -> this function) DOES need
+    per-cell SHAP explanations for the officer-facing map, so the default
+    stays True; only the scenario call site passes False."""
     if not cells:
         raise ValueError(f"score_cells called with zero cells for hazard '{hazard}'")
 
@@ -116,7 +126,7 @@ def score_cells(
     # on every score_cells() call, so this always builds/reuses the right
     # explainer for THIS model, and the batch call below still builds it
     # once for every cell in this run, not once per cell.
-    top_factors = top_contributions_batch(trained.model, features, feature_list)
+    top_factors = top_contributions_batch(trained.model, features, feature_list) if compute_explanations else []
 
     return HazardScoring(
         h3_indexes=h3_indexes,
