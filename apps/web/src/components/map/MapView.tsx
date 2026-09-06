@@ -180,6 +180,30 @@ export function MapView({
 }: MapViewProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  /**
+   * Part 1 fix (demo rehearsal: "habitation not loading", intermittent,
+   * every role): every data-setting effect below used to gate on
+   * `map.isStyleLoaded()`, falling back to `map.once("load", apply)` when
+   * false. That is unsound — `isStyleLoaded()` is not a one-way "has the
+   * map finished its initial load" flag; MapLibre reports it false again
+   * whenever ANY source's tiles are mid-update (e.g. right after a
+   * sibling effect's own `setData()` call), which happens routinely once
+   * real data starts arriving. Since the map's `"load"` event fires
+   * EXACTLY ONCE in its lifetime, an effect that re-checks
+   * `isStyleLoaded()` after that one real `"load"` has already fired —
+   * sees `false` again — and registers `map.once("load", apply)` anyway
+   * registers a listener for an event that will never fire again, so
+   * `apply()` is silently dropped forever. Confirmed by direct trace
+   * against a live page load: the habitations effect re-ran twice AFTER
+   * the map's one real `"load"` had already fired, both times seeing
+   * `isStyleLoaded() === false` and registering a dead listener — the
+   * habitations source stayed empty indefinitely. This ref is the fix:
+   * set exactly once, inside the mount effect's own `"load"` handler
+   * (which reliably fires once and only once), and checked instead of
+   * `isStyleLoaded()` everywhere below — a plain boolean that, unlike
+   * `isStyleLoaded()`, never regresses to false once the map is ready.
+   */
+  const styleLoadedRef = useRef(false);
   const onHabitationClickRef = useRef(onHabitationClick);
   onHabitationClickRef.current = onHabitationClick;
 
@@ -504,11 +528,16 @@ export function MapView({
         const id = feature?.properties?.id as string | undefined;
         if (id) onHabitationClickRef.current(id);
       });
+
+      // Set exactly once, here — see styleLoadedRef's own doc comment for why
+      // every other effect below checks this instead of map.isStyleLoaded().
+      styleLoadedRef.current = true;
     });
 
     return () => {
       map.remove();
       mapRef.current = null;
+      styleLoadedRef.current = false;
     };
   }, []);
 
@@ -552,7 +581,7 @@ export function MapView({
         map.fitBounds(bounds, { padding: 48, duration: 600 });
       }
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [district]);
 
@@ -564,7 +593,7 @@ export function MapView({
       const source = map.getSource("zones") as maplibregl.GeoJSONSource | undefined;
       source?.setData(zonesToFeatureCollection(zones, visibleHazards));
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [zones, visibleHazards]);
 
@@ -595,7 +624,7 @@ export function MapView({
       map.setLayoutProperty("scenario-zones-outline", "visibility", scenarioVisibility);
       map.setLayoutProperty("scenario-changed-outline", "visibility", scenarioVisibility);
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [activeScenario, scenarioViewMode, visibleHazards]);
 
@@ -638,7 +667,7 @@ export function MapView({
       blockSource?.setData(labelPointsToFeatureCollection(groupedLabelPoints(pointFeatures, "block")));
       panchayatSource?.setData(labelPointsToFeatureCollection(groupedLabelPoints(pointFeatures, "panchayat")));
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [habitations, showHabitations, recommendationStatusByHabitationId]);
 
@@ -660,7 +689,7 @@ export function MapView({
       }));
       source.setData({ type: "FeatureCollection", features });
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [relocationSites, showSites]);
 
@@ -696,7 +725,7 @@ export function MapView({
         "#0A0E13",
       ]);
     };
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [selectedHabitationId]);
 

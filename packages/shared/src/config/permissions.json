@@ -108,7 +108,9 @@
       "district:read",
       "fieldReport:read",
       "fieldReport:submit",
-      "habitation:read"
+      "habitation:read",
+      "hazardEvent:read",
+      "hazardZone:read"
     ]
   },
   "separationOfDuties": {

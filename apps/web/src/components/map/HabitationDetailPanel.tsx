@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useHabitation, useHabitationExplain, useHazardEvents, useRecommendations } from "../../hooks/useApi";
+import { useAuthStore } from "../../stores/authStore";
+import { hasPermission } from "../../lib/permissions";
 import { ZoneBadge } from "../ui/ZoneBadge";
 import { PriorityBadge } from "../ui/PriorityBadge";
 import { RecommendationStatusBadge } from "../ui/RecommendationStatusBadge";
@@ -159,10 +161,32 @@ interface HabitationDetailPanelProps {
 }
 
 export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetailPanelProps): JSX.Element {
+  const user = useAuthStore((s) => s.user);
+  // Part 1 audit finding: this panel used to fire both of these queries
+  // unconditionally for every role, including FIELD_VOLUNTEER — which
+  // holds neither `assessment:read` nor `recommendation:read`
+  // (packages/shared/src/config/permissions.json), so both calls always
+  // 403'd for that role. Nothing here rendered a visible error from it
+  // (neither query's `error`/`isError` was ever read), so it was silent
+  // rather than broken — but it wasted a round trip on every panel open,
+  // and Part 4B requires a FIELD_VOLUNTEER never see recommendation data
+  // at all, which "fetch it and rely on the API to 403" left as an
+  // enforcement gap in spirit even though the API already blocked it
+  // correctly. Gating on the query's own `enabled` flag (via `undefined`)
+  // fixes both: no request when the role can't use the result.
+  const canReadAssessmentExplain = user ? hasPermission(user.role, "assessment:read") : false;
+  const canReadRecommendations = user ? hasPermission(user.role, "recommendation:read") : false;
   const { data: habitation, isLoading, isError } = useHabitation(habitationId);
-  const { data: explain } = useHabitationExplain(habitationId);
+  const { data: explain } = useHabitationExplain(canReadAssessmentExplain ? habitationId : undefined);
+  // Disaster history (hazardEvent:read) is intentionally NOT gated here —
+  // every role that can see this panel at all, including FIELD_VOLUNTEER,
+  // is meant to see disaster history (Part 4B's field report explicitly
+  // lists it as in-scope for that role); the permission grant itself was
+  // the bug (fixed in permissions.json), not something to hide client-side.
   const { data: events } = useHazardEvents(habitation?.districtId);
-  const { data: recommendations } = useRecommendations({ districtId: habitation?.districtId });
+  const { data: recommendations } = useRecommendations({
+    districtId: canReadRecommendations ? habitation?.districtId : undefined,
+  });
 
   const assessment = habitation?.latestAssessment;
   const recommendation = recommendations?.items.find((r) => r.habitationId._id === habitationId);

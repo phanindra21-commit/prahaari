@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import type { HazardType, RecommendationStatus } from "@punarvas/shared";
 import { useDistrictStore } from "../stores/districtStore";
 import { useScenarioStore } from "../stores/scenarioStore";
+import { useAuthStore } from "../stores/authStore";
+import { hasPermission } from "../lib/permissions";
 import {
   useDistricts,
   useZones,
@@ -20,15 +22,30 @@ import { ScenarioSummary } from "../components/scenario/ScenarioSummary";
 import { ScenarioModeBanner } from "../components/scenario/ScenarioModeBanner";
 
 export function MapPage(): JSX.Element {
+  const user = useAuthStore((s) => s.user);
+  // Part 1 audit finding: this page used to fire useRelocationSites,
+  // useRecommendations, and useScenarios unconditionally for every role.
+  // FIELD_VOLUNTEER holds none of relocationSite:read/recommendation:read/
+  // scenario:read (deliberately — Part 4B), so all three 403'd on every
+  // map load for that role: silent (nothing here read their error state)
+  // but wasteful, and not the honest "this role doesn't see that layer"
+  // the map should show instead. Gating each on the query's own `enabled`
+  // flag (via `undefined`) stops the request from firing at all.
+  const canReadRelocationSites = user ? hasPermission(user.role, "relocationSite:read") : false;
+  const canReadRecommendations = user ? hasPermission(user.role, "recommendation:read") : false;
+  const canReadScenarios = user ? hasPermission(user.role, "scenario:read") : false;
+
   const selectedDistrictId = useDistrictStore((s) => s.selectedDistrictId);
   const { data: districtsData, isLoading: districtsLoading, isError: districtsError } = useDistricts();
   const district = districtsData?.items.find((d) => d._id === selectedDistrictId);
 
   const { data: zonesData } = useZones(selectedDistrictId ?? undefined);
   const { data: habitationsData } = useHabitationsGeoJSON(selectedDistrictId ?? undefined);
-  const { data: sitesData } = useRelocationSites(selectedDistrictId ?? "");
-  const { data: recommendationsData } = useRecommendations({ districtId: selectedDistrictId ?? undefined });
-  const { data: scenariosData } = useScenarios(selectedDistrictId ?? undefined);
+  const { data: sitesData } = useRelocationSites(canReadRelocationSites ? (selectedDistrictId ?? "") : undefined);
+  const { data: recommendationsData } = useRecommendations({
+    districtId: canReadRecommendations ? (selectedDistrictId ?? undefined) : undefined,
+  });
+  const { data: scenariosData } = useScenarios(canReadScenarios ? (selectedDistrictId ?? undefined) : undefined);
   const activeScenarioId = useScenarioStore((s) => s.activeScenarioId);
   const scenarioViewMode = useScenarioStore((s) => s.viewMode);
   const setActiveScenario = useScenarioStore((s) => s.setActiveScenario);
@@ -140,7 +157,14 @@ export function MapPage(): JSX.Element {
             onToggleSites={() => setShowSites((v) => !v)}
           />
           <ZoneLegend showDecisionRing={Object.keys(recommendationStatusByHabitationId).length > 0} />
-          {selectedDistrictId && <ScenarioPanel districtId={selectedDistrictId} hazards={availableHazards} />}
+          {/* Hidden entirely (not just its data) for a role lacking
+           * scenario:read: ScenarioPanel makes its own internal
+           * useScenarios() call, which would 403 unconditionally for
+           * FIELD_VOLUNTEER — Part 1 audit finding, and matches Part 4B's
+           * requirement that this role never see scenario data. */}
+          {selectedDistrictId && canReadScenarios && (
+            <ScenarioPanel districtId={selectedDistrictId} hazards={availableHazards} />
+          )}
           {activeScenario && (
             <div className="w-72 rounded border border-ink-600 bg-ink-800/95 p-3 shadow-panel backdrop-blur-sm">
               <ScenarioSummary scenario={activeScenario} />

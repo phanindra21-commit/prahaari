@@ -26,6 +26,13 @@ export function RecommendationMap({
 }: RecommendationMapProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  // See MapView.tsx's own styleLoadedRef doc comment: map.isStyleLoaded()
+  // is not a one-way "has loaded" flag (it can report false again once
+  // real data starts arriving), so map.once("load", apply) as a fallback
+  // can register a listener for an event that already fired and will
+  // never fire again — the same "habitation not loading" root cause,
+  // fixed the same way here for consistency (Part 1).
+  const styleLoadedRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -112,11 +119,14 @@ export function RecommendationMap({
         source: "safest-route",
         paint: { "line-color": "#4C9F73", "line-width": 3.5, "line-opacity": 0.95 },
       });
+
+      styleLoadedRef.current = true;
     });
 
     return () => {
       map.remove();
       mapRef.current = null;
+      styleLoadedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -194,7 +204,7 @@ export function RecommendationMap({
       }
     };
 
-    if (map.isStyleLoaded()) apply();
+    if (styleLoadedRef.current) apply();
     else map.once("load", apply);
   }, [origin, originName, candidateSites, selectedSiteId]);
 

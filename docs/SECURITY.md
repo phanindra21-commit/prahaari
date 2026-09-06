@@ -127,6 +127,26 @@ Every `(role, permission)` pair is asserted against this exact table in
 a judge who asks "how do you stop the wrong person approving a
 relocation."
 
+**`FIELD_VOLUNTEER` gained `hazardEvent:read` and `hazardZone:read`**
+(demo-rehearsal Part 1 fix): the map page and the habitation detail
+panel's disaster-history section fetch `GET /hazard-events` and
+`GET /zones`/`GET /grid` respectively, and this role held every other
+permission those need (`habitation:read`, `district:read`) but not
+these two — a genuine gap, not a deliberate restriction. A field
+volunteer doing field work benefits most from knowing a habitation's
+real disaster history and seeing hazard zones on the map — safety-
+relevant information, not recommendation/decision detail — and the
+volunteer's own printable report (Part 4B) explicitly lists disaster
+history as in-scope for this role. `recommendation:read`,
+`relocationSite:read`, `scenario:read`/`scenario:run`, `assessment:read`,
+and `decision:read` remain deliberately withheld — a field volunteer
+must never see recommendation, candidate-site, scenario, or decision
+detail (Part 4B). The map page (`apps/web/src/routes/MapPage.tsx`) gates
+its own recommendation/relocation-site/scenario queries behind
+`hasPermission()` client-side so this role's map loads cleanly (no
+console 403s) rather than silently attempting requests it can never
+succeed at.
+
 | Permission               | SUPER_ADMIN | STATE_ADMIN | DISTRICT_OFFICER | ANALYST | FIELD_VOLUNTEER |
 | ------------------------ | :---------: | :---------: | :--------------: | :-----: | :-------------: |
 | `assessment:read`        |     ✅      |     ✅      |        ✅        |   ✅    |                 |
@@ -138,9 +158,9 @@ relocation."
 | `fieldReport:verify`     |     ✅      |     ✅      |        ✅        |         |                 |
 | `habitation:read`        |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `habitation:write`       |     ✅      |     ✅      |                  |         |                 |
-| `hazardEvent:read`       |     ✅      |     ✅      |        ✅        |   ✅    |                 |
+| `hazardEvent:read`       |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `hazardEvent:write`      |     ✅      |     ✅      |                  |         |                 |
-| `hazardZone:read`        |     ✅      |     ✅      |        ✅        |   ✅    |                 |
+| `hazardZone:read`        |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `hazardZone:write`       |     ✅      |     ✅      |                  |         |                 |
 | `pipeline:run`           |     ✅      |     ✅      |                  |   ✅    |                 |
 | `recommendation:approve` |     ✅      |             |        ✅        |         |                 |

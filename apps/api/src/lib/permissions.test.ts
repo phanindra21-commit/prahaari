@@ -90,7 +90,14 @@ const EXPECTED: Record<UserRole, string[]> = {
     "scenario:read",
     "scenario:run",
   ],
-  FIELD_VOLUNTEER: ["district:read", "fieldReport:read", "fieldReport:submit", "habitation:read"],
+  FIELD_VOLUNTEER: [
+    "district:read",
+    "fieldReport:read",
+    "fieldReport:submit",
+    "habitation:read",
+    "hazardEvent:read",
+    "hazardZone:read",
+  ],
 };
 
 const ALL_PERMISSIONS = permissionsConfig.permissions;
@@ -131,9 +138,18 @@ describe("RBAC permission matrix (Step 3 Part C3)", () => {
       }
     });
 
-    it("FIELD_VOLUNTEER cannot see recommendations or decisions", () => {
+    it("FIELD_VOLUNTEER cannot see recommendations, decisions, assessments, candidate sites, or scenarios", () => {
       expect(hasPermission("FIELD_VOLUNTEER", "recommendation:read")).toBe(false);
       expect(hasPermission("FIELD_VOLUNTEER", "decision:read")).toBe(false);
+      expect(hasPermission("FIELD_VOLUNTEER", "assessment:read")).toBe(false);
+      expect(hasPermission("FIELD_VOLUNTEER", "relocationSite:read")).toBe(false);
+      expect(hasPermission("FIELD_VOLUNTEER", "scenario:read")).toBe(false);
+      expect(hasPermission("FIELD_VOLUNTEER", "scenario:run")).toBe(false);
+    });
+
+    it("FIELD_VOLUNTEER can read disaster history and hazard zones — safety-relevant map data, a genuine permission gap fixed in demo-rehearsal Part 1, not a deliberate restriction", () => {
+      expect(hasPermission("FIELD_VOLUNTEER", "hazardEvent:read")).toBe(true);
+      expect(hasPermission("FIELD_VOLUNTEER", "hazardZone:read")).toBe(true);
     });
 
     it("ANALYST cannot create Decisions or edit habitation data", () => {
