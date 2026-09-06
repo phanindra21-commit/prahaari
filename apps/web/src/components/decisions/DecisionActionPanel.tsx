@@ -208,7 +208,10 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
           </div>
 
           {overrides.length === 0 && (
-            <p className="text-[11px] text-mist-400">Change at least one field above to submit a Modify decision.</p>
+            <p className="rounded border border-zone-orange/40 bg-zone-orange/10 px-2 py-1.5 text-[11px] text-zone-orange">
+              Change at least one field above to submit a Modify decision — the Submit button stays disabled until
+              you do.
+            </p>
           )}
         </div>
       )}
@@ -226,6 +229,17 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
       <p className={`mt-0.5 text-[10px] ${justificationValid ? "text-mist-500" : "text-zone-orange"}`}>
         {justification.trim().length} / {MIN_JUSTIFICATION_LENGTH} characters
       </p>
+      {/* A native `disabled` button gives a real click zero feedback — this
+       * repo's standing rule (CLAUDE.md: "officer actions are never silent")
+       * means the reason the Submit button won't respond must be as visible
+       * as a server error, not a 10px counter easy to miss at a glance. */}
+      {!justificationValid && (
+        <p className="mt-1.5 rounded border border-zone-orange/40 bg-zone-orange/10 px-2 py-1.5 text-[11px] text-zone-orange">
+          Justification needs {MIN_JUSTIFICATION_LENGTH - justification.trim().length} more character
+          {MIN_JUSTIFICATION_LENGTH - justification.trim().length === 1 ? "" : "s"} before this decision can be
+          submitted.
+        </p>
+      )}
 
       {error && (
         <p className="mt-2 rounded border border-zone-red/40 bg-zone-red/10 px-2 py-1.5 text-[11px] text-zone-red">
