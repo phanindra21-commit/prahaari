@@ -19,7 +19,17 @@ test.describe("worklist and review queue filters actually filter (requires the d
 
   test("priority worklist bucket filters narrow the result set", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
+    // analyst.wayanad, not officer.wayanad: this test only needs
+    // assessment:read (which ANALYST holds) and Wayanad-scoped data — using
+    // a different seeded account spreads the per-email login-rate-limit
+    // budget across the suite instead of piling every Wayanad-scoped spec
+    // onto the one officer account (decision-workbench.spec.ts,
+    // full-demo-path.spec.ts, and notifications.spec.ts already use it;
+    // adding this test's login as a 5th/6th use of the same account
+    // deterministically tripped the 5-per-15-min limiter on a full,
+    // single suite run — a self-inflicted side effect of adding new specs
+    // in the same session, not a product bug).
+    await page.getByLabel("Email").fill("analyst.wayanad@punarvas.gov.in");
     await page.getByLabel("Password").fill("PunarVas@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
