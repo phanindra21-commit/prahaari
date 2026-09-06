@@ -695,4 +695,31 @@ export function getDashboardSummary(districtId?: string): Promise<DashboardSumma
   return apiRequest("/dashboard/summary", { query: { districtId } });
 }
 
+export interface NotificationRecord {
+  _id: string;
+  recipientId: string;
+  type: "DECISION_RECORDED";
+  message: string;
+  relatedEntityType: "recommendation";
+  relatedEntityId: string;
+  districtId: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export function listNotifications(params: { unreadOnly?: boolean } = {}): Promise<{
+  items: NotificationRecord[];
+  unreadCount: number;
+}> {
+  return apiRequest("/notifications", { query: params });
+}
+
+export function markNotificationRead(id: string): Promise<NotificationRecord> {
+  return apiRequest(`/notifications/${id}/read`, { method: "PATCH" });
+}
+
+export function markAllNotificationsRead(): Promise<{ modifiedCount: number }> {
+  return apiRequest("/notifications/read-all", { method: "POST" });
+}
+
 export type { UserRole };

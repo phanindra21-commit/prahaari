@@ -18,6 +18,7 @@ import {
   FIELD_REPORT_VERIFICATION_STATUSES,
   JOB_STATUSES,
   JOB_TYPES,
+  NOTIFICATION_TYPES,
 } from "../constants";
 
 /** 24-character hex string — the wire representation of a Mongoose ObjectId. */
@@ -41,6 +42,7 @@ export const fieldReportObservationTypeSchema = z.enum(FIELD_REPORT_OBSERVATION_
 export const fieldReportVerificationStatusSchema = z.enum(FIELD_REPORT_VERIFICATION_STATUSES);
 export const jobStatusSchema = z.enum(JOB_STATUSES);
 export const jobTypeSchema = z.enum(JOB_TYPES);
+export const notificationTypeSchema = z.enum(NOTIFICATION_TYPES);
 
 const longitudeSchema = z.number().min(-180).max(180);
 const latitudeSchema = z.number().min(-90).max(90);

@@ -192,3 +192,34 @@ export function useDashboardSummary(districtId: string | undefined) {
     queryFn: () => api.getDashboardSummary(districtId),
   });
 }
+
+/** Polls every 30s — simple, in-app only (Step 10 Part 6): no push/email/
+ * websocket, a bell icon that stays reasonably fresh is enough for this demo. */
+export function useNotifications(enabled: boolean) {
+  return useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => api.listNotifications(),
+    enabled,
+    refetchInterval: 30_000,
+  });
+}
+
+export function useMarkNotificationRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.markNotificationRead,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+export function useMarkAllNotificationsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.markAllNotificationsRead,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}

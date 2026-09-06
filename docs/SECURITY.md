@@ -147,6 +147,22 @@ its own recommendation/relocation-site/scenario queries behind
 console 403s) rather than silently attempting requests it can never
 succeed at.
 
+**`notification:read`** (demo-rehearsal Part 6) is granted to every role,
+including `FIELD_VOLUNTEER` — it gates only a caller's own notifications
+(`GET/PATCH /api/v1/notifications*`), which are never district-scoped:
+the query filter is always `recipientId: req.auth.userId`, hardcoded from
+the verified token rather than a request parameter, so there is no
+`requireScope()` call on these routes (there is no row-level access
+question to answer beyond "is this my own row"). In practice
+`FIELD_VOLUNTEER` never receives a notification today — `notifyOnDecision`
+(`apps/api/src/lib/notifications.ts`) deliberately omits this role from a
+Decision's recipient list, since every notification message names the
+habitation, action, and deciding officer, which is exactly the
+recommendation/decision detail this role must never see (Part 4B's same
+boundary). The permission is still granted broadly so a future
+notification type this role legitimately should see does not need a
+separate RBAC change to reach it.
+
 | Permission               | SUPER_ADMIN | STATE_ADMIN | DISTRICT_OFFICER | ANALYST | FIELD_VOLUNTEER |
 | ------------------------ | :---------: | :---------: | :--------------: | :-----: | :-------------: |
 | `assessment:read`        |     ✅      |     ✅      |        ✅        |   ✅    |                 |
@@ -162,6 +178,7 @@ succeed at.
 | `hazardEvent:write`      |     ✅      |     ✅      |                  |         |                 |
 | `hazardZone:read`        |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `hazardZone:write`       |     ✅      |     ✅      |                  |         |                 |
+| `notification:read`      |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `pipeline:run`           |     ✅      |     ✅      |                  |   ✅    |                 |
 | `recommendation:approve` |     ✅      |             |        ✅        |         |                 |
 | `recommendation:read`    |     ✅      |     ✅      |        ✅        |   ✅    |                 |
@@ -215,7 +232,13 @@ router.post(
   - `STATE_ADMIN` → `{ districtId: { $in: [...districts in their state] } }`
     (resolved via a lookup against the `districts` collection, since
     resource documents carry `districtId`, not `state`, directly).
-  - `DISTRICT_OFFICER` / `ANALYST` / `FIELD_VOLUNTEER` → `{ districtId: <their one district> }`.
+  - `ANALYST` with `scope.state` set and no `scope.districtId` (a
+    state-level analyst — demo-rehearsal Part 5) gets that same state-wide
+    `$in` lookup. An `ANALYST` with `scope.districtId` set (the more
+    common, district-level shape) still gets the single-district rule
+    below regardless of whether `scope.state` is also set.
+  - `DISTRICT_OFFICER` / `FIELD_VOLUNTEER` / a district-level `ANALYST` →
+    `{ districtId: <their one district> }`.
   - A role with no `state`/`districtId` configured never falls open to
     "everything" — it matches nothing (`{ _id: { $exists: false } }`).
 

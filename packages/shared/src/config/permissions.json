@@ -15,6 +15,7 @@
     "hazardEvent:write",
     "hazardZone:read",
     "hazardZone:write",
+    "notification:read",
     "pipeline:run",
     "recommendation:approve",
     "recommendation:read",
@@ -41,6 +42,7 @@
       "hazardEvent:write",
       "hazardZone:read",
       "hazardZone:write",
+      "notification:read",
       "pipeline:run",
       "recommendation:approve",
       "recommendation:read",
@@ -65,6 +67,7 @@
       "hazardEvent:write",
       "hazardZone:read",
       "hazardZone:write",
+      "notification:read",
       "pipeline:run",
       "recommendation:read",
       "relocationSite:read",
@@ -83,6 +86,7 @@
       "habitation:read",
       "hazardEvent:read",
       "hazardZone:read",
+      "notification:read",
       "recommendation:approve",
       "recommendation:read",
       "relocationSite:read",
@@ -98,6 +102,7 @@
       "habitation:read",
       "hazardEvent:read",
       "hazardZone:read",
+      "notification:read",
       "pipeline:run",
       "recommendation:read",
       "relocationSite:read",
@@ -110,7 +115,8 @@
       "fieldReport:submit",
       "habitation:read",
       "hazardEvent:read",
-      "hazardZone:read"
+      "hazardZone:read",
+      "notification:read"
     ]
   },
   "separationOfDuties": {

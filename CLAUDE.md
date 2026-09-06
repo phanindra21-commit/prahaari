@@ -77,7 +77,7 @@ SIH/
 ├── apps/
 │   ├── web/            React + Vite frontend (map UI, officer workbench)
 │   └── api/             Express API (auth, CRUD, orchestrates services/ml)
-│       └── src/models/    Mongoose models (16 collections, see below)
+│       └── src/models/    Mongoose models (17 collections, see below)
 │       └── src/lib/        JWT, password hashing, sessions, audit(), RBAC helpers,
 │                            mlServiceClient (timeout+retry+Zod), zoneVersioning
 │       └── src/lib/jobs/   In-process job runner (zoningJob.ts — no queue)
@@ -169,9 +169,9 @@ Full design in `docs/SECURITY.md` — this is the enforceable rule:
   `habitations`, `hazardZones`, `hazardEvents`, `assessments`,
   `relocationSites`, `recommendations`, `decisions`, `auditLogs`,
   `scenarioRuns`, `refreshTokens`, `fieldReports`, `gridCells`,
-  `modelRuns`, `jobs` — the full list of 16 collections, each with a
-  Mongoose model in `apps/api/src/models/` and a matching Zod schema in
-  `packages/shared/src/schemas/`.
+  `modelRuns`, `jobs`, `notifications` — the full list of 17 collections,
+  each with a Mongoose model in `apps/api/src/models/` and a matching Zod
+  schema in `packages/shared/src/schemas/`.
 - Every document has `createdAt` / `updatedAt` (Mongoose timestamps).
 - Every document that represents an officer-reviewable recommendation
   carries a `status` field with an explicit enum (e.g.
@@ -792,6 +792,114 @@ completed.
   re-run including `full-demo-path.spec.ts`. Logged in as the Chamoli
   officer in a real browser: dashboard, map, a habitation, and a
   recommendation all render real Chamoli data.
+
+  ### Step 10 continued (demo-rehearsal Parts 2-6: cross-session leakage, field volunteers, notifications) — DONE
+
+  A later session's continuation of the same "Step 10" demo-rehearsal
+  numbering (Part 1's habitation-loading fix and its own scope block are
+  above), covering Parts 2 through 6 of a six-part rehearsal punch list.
+
+  **Part 2** (zone segregation reportedly working via the worklist but not
+  a direct map click): could not reproduce the literal symptom after
+  extensive testing (same-session, independent-fresh-context, and
+  network-throttled comparisons of both paths all showed identical zones
+  data). Found and fixed a real, related bug instead: neither
+  `useDistrictStore` (a plain in-memory Zustand singleton) nor the React
+  Query cache reset on logout, so signing into a *different* district-
+  scoped user in the same browser tab could still see the previous user's
+  stale district selection and cached query results. Fixed via a shared
+  `queryClient` singleton (`apps/web/src/lib/queryClient.ts`) cleared in
+  `authStore.clearSession()`, plus a `TopBar` fix that re-validates the
+  current district selection against the freshly-fetched list on every
+  change. `e2e/district-selection.spec.ts` failed against the district-
+  store fix alone until the cache-clear was added, confirming the cache
+  was the real gap.
+
+  **Part 3** (worklist/review-queue bucket filters reportedly not
+  filtering): traced every layer (button → state → React Query → API
+  query-string → Zod-validated route → Mongo filter) and live-tested as
+  two roles across every bucket/status value and combined filters — all
+  filtered correctly every time. Could not reproduce the reported bug.
+  Added a "N matching records" count (previously missing) and
+  `e2e/worklist-filters.spec.ts` as a regression guard regardless.
+
+  **Part 4** (field volunteer users + broken disaster-report download):
+  seeded `volunteer.wayanad@`/`volunteer.chamoli@` (only Ganjam existed).
+  Diagnosed the report by testing live as the role rather than reading
+  code alone, and found it was worse than "doesn't download": Dashboard's
+  one "Download report" link, shown to every role, always pointed at the
+  officer-oriented district situation report, whose queries need
+  `assessment:read`/`recommendation:read`/`decision:read` — none of which
+  `FIELD_VOLUNTEER` holds — so they 403 silently and the report renders
+  misleadingly wrong text ("no recommendations yet") instead of an honest
+  boundary. Also found a real, independent scope leak: `GET
+  /habitations/:id` was gated only on `habitation:read` but always
+  embedded the full Assessment (risk breakdown, SHAP explanation,
+  vulnerability dimensions, RPI) — exactly the detail `assessment:read`
+  exists to gate elsewhere. Fixed by conditioning `latestAssessment` on
+  that permission. Built the report Part 4B actually asked for:
+  `FieldReportPage` (`/reports/field/:districtId`, new `GET
+  /api/v1/field-reports`) showing district habitations (name, population,
+  zone class — no RPI), disaster history, and the volunteer's own
+  submitted field reports (a list endpoint FieldReport never had; no
+  submission endpoint exists yet, noted rather than silently built beyond
+  scope). Dashboard and the habitation panel now route each role to the
+  report shaped for what it can see. Also fixed, found while verifying:
+  `ReviewQueuePage`/`PrioritiesPage` fired their queries unconditionally,
+  so a direct URL to a nav-hidden page still hit a raw 403 — same fix
+  pattern as Part 1's `MapPage` audit. Verified live as all three
+  volunteers: own-district-only, no cross-permission data, honest
+  "Access restricted" messages, zero unexpected 4xx/5xx.
+
+  **Part 5** (analyst users): seeded one district-level `ANALYST` per
+  district (renamed the sole existing one to `analyst.wayanad@` for
+  naming consistency, added `analyst.ganjam@`/`analyst.chamoli@`) plus one
+  state-level analyst per state (`analyst.kerala@`/`analyst.odisha@`/
+  `analyst.uttarakhand@`, `scope.state` only). The state-level shape
+  required a real backend change — `buildScopeFilter`
+  (`apps/api/src/lib/scope.ts`) only granted state-wide scope to
+  `STATE_ADMIN` before this; extended to also cover an `ANALYST` with
+  `scope.state` set and no `districtId`, leaving a district-level
+  `ANALYST` unaffected (2 new unit tests cover both branches). Verified
+  live: both `analyst.wayanad` and the state-level `analyst.kerala`
+  correctly see only Wayanad, can view the review queue read-only, and
+  have no Approve control.
+
+  **Part 6** (in-app notifications on Decision): built from scratch — no
+  `Notification` model or route existed. New `notifications` collection
+  (17th), `POST /api/v1/decisions` now calls `notifyOnDecision()`
+  (`apps/api/src/lib/notifications.ts`, best-effort — a notification
+  failure never blocks the decision itself) which notifies, in order,
+  `STATE_ADMIN` for that state, `DISTRICT_OFFICER` for that district, and
+  `ANALYST` in scope (both a district-level and a state-level analyst),
+  excluding the deciding officer. `FIELD_VOLUNTEER` is deliberately never
+  notified — every message names the habitation/action/officer, which is
+  recommendation/decision detail this role must never see (Part 4B's same
+  boundary); a generic message was considered and rejected as
+  manufactured noise, so this role is omitted with the reasoning
+  documented in code rather than silently. `GET/PATCH/POST
+  /api/v1/notifications*` are ownership-scoped (`recipientId: req.auth.userId`
+  hardcoded from the token, not a query param) rather than
+  district-scoped via `requireScope()`, since there is no row-level
+  access question beyond "is this the caller's own row" — documented as a
+  deliberate deviation from this file's usual `requirePermission`+
+  `requireScope` pairing. Web: a bell icon in `TopBar` (unread badge,
+  30s poll, dropdown, mark-one/mark-all read) — `NotificationBell.tsx`.
+  `e2e/notifications.spec.ts` approves a real recommendation as the
+  Wayanad officer, confirms the Wayanad analyst's bell shows it, and
+  confirms the Ganjam officer's bell shows no unread badge at all (the
+  cross-district-leakage check Part 6 explicitly asked for, given this
+  project's own history of exactly that class of bug via `?districtId=`
+  bypasses).
+
+  Verified across all five parts: 264 API tests (was 253), full e2e suite
+  passes (9 specs, including the two new ones) when not rate-limited by
+  the login limiter's own 5-attempts/15-min budget being exhausted by
+  running the full suite repeatedly in one session (a known, previously-
+  documented artifact of local re-runs against the same seeded accounts,
+  not a regression — every spec, including the ones that hit it, passes
+  cleanly individually or with a fresh rate-limit window). Typecheck and
+  lint clean on both workspaces throughout.
 
 ## Why Python Is a Separate Service
 

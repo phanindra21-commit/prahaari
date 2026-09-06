@@ -4,6 +4,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useDistrictStore } from "../../stores/districtStore";
 import { useDistricts } from "../../hooks/useApi";
 import { hasPermission } from "../../lib/permissions";
+import { NotificationBell } from "./NotificationBell";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "Super Admin",
@@ -80,6 +81,7 @@ export function TopBar(): JSX.Element {
       <div className="flex items-center gap-3 text-sm">
         {user && (
           <>
+            <NotificationBell />
             <span className="text-mist-300">
               {user.name} <span className="text-mist-400">· {ROLE_LABELS[user.role] ?? user.role}</span>
             </span>

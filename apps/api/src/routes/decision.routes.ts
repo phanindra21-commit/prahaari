@@ -7,8 +7,12 @@ import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
 import { requireDistrictInScope } from "../lib/districtScope";
+import { notifyOnDecision } from "../lib/notifications";
 import { Decision } from "../models/Decision";
 import { Recommendation, type RecommendationDoc } from "../models/Recommendation";
+import { Habitation } from "../models/Habitation";
+import { District } from "../models/District";
+import { User } from "../models/User";
 
 export const decisionRouter = Router();
 
@@ -195,6 +199,32 @@ decisionRouter.post(
         decidedAt: new Date(),
         ipAddress: req.ip ?? "unknown",
       });
+
+      // Step 10 Part 6: notify relevant users. Best-effort — a
+      // notification failure must never block the decision itself from
+      // having been recorded (already committed above); errors are
+      // logged, not thrown.
+      try {
+        const [habitation, district, officer] = await Promise.all([
+          Habitation.findById(recommendation.habitationId, { name: 1 }).lean(),
+          District.findById(recommendation.districtId, { name: 1, state: 1 }).lean(),
+          User.findById(req.auth!.userId, { name: 1 }).lean(),
+        ]);
+        if (habitation && district && officer) {
+          await notifyOnDecision({
+            action: body.action,
+            officerId: req.auth!.userId,
+            officerName: officer.name,
+            districtId: recommendation.districtId,
+            districtName: district.name,
+            districtState: district.state,
+            habitationName: habitation.name,
+            recommendationId: recommendation._id,
+          });
+        }
+      } catch (error) {
+        console.error("notifyOnDecision failed (decision was still recorded):", error);
+      }
 
       res.locals.auditEntity = {
         entityType: "decision",

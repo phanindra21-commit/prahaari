@@ -49,6 +49,8 @@ export type FieldReportVerificationStatus = "PENDING" | "VERIFIED" | "REJECTED";
 export type JobStatus = "PENDING" | "RUNNING" | "SUCCEEDED" | "FAILED";
 export type JobType = "ZONING_RUN" | "PIPELINE_RUN";
 
+export type NotificationType = "DECISION_RECORDED";
+
 export interface HealthCheckResponse {
   status: "ok";
   service: string;

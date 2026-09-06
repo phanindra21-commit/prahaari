@@ -61,6 +61,8 @@ export const JOB_STATUSES = ["PENDING", "RUNNING", "SUCCEEDED", "FAILED"] as con
 
 export const JOB_TYPES = ["ZONING_RUN", "PIPELINE_RUN"] as const;
 
+export const NOTIFICATION_TYPES = ["DECISION_RECORDED"] as const;
+
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },
   { name: "Ganjam", state: "Odisha", primaryHazard: "coastalErosion" },

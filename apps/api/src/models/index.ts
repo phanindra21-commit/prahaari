@@ -14,3 +14,4 @@ export * from "./FieldReport";
 export * from "./GridCell";
 export * from "./ModelRun";
 export * from "./Job";
+export * from "./Notification";
