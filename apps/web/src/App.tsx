@@ -8,6 +8,7 @@ import { ReviewQueuePage } from "./routes/ReviewQueuePage";
 import { RecommendationDetailPage } from "./routes/RecommendationDetailPage";
 import { DistrictReportPage } from "./routes/DistrictReportPage";
 import { HabitationReportPage } from "./routes/HabitationReportPage";
+import { FieldReportPage } from "./routes/FieldReportPage";
 
 export function App(): JSX.Element {
   return (
@@ -22,6 +23,7 @@ export function App(): JSX.Element {
           <Route path="/recommendations/:id" element={<RecommendationDetailPage />} />
           <Route path="/reports/district/:districtId" element={<DistrictReportPage />} />
           <Route path="/reports/habitation/:habitationId" element={<HabitationReportPage />} />
+          <Route path="/reports/field/:districtId" element={<FieldReportPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

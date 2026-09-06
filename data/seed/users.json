@@ -33,11 +33,53 @@
   },
   {
     "name": "Suresh Babu",
-    "email": "analyst@punarvas.gov.in",
+    "email": "analyst.wayanad@punarvas.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Kerala",
       "districtLgdCode": "DEMO-WYD-001"
+    }
+  },
+  {
+    "name": "Nabanita Roy",
+    "email": "analyst.ganjam@punarvas.gov.in",
+    "role": "ANALYST",
+    "scope": {
+      "state": "Odisha",
+      "districtLgdCode": "DEMO-GJM-001"
+    }
+  },
+  {
+    "name": "Vikram Negi",
+    "email": "analyst.chamoli@punarvas.gov.in",
+    "role": "ANALYST",
+    "scope": {
+      "state": "Uttarakhand",
+      "districtLgdCode": "DEMO-CHM-001"
+    }
+  },
+  {
+    "name": "Meera Pillai",
+    "email": "analyst.kerala@punarvas.gov.in",
+    "role": "ANALYST",
+    "scope": {
+      "state": "Kerala"
+    }
+  },
+  {
+    "name": "Sujata Dash",
+    "email": "analyst.odisha@punarvas.gov.in",
+    "role": "ANALYST",
+    "scope": {
+      "state": "Odisha"
+    }
+  },
+  {
+    "name": "Ajay Bisht",
+    "email": "analyst.uttarakhand@punarvas.gov.in",
+    "role": "ANALYST",
+    "scope": {
+      "state": "Uttarakhand"
     }
   },
   {
@@ -47,6 +89,24 @@
     "scope": {
       "state": "Odisha",
       "districtLgdCode": "DEMO-GJM-001"
+    }
+  },
+  {
+    "name": "Anoop Krishnan",
+    "email": "volunteer.wayanad@punarvas.gov.in",
+    "role": "FIELD_VOLUNTEER",
+    "scope": {
+      "state": "Kerala",
+      "districtLgdCode": "DEMO-WYD-001"
+    }
+  },
+  {
+    "name": "Bhuvan Rana",
+    "email": "volunteer.chamoli@punarvas.gov.in",
+    "role": "FIELD_VOLUNTEER",
+    "scope": {
+      "state": "Uttarakhand",
+      "districtLgdCode": "DEMO-CHM-001"
     }
   },
   {

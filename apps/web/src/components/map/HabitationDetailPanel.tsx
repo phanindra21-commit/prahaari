@@ -198,7 +198,12 @@ export function HabitationDetailPanel({ habitationId, onClose }: HabitationDetai
           {habitation?.name ?? (isError ? "Not found" : "Loading…")}
         </h2>
         <div className="flex items-center gap-1">
-          {habitation && (
+          {/* Part 4B fix: this per-habitation report shows the full risk/
+           * RPI/vulnerability breakdown, which requires assessment:read —
+           * a role without it (FIELD_VOLUNTEER) used to get this link
+           * anyway. The district-level field report (Dashboard) is that
+           * role's equivalent download. */}
+          {habitation && canReadAssessmentExplain && (
             <Link
               to={`/reports/habitation/${habitationId}`}
               target="_blank"

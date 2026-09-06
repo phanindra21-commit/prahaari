@@ -26,8 +26,13 @@ const MATCH_NOTHING = { _id: { $exists: false } };
  * - STATE_ADMIN: restricted to districts belonging to their state —
  *   resolved via a lookup against the districts collection, since
  *   resource documents are scoped by `districtId`, not `state`, directly.
- * - DISTRICT_OFFICER / ANALYST / FIELD_VOLUNTEER: restricted to their
- *   single assigned district.
+ * - ANALYST: restricted to their single assigned district — UNLESS seeded
+ *   as a state-level analyst (`scope.state` set, no `scope.districtId`;
+ *   demo-rehearsal Part 5), in which case it gets the same state-wide
+ *   lookup as STATE_ADMIN. A district-level ANALYST (the more common case)
+ *   still falls through to the districtId branch below.
+ * - DISTRICT_OFFICER / FIELD_VOLUNTEER: restricted to their single
+ *   assigned district.
  */
 export async function buildScopeFilter(
   auth: AuthScope,
@@ -43,6 +48,11 @@ export async function buildScopeFilter(
     if (!auth.state) {
       return MATCH_NOTHING;
     }
+    const districts = await District.find({ state: auth.state }, { _id: 1 }).lean();
+    return { [field]: { $in: districts.map((d) => d._id) } };
+  }
+
+  if (auth.role === "ANALYST" && auth.state && !auth.districtId) {
     const districts = await District.find({ state: auth.state }, { _id: 1 }).lean();
     return { [field]: { $in: districts.map((d) => d._id) } };
   }

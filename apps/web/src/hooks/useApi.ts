@@ -25,6 +25,14 @@ export function useHabitationsGeoJSON(
   });
 }
 
+export function useHabitations(districtId: string | undefined) {
+  return useQuery({
+    queryKey: ["habitations", districtId],
+    queryFn: () => api.listHabitations({ districtId, pageSize: 200 }),
+    enabled: !!districtId,
+  });
+}
+
 export function useHabitation(id: string | undefined) {
   return useQuery({
     queryKey: ["habitation", id],
@@ -53,6 +61,14 @@ export function useHazardEvents(districtId: string | undefined) {
   return useQuery({
     queryKey: ["hazard-events", districtId],
     queryFn: () => api.listHazardEvents({ districtId }),
+    enabled: !!districtId,
+  });
+}
+
+export function useFieldReports(districtId: string | undefined) {
+  return useQuery({
+    queryKey: ["field-reports", districtId],
+    queryFn: () => api.listFieldReports({ districtId }),
     enabled: !!districtId,
   });
 }

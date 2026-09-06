@@ -281,6 +281,27 @@ export function listHazardEvents(params: {
   return apiRequest("/hazard-events", { query: params });
 }
 
+export interface FieldReportRecord {
+  _id: string;
+  habitationId: { _id: string; name: string; districtId: string };
+  observationType: string;
+  photos: string[];
+  notes?: string;
+  location: GeoPoint;
+  submittedBy: { _id: string; name: string };
+  verificationStatus: string;
+  verifiedBy: string | null;
+  verifiedAt: string | null;
+  createdAt: string;
+}
+
+export function listFieldReports(params: {
+  districtId?: string;
+  habitationId?: string;
+}): Promise<{ items: FieldReportRecord[] }> {
+  return apiRequest("/field-reports", { query: params });
+}
+
 export interface RelocationSite {
   _id: string;
   districtId: string;

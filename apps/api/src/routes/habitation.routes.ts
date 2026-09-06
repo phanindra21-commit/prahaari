@@ -14,6 +14,7 @@ import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
 import { requireDistrictInScope } from "../lib/districtScope";
+import { hasPermission } from "../lib/permissions";
 import { Habitation, type HabitationDoc } from "../models/Habitation";
 import { Assessment, type AssessmentDoc } from "../models/Assessment";
 import { getActiveAssessment } from "../lib/assessmentVersioning";
@@ -277,7 +278,20 @@ habitationRouter.get(
         return;
       }
 
-      const latest = await getActiveAssessment({ habitationId: habitation._id as Types.ObjectId });
+      // SECURITY (demo-rehearsal Part 4B): this route is gated only on
+      // habitation:read, but used to always embed the FULL Assessment —
+      // risk breakdown, per-hazard exposure, vulnerability dimension
+      // scores, RPI, and the SHAP explanation array — the exact detail
+      // the separate assessment:read permission exists to gate (and does
+      // gate correctly on /habitations/:id/assessment and /:id/explain).
+      // A role with habitation:read but not assessment:read (FIELD_VOLUNTEER)
+      // could see it anyway just by opening this endpoint. Found while
+      // diagnosing why the field volunteer's report "doesn't work" —
+      // HabitationReportPage.tsx renders this field directly, unguarded.
+      const canReadAssessment = hasPermission(req.auth!.role, "assessment:read");
+      const latest = canReadAssessment
+        ? await getActiveAssessment({ habitationId: habitation._id as Types.ObjectId })
+        : null;
 
       const body = habitationDetailResponseSchema.parse({
         ...habitationToSummaryFields(habitation),

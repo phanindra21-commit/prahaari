@@ -286,6 +286,28 @@ describe("habitation routes integration", () => {
     expect(priorities.status).toBe(404);
   });
 
+  it("GET /habitations/:id omits latestAssessment for a role without assessment:read, includes it for one with it (Step 10 Part 4B)", async () => {
+    const district = await seedDistrict("HAB-RT-010");
+    const districtId = district._id as Types.ObjectId;
+    const habitation = await seedHabitation(districtId, "HAB-RT-010-A", "Leak Check Habitation");
+    await writeAssessmentVersions([assessmentInput(habitation._id as Types.ObjectId, districtId)]);
+    const habitationId = (habitation._id as Types.ObjectId).toString();
+
+    const volunteerToken = await tokenForRole("FIELD_VOLUNTEER", districtId);
+    const volunteerRes = await request(app)
+      .get(`/api/v1/habitations/${habitationId}`)
+      .set("Authorization", `Bearer ${volunteerToken}`);
+    expect(volunteerRes.status).toBe(200);
+    expect(volunteerRes.body.latestAssessment).toBeNull();
+
+    const analystToken = await tokenForRole("ANALYST", districtId);
+    const analystRes = await request(app)
+      .get(`/api/v1/habitations/${habitationId}`)
+      .set("Authorization", `Bearer ${analystToken}`);
+    expect(analystRes.status).toBe(200);
+    expect(analystRes.body.latestAssessment.priorityBucket).toBe("Immediate");
+  });
+
   it("rejects a FIELD_VOLUNTEER from /priorities (no assessment:read) but allows /habitations (habitation:read)", async () => {
     const district = await seedDistrict("HAB-RT-008");
     const token = await tokenForRole("FIELD_VOLUNTEER", district._id as Types.ObjectId);

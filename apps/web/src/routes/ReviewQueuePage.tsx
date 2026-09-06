@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { RecommendationStatus, RelocationPriorityBucket } from "@punarvas/shared";
 import { useDistrictStore } from "../stores/districtStore";
+import { useAuthStore } from "../stores/authStore";
+import { hasPermission } from "../lib/permissions";
 import { useDistricts, useRecommendations } from "../hooks/useApi";
 import { PriorityBadge } from "../components/ui/PriorityBadge";
 import { RecommendationStatusBadge } from "../components/ui/RecommendationStatusBadge";
@@ -26,6 +28,8 @@ const STATUS_FILTERS: Array<{ label: string; value: RecommendationStatus | undef
  * habitation-to-site recommendation for the selected district (TopBar's
  * district switcher), filterable by priority bucket and decision status. */
 export function ReviewQueuePage(): JSX.Element {
+  const user = useAuthStore((s) => s.user);
+  const canReadRecommendations = user ? hasPermission(user.role, "recommendation:read") : false;
   const selectedDistrictId = useDistrictStore((s) => s.selectedDistrictId);
   const { data: districtsData } = useDistricts();
   const district = districtsData?.items.find((d) => d._id === selectedDistrictId);
@@ -33,11 +37,26 @@ export function ReviewQueuePage(): JSX.Element {
   const [bucket, setBucket] = useState<RelocationPriorityBucket | undefined>(undefined);
   const [status, setStatus] = useState<RecommendationStatus | undefined>(undefined);
   const { data, isLoading, isError } = useRecommendations({
-    districtId: selectedDistrictId ?? undefined,
+    districtId: canReadRecommendations ? (selectedDistrictId ?? undefined) : undefined,
     priorityBucket: bucket,
     status,
   });
   const navigate = useNavigate();
+
+  // The nav bar already hides the "Review queue" link for a role without
+  // recommendation:read (TopBar.tsx) — this guards direct URL navigation
+  // (bookmark, back button, typed URL), which would otherwise still fire
+  // the query above and land on a raw "Could not load" error instead of
+  // an honest access-restricted message.
+  if (!canReadRecommendations) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="max-w-md text-center text-sm text-mist-300">
+          Access restricted. Your role does not include permission to view the officer review queue.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="scrollbar-thin h-full overflow-y-auto p-4">

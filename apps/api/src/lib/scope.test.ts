@@ -72,6 +72,26 @@ describe("buildScopeFilter (Step 3 Part C2)", () => {
     expect(volunteerFilter).toEqual({ districtId: district._id.toString() });
   });
 
+  it("a state-level ANALYST (scope.state set, no districtId — Step 10 Part 5) gets the same state-wide $in filter as STATE_ADMIN", async () => {
+    const kerala1 = await makeDistrict("KL-6", "Kerala");
+    const kerala2 = await makeDistrict("KL-7", "Kerala");
+    await makeDistrict("OD-2", "Odisha");
+
+    const filter = await buildScopeFilter({ role: "ANALYST", state: "Kerala" });
+    const inClause = (filter.districtId as { $in: unknown[] }).$in.map(String).sort();
+    expect(inClause).toEqual([kerala1._id.toString(), kerala2._id.toString()].sort());
+  });
+
+  it("a district-level ANALYST (districtId set) is still restricted to that one district, even if scope.state is also set", async () => {
+    const district = await makeDistrict("KL-8", "Kerala");
+    const filter = await buildScopeFilter({
+      role: "ANALYST",
+      state: "Kerala",
+      districtId: district._id.toString(),
+    });
+    expect(filter).toEqual({ districtId: district._id.toString() });
+  });
+
   it("a district-scoped role with no districtId configured matches nothing (never falls open)", async () => {
     const filter = await buildScopeFilter({ role: "DISTRICT_OFFICER" });
     expect(filter).toEqual({ _id: { $exists: false } });

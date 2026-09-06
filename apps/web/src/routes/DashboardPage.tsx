@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { hasPermission } from "../lib/permissions";
 import { useDashboardSummary } from "../hooks/useApi";
 import { CapacityShortfallPanel } from "../components/dashboard/CapacityShortfallPanel";
 import { DashboardCharts } from "../components/dashboard/DashboardCharts";
@@ -73,14 +74,35 @@ export function DashboardPage(): JSX.Element {
             </h1>
             <p className="text-xs text-mist-400">{headlineLabel}</p>
           </div>
-          <Link
-            to={`/reports/district/${selected.districtId}`}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded border border-ink-500 px-3 py-1.5 text-xs text-mist-200 transition-colors hover:border-signal-bright/60 hover:text-signal-bright"
-          >
-            Download {selected.districtName} situation report
-          </Link>
+          {/* Part 4B fix: the district situation report shows priorities/
+           * recommendations/decisions (assessment:read, recommendation:read,
+           * decision:read) — a role without those (FIELD_VOLUNTEER) used to
+           * get this exact link anyway, landing on a report whose queries
+           * silently 403 and render misleading "none yet" text instead of
+           * the real (permission-denied) reason. Route by what the signed-in
+           * role can actually see instead. */}
+          {user && hasPermission(user.role, "recommendation:read") ? (
+            <Link
+              to={`/reports/district/${selected.districtId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded border border-ink-500 px-3 py-1.5 text-xs text-mist-200 transition-colors hover:border-signal-bright/60 hover:text-signal-bright"
+            >
+              Download {selected.districtName} situation report
+            </Link>
+          ) : (
+            user &&
+            hasPermission(user.role, "fieldReport:read") && (
+              <Link
+                to={`/reports/field/${selected.districtId}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded border border-ink-500 px-3 py-1.5 text-xs text-mist-200 transition-colors hover:border-signal-bright/60 hover:text-signal-bright"
+              >
+                Download {selected.districtName} field report
+              </Link>
+            )
+          )}
         </div>
 
         <section className="mb-4">

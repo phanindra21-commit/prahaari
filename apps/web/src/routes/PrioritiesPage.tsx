@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { RelocationPriorityBucket } from "@punarvas/shared";
 import { useDistrictStore } from "../stores/districtStore";
+import { useAuthStore } from "../stores/authStore";
+import { hasPermission } from "../lib/permissions";
 import { usePriorities } from "../hooks/useApi";
 import { ZoneBadge } from "../components/ui/ZoneBadge";
 import { PriorityBadge } from "../components/ui/PriorityBadge";
@@ -21,10 +23,29 @@ const HAZARD_LABELS: Record<string, string> = {
 };
 
 export function PrioritiesPage(): JSX.Element {
+  const user = useAuthStore((s) => s.user);
+  const canReadAssessments = user ? hasPermission(user.role, "assessment:read") : false;
   const selectedDistrictId = useDistrictStore((s) => s.selectedDistrictId);
   const [bucket, setBucket] = useState<RelocationPriorityBucket | undefined>(undefined);
-  const { data, isLoading, isError } = usePriorities(selectedDistrictId ?? undefined, bucket);
+  const { data, isLoading, isError } = usePriorities(
+    canReadAssessments ? (selectedDistrictId ?? undefined) : undefined,
+    bucket,
+  );
   const navigate = useNavigate();
+
+  // The nav bar already hides the "Priority worklist" link for a role
+  // without assessment:read (TopBar.tsx) — this guards direct URL
+  // navigation, which would otherwise still fire the query above and land
+  // on a raw "Could not load" error instead of an honest message.
+  if (!canReadAssessments) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="max-w-md text-center text-sm text-mist-300">
+          Access restricted. Your role does not include permission to view the priority worklist.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="scrollbar-thin h-full overflow-y-auto p-4">
