@@ -26,10 +26,17 @@ export function TopBar(): JSX.Element {
   const { data } = useDistricts();
 
   useEffect(() => {
-    if (!selectedDistrictId && data && data.items.length > 0) {
-      setSelectedDistrictId(data.items[0]!._id);
+    if (!data || data.items.length === 0) return;
+
+    const currentIsValid = data.items.some((d) => d._id === selectedDistrictId);
+    if (!selectedDistrictId || !currentIsValid) {
+      // Prioritize the user's assigned district if present, otherwise default to first available
+      const userDistrictMatch = user?.scope?.districtId
+        ? data.items.find((d) => d._id === user.scope.districtId)
+        : null;
+      setSelectedDistrictId(userDistrictMatch ? userDistrictMatch._id : data.items[0]!._id);
     }
-  }, [data, selectedDistrictId, setSelectedDistrictId]);
+  }, [data, selectedDistrictId, setSelectedDistrictId, user]);
 
   return (
     <header className="flex h-12 flex-shrink-0 items-center justify-between border-b border-ink-600 bg-ink-900 px-4">

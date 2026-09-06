@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import type { SafeUser } from "@punarvas/shared";
 import { API_BASE_URL } from "../lib/apiClient";
+import { queryClient } from "../lib/queryClient";
+import { useDistrictStore } from "./districtStore";
 
 /**
  * Matches Step 3's rotation scheme (apps/api/src/routes/auth.routes.ts):
@@ -84,6 +86,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   clearSession() {
     clearRefreshTimer();
     set({ user: null, accessToken: null, accessTokenExpiresAt: null, status: "unauthenticated" });
+    useDistrictStore.getState().clearSelectedDistrictId();
+    // See queryClient.ts's doc comment: without this, a different user
+    // logging in in the same tab could still see the previous user's
+    // cached query results (districts, zones, habitations, ...).
+    queryClient.clear();
   },
 
   async login(email, password) {
