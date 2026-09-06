@@ -6,7 +6,10 @@
     "date": "2024-07-30T00:00:00.000Z",
     "extent": {
       "type": "Point",
-      "coordinates": [76.129, 11.497]
+      "coordinates": [
+        76.129,
+        11.497
+      ]
     },
     "deaths": 231,
     "injured": 397,
@@ -25,7 +28,10 @@
     "date": "2013-10-12T00:00:00.000Z",
     "extent": {
       "type": "Point",
-      "coordinates": [84.9006, 19.2647]
+      "coordinates": [
+        84.9006,
+        19.2647
+      ]
     },
     "deaths": 45,
     "injured": 200,
@@ -44,7 +50,10 @@
     "date": "2018-10-11T00:00:00.000Z",
     "extent": {
       "type": "Point",
-      "coordinates": [84.97, 19.32]
+      "coordinates": [
+        84.97,
+        19.32
+      ]
     },
     "deaths": 77,
     "injured": 150,
@@ -55,5 +64,71 @@
     "confidence": "HIGH",
     "dataProvenance": "PUBLIC_RECORD",
     "sourceUrl": "https://en.wikipedia.org/wiki/Cyclone_Titli"
+  },
+  {
+    "districtLgdCode": "DEMO-CHM-001",
+    "hazardType": "landslide",
+    "name": "2021 Rishiganga\u2013Raini rock-ice avalanche and flash flood",
+    "date": "2021-02-07T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [
+        79.728,
+        30.554
+      ]
+    },
+    "deaths": 204,
+    "injured": 12,
+    "displaced": 2000,
+    "housesDamaged": 35,
+    "economicLossInrLakh": 150000,
+    "source": "NEWS",
+    "confidence": "HIGH",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2021_Uttarakhand_flood"
+  },
+  {
+    "districtLgdCode": "DEMO-CHM-001",
+    "hazardType": "flood",
+    "name": "2013 Uttarakhand floods (Alaknanda valley, Chamoli)",
+    "date": "2013-06-17T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [
+        79.5641,
+        30.561
+      ]
+    },
+    "deaths": 54,
+    "injured": 80,
+    "displaced": 15000,
+    "housesDamaged": 890,
+    "economicLossInrLakh": 45000,
+    "source": "SDMA",
+    "confidence": "MEDIUM",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2013_North_India_floods"
+  },
+  {
+    "districtLgdCode": "DEMO-CHM-001",
+    "hazardType": "landslide",
+    "name": "2023 Joshimath land subsidence (mechanism not covered by this platform's hazard types \u2014 see METHODOLOGY limitation)",
+    "date": "2023-01-02T00:00:00.000Z",
+    "extent": {
+      "type": "Point",
+      "coordinates": [
+        79.5641,
+        30.561
+      ]
+    },
+    "deaths": 0,
+    "injured": 0,
+    "displaced": 4000,
+    "housesDamaged": 868,
+    "economicLossInrLakh": 100000,
+    "source": "NEWS",
+    "confidence": "HIGH",
+    "dataProvenance": "PUBLIC_RECORD",
+    "sourceUrl": "https://en.wikipedia.org/wiki/2023_Joshimath_land_subsidence"
   }
 ]

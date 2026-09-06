@@ -1,5 +1,5 @@
 /**
- * Idempotent seed script for the two pilot districts (Wayanad, Ganjam).
+ * Idempotent seed script for the three pilot districts (Wayanad, Ganjam, Chamoli).
  * Reads the static GeoJSON/JSON files in data/seed/ (never hardcodes
  * habitation-level data here) and upserts them into MongoDB by natural
  * key, so re-running `npm run seed` is safe. `npm run seed:reset` clears
@@ -161,7 +161,7 @@ function requireDistrictId(
 }
 
 async function seedHabitations(districtByLgdCode: Map<string, Types.ObjectId>): Promise<void> {
-  const files = ["wayanad-habitations.geojson", "ganjam-habitations.geojson"];
+  const files = ["wayanad-habitations.geojson", "ganjam-habitations.geojson", "chamoli-habitations.geojson"];
   let inserted = 0;
   let updated = 0;
 
@@ -210,7 +210,7 @@ async function seedHabitations(districtByLgdCode: Map<string, Types.ObjectId>): 
 }
 
 async function seedHazardZones(districtByLgdCode: Map<string, Types.ObjectId>): Promise<void> {
-  const files = ["wayanad-hazard-zones.geojson", "ganjam-hazard-zones.geojson"];
+  const files = ["wayanad-hazard-zones.geojson", "ganjam-hazard-zones.geojson", "chamoli-hazard-zones.geojson"];
   let inserted = 0;
   let updated = 0;
 
@@ -300,7 +300,11 @@ async function seedHazardEvents(districtByLgdCode: Map<string, Types.ObjectId>):
 }
 
 async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId>): Promise<void> {
-  const files = ["wayanad-relocation-sites.geojson", "ganjam-relocation-sites.geojson"];
+  const files = [
+    "wayanad-relocation-sites.geojson",
+    "ganjam-relocation-sites.geojson",
+    "chamoli-relocation-sites.geojson",
+  ];
   let inserted = 0;
   let updated = 0;
 
@@ -429,7 +433,11 @@ function printUserCredentials(credentials: SeededCredential[]): void {
  */
 function validateGeometry(): void {
   const districts = z.array(seedDistrictSchema).parse(readSeedFile("districts.json"));
-  const habitationFiles = ["wayanad-habitations.geojson", "ganjam-habitations.geojson"];
+  const habitationFiles = [
+    "wayanad-habitations.geojson",
+    "ganjam-habitations.geojson",
+    "chamoli-habitations.geojson",
+  ];
 
   const habitations = habitationFiles.flatMap((file) => {
     const collection = seedHabitationCollectionSchema.parse(readSeedFile(file));

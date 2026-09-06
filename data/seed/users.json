@@ -48,5 +48,22 @@
       "state": "Odisha",
       "districtLgdCode": "DEMO-GJM-001"
     }
+  },
+  {
+    "name": "Harish Rawat",
+    "email": "stateadmin.uttarakhand@punarvas.gov.in",
+    "role": "STATE_ADMIN",
+    "scope": {
+      "state": "Uttarakhand"
+    }
+  },
+  {
+    "name": "Deepika Bhandari",
+    "email": "officer.chamoli@punarvas.gov.in",
+    "role": "DISTRICT_OFFICER",
+    "scope": {
+      "state": "Uttarakhand",
+      "districtLgdCode": "DEMO-CHM-001"
+    }
   }
 ]

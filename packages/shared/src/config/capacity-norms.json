@@ -2,7 +2,8 @@
   "modelVersion": "capacity-norms-v1",
   "stateTerrainTier": {
     "Kerala": "HILLY_TRIBAL",
-    "Odisha": "PLAINS"
+    "Odisha": "PLAINS",
+    "Uttarakhand": "HILLY_TRIBAL"
   },
   "water": {
     "lpcd": 55,
@@ -10,7 +11,8 @@
     "defaultAvgHouseholdSize": 4.8,
     "stateAvgHouseholdSize": {
       "Kerala": 4.3,
-      "Odisha": 4.6
+      "Odisha": 4.6,
+      "Uttarakhand": 4.7
     }
   },
   "land": {

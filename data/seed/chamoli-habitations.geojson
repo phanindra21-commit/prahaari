@@ -1,0 +1,2178 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.567206,
+          30.559449
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H001",
+        "name": "Joshimath",
+        "block": "Joshimath",
+        "panchayat": "Joshimath Nagar Palika",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 16709,
+        "households": 3231,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.3,
+          "scStShare": 0.15,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.14,
+          "avgBuildingAgeYears": 34.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.19,
+          "distanceToPhcKm": 1.8,
+          "mobileNetworkCoverage": 0.64,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 0.24,
+          "primaryLivelihoodDependenceShare": 0.66
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 87.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.68
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.568754,
+          30.531362
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H002",
+        "name": "Auli",
+        "block": "Joshimath",
+        "panchayat": "Auli",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 310,
+        "households": 68,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.25,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.31,
+          "scStShare": 0.12,
+          "literacyRate": 0.64
+        },
+        "structures": {
+          "kutchaHousingShare": 0.5,
+          "avgBuildingAgeYears": 42.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 7.33,
+          "distanceToPhcKm": 8.28,
+          "mobileNetworkCoverage": 0.37,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 1.05,
+          "primaryLivelihoodDependenceShare": 0.64
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 178.9,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.4
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.590013,
+          30.54131
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H003",
+        "name": "Tapovan",
+        "block": "Joshimath",
+        "panchayat": "Tapovan",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 1140,
+        "households": 241,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.2,
+          "womenHeadedHouseholdShare": 0.24,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.41,
+          "scStShare": 0.16,
+          "literacyRate": 0.73
+        },
+        "structures": {
+          "kutchaHousingShare": 0.44,
+          "avgBuildingAgeYears": 10.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.72,
+          "distanceToPhcKm": 3.5,
+          "mobileNetworkCoverage": 0.87,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.42,
+          "primaryLivelihoodDependenceShare": 0.72
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 161.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.31
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.685041,
+          30.550902
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H004",
+        "name": "Raini",
+        "block": "Joshimath",
+        "panchayat": "Raini",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 487,
+        "households": 102,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.18,
+          "womenHeadedHouseholdShare": 0.23,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.36,
+          "scStShare": 0.16,
+          "literacyRate": 0.7
+        },
+        "structures": {
+          "kutchaHousingShare": 0.63,
+          "avgBuildingAgeYears": 36.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 6.49,
+          "distanceToPhcKm": 12.64,
+          "mobileNetworkCoverage": 0.17,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.92,
+          "primaryLivelihoodDependenceShare": 0.69
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 177.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.28
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.552016,
+          30.571977
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H005",
+        "name": "Selang",
+        "block": "Joshimath",
+        "panchayat": "Selang",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 612,
+        "households": 131,
+        "demographics": {
+          "shareUnder5": 0.04,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.23,
+          "womenHeadedHouseholdShare": 0.26,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.31,
+          "scStShare": 0.13,
+          "literacyRate": 0.63
+        },
+        "structures": {
+          "kutchaHousingShare": 0.63,
+          "avgBuildingAgeYears": 33.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 6.02,
+          "distanceToPhcKm": 13.69,
+          "mobileNetworkCoverage": 0.42,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.0,
+          "primaryLivelihoodDependenceShare": 0.63
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 179.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.3
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.571046,
+          30.535884
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H006",
+        "name": "Marwari",
+        "block": "Joshimath",
+        "panchayat": "Marwari",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 845,
+        "households": 176,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.12,
+          "shareOver60": 0.21,
+          "womenHeadedHouseholdShare": 0.25,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.43,
+          "scStShare": 0.15,
+          "literacyRate": 0.71
+        },
+        "structures": {
+          "kutchaHousingShare": 0.35,
+          "avgBuildingAgeYears": 9.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.49,
+          "distanceToPhcKm": 4.98,
+          "mobileNetworkCoverage": 0.65,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "DAILY_WAGE_LABOUR",
+          "distanceToLivelihoodAssetKm": 1.2,
+          "primaryLivelihoodDependenceShare": 0.65
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 137.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.35
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.489902,
+          30.765621
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H007",
+        "name": "Mana",
+        "block": "Joshimath",
+        "panchayat": "Mana",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 298,
+        "households": 71,
+        "demographics": {
+          "shareUnder5": 0.04,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.22,
+          "womenHeadedHouseholdShare": 0.31,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.43,
+          "scStShare": 0.12,
+          "literacyRate": 0.72
+        },
+        "structures": {
+          "kutchaHousingShare": 0.61,
+          "avgBuildingAgeYears": 36.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.47,
+          "distanceToPhcKm": 13.12,
+          "mobileNetworkCoverage": 0.31,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 0.66,
+          "primaryLivelihoodDependenceShare": 0.59
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 146.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.28
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.31691,
+          30.389929
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H008",
+        "name": "Gopeshwar",
+        "block": "Dasholi",
+        "panchayat": "Gopeshwar Nagar Palika",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 8632,
+        "households": 1804,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.3,
+          "scStShare": 0.15,
+          "literacyRate": 0.91
+        },
+        "structures": {
+          "kutchaHousingShare": 0.14,
+          "avgBuildingAgeYears": 21.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.78,
+          "distanceToPhcKm": 4.71,
+          "mobileNetworkCoverage": 0.86,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.6,
+          "primaryLivelihoodDependenceShare": 0.47
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 102.6,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.48
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.285145,
+          30.449921
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H009",
+        "name": "Mandal",
+        "block": "Dasholi",
+        "panchayat": "Mandal",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 674,
+        "households": 142,
+        "demographics": {
+          "shareUnder5": 0.04,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.21,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.42,
+          "scStShare": 0.06,
+          "literacyRate": 0.68
+        },
+        "structures": {
+          "kutchaHousingShare": 0.61,
+          "avgBuildingAgeYears": 47.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.13,
+          "distanceToPhcKm": 12.35,
+          "mobileNetworkCoverage": 0.4,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.63,
+          "primaryLivelihoodDependenceShare": 0.78
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 152.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.23
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.342995,
+          30.408133
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H010",
+        "name": "Sonla",
+        "block": "Dasholi",
+        "panchayat": "Sonla",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 521,
+        "households": 109,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.12,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.22,
+          "scStShare": 0.11,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.32,
+          "avgBuildingAgeYears": 21.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.49,
+          "distanceToPhcKm": 10.92,
+          "mobileNetworkCoverage": 0.31,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.99,
+          "primaryLivelihoodDependenceShare": 0.76
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 155.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.39
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.400149,
+          30.480803
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H011",
+        "name": "Urgam",
+        "block": "Dasholi",
+        "panchayat": "Urgam",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 389,
+        "households": 84,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.12,
+          "shareOver60": 0.24,
+          "womenHeadedHouseholdShare": 0.34,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.35,
+          "scStShare": 0.16,
+          "literacyRate": 0.64
+        },
+        "structures": {
+          "kutchaHousingShare": 0.47,
+          "avgBuildingAgeYears": 36.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.28,
+          "distanceToPhcKm": 9.25,
+          "mobileNetworkCoverage": 0.22,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.13,
+          "primaryLivelihoodDependenceShare": 0.67
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 164.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.3
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.291443,
+          30.36154
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H012",
+        "name": "Pana",
+        "block": "Dasholi",
+        "panchayat": "Pana",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 456,
+        "households": 97,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.13,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.17,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.31,
+          "scStShare": 0.06,
+          "literacyRate": 0.81
+        },
+        "structures": {
+          "kutchaHousingShare": 0.25,
+          "avgBuildingAgeYears": 32.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.44,
+          "distanceToPhcKm": 11.08,
+          "mobileNetworkCoverage": 0.31,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.62,
+          "primaryLivelihoodDependenceShare": 0.71
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 173.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.24
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.624812,
+          30.289614
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H013",
+        "name": "Ghat",
+        "block": "Ghat",
+        "panchayat": "Ghat",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 1287,
+        "households": 268,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.31,
+          "scStShare": 0.09,
+          "literacyRate": 0.92
+        },
+        "structures": {
+          "kutchaHousingShare": 0.23,
+          "avgBuildingAgeYears": 26.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.69,
+          "distanceToPhcKm": 1.91,
+          "mobileNetworkCoverage": 0.74,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.83,
+          "primaryLivelihoodDependenceShare": 0.4
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 72.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.55
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.651951,
+          30.308168
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H014",
+        "name": "Kunjani",
+        "block": "Ghat",
+        "panchayat": "Kunjani",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 534,
+        "households": 112,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.28,
+          "scStShare": 0.18,
+          "literacyRate": 0.77
+        },
+        "structures": {
+          "kutchaHousingShare": 0.29,
+          "avgBuildingAgeYears": 29.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 7.35,
+          "distanceToPhcKm": 9.03,
+          "mobileNetworkCoverage": 0.23,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.13,
+          "primaryLivelihoodDependenceShare": 0.7
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 123.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.36
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.598422,
+          30.262844
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H015",
+        "name": "Birahi",
+        "block": "Ghat",
+        "panchayat": "Birahi",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 412,
+        "households": 87,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.14,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.3,
+          "scStShare": 0.11,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.37,
+          "avgBuildingAgeYears": 22.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.58,
+          "distanceToPhcKm": 1.87,
+          "mobileNetworkCoverage": 0.6,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.58,
+          "primaryLivelihoodDependenceShare": 0.82
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 157.1,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.19
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.667002,
+          30.333349
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H016",
+        "name": "Sitel",
+        "block": "Ghat",
+        "panchayat": "Sitel",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 298,
+        "households": 64,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.12,
+          "shareOver60": 0.24,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.37,
+          "scStShare": 0.1,
+          "literacyRate": 0.72
+        },
+        "structures": {
+          "kutchaHousingShare": 0.6,
+          "avgBuildingAgeYears": 31.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.86,
+          "distanceToPhcKm": 9.11,
+          "mobileNetworkCoverage": 0.17,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.56,
+          "primaryLivelihoodDependenceShare": 0.62
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 160.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.31
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.216006,
+          30.26359
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H017",
+        "name": "Karnaprayag",
+        "block": "Karnaprayag",
+        "panchayat": "Karnaprayag Nagar Palika",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 5108,
+        "households": 1069,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.17,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.31,
+          "scStShare": 0.1,
+          "literacyRate": 0.88
+        },
+        "structures": {
+          "kutchaHousingShare": 0.14,
+          "avgBuildingAgeYears": 36.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.28,
+          "distanceToPhcKm": 1.34,
+          "mobileNetworkCoverage": 0.82,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "TRADE",
+          "distanceToLivelihoodAssetKm": 0.69,
+          "primaryLivelihoodDependenceShare": 0.55
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 103.3,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.54
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.197234,
+          30.296111
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H018",
+        "name": "Nauti",
+        "block": "Karnaprayag",
+        "panchayat": "Nauti",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 723,
+        "households": 151,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.1,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.28,
+          "scStShare": 0.11,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.37,
+          "avgBuildingAgeYears": 21.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.52,
+          "distanceToPhcKm": 12.83,
+          "mobileNetworkCoverage": 0.27,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.26,
+          "primaryLivelihoodDependenceShare": 0.72
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 142.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.34
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.237584,
+          30.242009
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H019",
+        "name": "Simli",
+        "block": "Karnaprayag",
+        "panchayat": "Simli",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 489,
+        "households": 102,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.17,
+          "scStShare": 0.06,
+          "literacyRate": 0.85
+        },
+        "structures": {
+          "kutchaHousingShare": 0.4,
+          "avgBuildingAgeYears": 20.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.83,
+          "distanceToPhcKm": 5.07,
+          "mobileNetworkCoverage": 0.76,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.18,
+          "primaryLivelihoodDependenceShare": 0.64
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 139.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.38
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.178293,
+          30.282785
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H020",
+        "name": "Chandpur",
+        "block": "Karnaprayag",
+        "panchayat": "Chandpur",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 356,
+        "households": 76,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.23,
+          "scStShare": 0.1,
+          "literacyRate": 0.77
+        },
+        "structures": {
+          "kutchaHousingShare": 0.26,
+          "avgBuildingAgeYears": 28.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 6.42,
+          "distanceToPhcKm": 9.28,
+          "mobileNetworkCoverage": 0.26,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.75,
+          "primaryLivelihoodDependenceShare": 0.74
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 149.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.31
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.244595,
+          30.289866
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H021",
+        "name": "Melgaon",
+        "block": "Karnaprayag",
+        "panchayat": "Melgaon",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 298,
+        "households": 63,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.21,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.16,
+          "scStShare": 0.17,
+          "literacyRate": 0.81
+        },
+        "structures": {
+          "kutchaHousingShare": 0.27,
+          "avgBuildingAgeYears": 21.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.83,
+          "distanceToPhcKm": 10.53,
+          "mobileNetworkCoverage": 0.44,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.8,
+          "primaryLivelihoodDependenceShare": 0.76
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 128.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.36
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.432087,
+          30.282351
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H022",
+        "name": "Pokhri",
+        "block": "Pokhri",
+        "panchayat": "Pokhri",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 1456,
+        "households": 302,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.27,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.33,
+          "scStShare": 0.17,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.2,
+          "avgBuildingAgeYears": 21.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.39,
+          "distanceToPhcKm": 5.27,
+          "mobileNetworkCoverage": 0.8,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.69,
+          "primaryLivelihoodDependenceShare": 0.38
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 78.2,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.67
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.455667,
+          30.306352
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H023",
+        "name": "Kanol",
+        "block": "Pokhri",
+        "panchayat": "Kanol",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 412,
+        "households": 88,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.25,
+          "womenHeadedHouseholdShare": 0.3,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.42,
+          "scStShare": 0.12,
+          "literacyRate": 0.67
+        },
+        "structures": {
+          "kutchaHousingShare": 0.64,
+          "avgBuildingAgeYears": 47.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.43,
+          "distanceToPhcKm": 12.06,
+          "mobileNetworkCoverage": 0.42,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.26,
+          "primaryLivelihoodDependenceShare": 0.76
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 177.1,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.21
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.415178,
+          30.263666
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H024",
+        "name": "Pali",
+        "block": "Pokhri",
+        "panchayat": "Pali",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 367,
+        "households": 78,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.12,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.22,
+          "scStShare": 0.08,
+          "literacyRate": 0.87
+        },
+        "structures": {
+          "kutchaHousingShare": 0.39,
+          "avgBuildingAgeYears": 19.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 7.49,
+          "distanceToPhcKm": 9.24,
+          "mobileNetworkCoverage": 0.18,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.46,
+          "primaryLivelihoodDependenceShare": 0.8
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 171.9,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.33
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.464066,
+          30.271958
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H025",
+        "name": "Devgram",
+        "block": "Pokhri",
+        "panchayat": "Devgram",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 289,
+        "households": 61,
+        "demographics": {
+          "shareUnder5": 0.04,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.19,
+          "womenHeadedHouseholdShare": 0.34,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.37,
+          "scStShare": 0.06,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.54,
+          "avgBuildingAgeYears": 32.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.98,
+          "distanceToPhcKm": 8.74,
+          "mobileNetworkCoverage": 0.3,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.08,
+          "primaryLivelihoodDependenceShare": 0.81
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 170.1,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.29
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.317474,
+          29.949744
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H026",
+        "name": "Gairsain",
+        "block": "Gairsain",
+        "panchayat": "Gairsain Nagar Palika",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 2213,
+        "households": 461,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.14,
+          "womenHeadedHouseholdShare": 0.17,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.24,
+          "scStShare": 0.17,
+          "literacyRate": 0.86
+        },
+        "structures": {
+          "kutchaHousingShare": 0.13,
+          "avgBuildingAgeYears": 25.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.97,
+          "distanceToPhcKm": 2.78,
+          "mobileNetworkCoverage": 0.64,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.9,
+          "primaryLivelihoodDependenceShare": 0.52
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 91.2,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.66
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.346494,
+          29.97687
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H027",
+        "name": "Ramni",
+        "block": "Gairsain",
+        "panchayat": "Ramni",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 498,
+        "households": 104,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.21,
+          "womenHeadedHouseholdShare": 0.31,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.35,
+          "scStShare": 0.08,
+          "literacyRate": 0.66
+        },
+        "structures": {
+          "kutchaHousingShare": 0.53,
+          "avgBuildingAgeYears": 30.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 6.14,
+          "distanceToPhcKm": 9.32,
+          "mobileNetworkCoverage": 0.39,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.98,
+          "primaryLivelihoodDependenceShare": 0.74
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 135.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.24
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.293727,
+          29.956695
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H028",
+        "name": "Maikoti",
+        "block": "Gairsain",
+        "panchayat": "Maikoti",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 356,
+        "households": 75,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.1,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.14,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.23,
+          "scStShare": 0.15,
+          "literacyRate": 0.86
+        },
+        "structures": {
+          "kutchaHousingShare": 0.26,
+          "avgBuildingAgeYears": 25.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.96,
+          "distanceToPhcKm": 11.39,
+          "mobileNetworkCoverage": 0.38,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.0,
+          "primaryLivelihoodDependenceShare": 0.69
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 172.5,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.18
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.338035,
+          29.994035
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H029",
+        "name": "Simkholi",
+        "block": "Gairsain",
+        "panchayat": "Simkholi",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 312,
+        "households": 67,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.12,
+          "shareOver60": 0.24,
+          "womenHeadedHouseholdShare": 0.29,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.35,
+          "scStShare": 0.16,
+          "literacyRate": 0.65
+        },
+        "structures": {
+          "kutchaHousingShare": 0.47,
+          "avgBuildingAgeYears": 37.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.79,
+          "distanceToPhcKm": 9.2,
+          "mobileNetworkCoverage": 0.37,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.94,
+          "primaryLivelihoodDependenceShare": 0.79
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 140.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.39
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.272783,
+          29.968703
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H030",
+        "name": "Dhungi",
+        "block": "Gairsain",
+        "panchayat": "Dhungi",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 278,
+        "households": 59,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.24,
+          "scStShare": 0.1,
+          "literacyRate": 0.81
+        },
+        "structures": {
+          "kutchaHousingShare": 0.4,
+          "avgBuildingAgeYears": 18.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 3.98,
+          "distanceToPhcKm": 8.34,
+          "mobileNetworkCoverage": 0.26,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.16,
+          "primaryLivelihoodDependenceShare": 0.63
+        },
+        "consentStatus": "CONSENTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 174.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.24
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.43198,
+          30.163602
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H031",
+        "name": "Narayanbagar",
+        "block": "Narayanbagar",
+        "panchayat": "Narayanbagar",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 1834,
+        "households": 382,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.1,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.27,
+          "scStShare": 0.15,
+          "literacyRate": 0.82
+        },
+        "structures": {
+          "kutchaHousingShare": 0.2,
+          "avgBuildingAgeYears": 31.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.63,
+          "distanceToPhcKm": 1.88,
+          "mobileNetworkCoverage": 0.69,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.57,
+          "primaryLivelihoodDependenceShare": 0.53
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 91.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.45
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.458186,
+          30.147708
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H032",
+        "name": "Bhetwa",
+        "block": "Narayanbagar",
+        "panchayat": "Bhetwa",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 445,
+        "households": 94,
+        "demographics": {
+          "shareUnder5": 0.07,
+          "shareSchoolAge6to14": 0.13,
+          "shareOver60": 0.16,
+          "womenHeadedHouseholdShare": 0.13,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.28,
+          "scStShare": 0.12,
+          "literacyRate": 0.83
+        },
+        "structures": {
+          "kutchaHousingShare": 0.39,
+          "avgBuildingAgeYears": 24.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 7.05,
+          "distanceToPhcKm": 9.98,
+          "mobileNetworkCoverage": 0.35,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.88,
+          "primaryLivelihoodDependenceShare": 0.77
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 171.7,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.2
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.401039,
+          30.186249
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H033",
+        "name": "Simdi",
+        "block": "Narayanbagar",
+        "panchayat": "Simdi",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 367,
+        "households": 77,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.24,
+          "scStShare": 0.15,
+          "literacyRate": 0.85
+        },
+        "structures": {
+          "kutchaHousingShare": 0.36,
+          "avgBuildingAgeYears": 31.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 6.36,
+          "distanceToPhcKm": 8.9,
+          "mobileNetworkCoverage": 0.42,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.92,
+          "primaryLivelihoodDependenceShare": 0.67
+        },
+        "consentStatus": "OBJECTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 158.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.3
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.450447,
+          30.195863
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H034",
+        "name": "Kotmando",
+        "block": "Narayanbagar",
+        "panchayat": "Kotmando",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 298,
+        "households": 63,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.22,
+          "womenHeadedHouseholdShare": 0.25,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.42,
+          "scStShare": 0.1,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.45,
+          "avgBuildingAgeYears": 34.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 4.43,
+          "distanceToPhcKm": 8.37,
+          "mobileNetworkCoverage": 0.35,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 2.0,
+          "primaryLivelihoodDependenceShare": 0.63
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 128.8,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.35
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.499547,
+          30.102167
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H035",
+        "name": "Tharali",
+        "block": "Tharali",
+        "panchayat": "Tharali",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 1298,
+        "households": 271,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.19,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.21,
+          "scStShare": 0.15,
+          "literacyRate": 0.84
+        },
+        "structures": {
+          "kutchaHousingShare": 0.14,
+          "avgBuildingAgeYears": 22.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.77,
+          "distanceToPhcKm": 5.08,
+          "mobileNetworkCoverage": 0.63,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.53,
+          "primaryLivelihoodDependenceShare": 0.38
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 98.8,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.49
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.523603,
+          30.082891
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H036",
+        "name": "Devsari",
+        "block": "Tharali",
+        "panchayat": "Devsari",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 412,
+        "households": 87,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.22,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.18,
+          "scStShare": 0.17,
+          "literacyRate": 0.78
+        },
+        "structures": {
+          "kutchaHousingShare": 0.39,
+          "avgBuildingAgeYears": 24.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.77,
+          "distanceToPhcKm": 8.86,
+          "mobileNetworkCoverage": 0.34,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.02,
+          "primaryLivelihoodDependenceShare": 0.67
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 166.0,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.18
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.476906,
+          30.120566
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H037",
+        "name": "Kulsari",
+        "block": "Tharali",
+        "panchayat": "Kulsari",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 534,
+        "households": 112,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.17,
+          "womenHeadedHouseholdShare": 0.16,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.27,
+          "scStShare": 0.1,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.26,
+          "avgBuildingAgeYears": 32.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 0.9,
+          "distanceToPhcKm": 3.22,
+          "mobileNetworkCoverage": 0.62,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.51,
+          "primaryLivelihoodDependenceShare": 0.62
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 145.4,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.28
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.54122,
+          30.068838
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H038",
+        "name": "Simali",
+        "block": "Tharali",
+        "panchayat": "Simali",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 289,
+        "households": 62,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.23,
+          "womenHeadedHouseholdShare": 0.3,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.44,
+          "scStShare": 0.13,
+          "literacyRate": 0.73
+        },
+        "structures": {
+          "kutchaHousingShare": 0.57,
+          "avgBuildingAgeYears": 31.0,
+          "predominantFoundationType": "RUBBLE"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.81,
+          "distanceToPhcKm": 10.27,
+          "mobileNetworkCoverage": 0.18,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 1.65,
+          "primaryLivelihoodDependenceShare": 0.7
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 161.6,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.18
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.548881,
+          30.149897
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H039",
+        "name": "Dewal",
+        "block": "Dewal",
+        "panchayat": "Dewal",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 967,
+        "households": 201,
+        "demographics": {
+          "shareUnder5": 0.04,
+          "shareSchoolAge6to14": 0.08,
+          "shareOver60": 0.24,
+          "womenHeadedHouseholdShare": 0.28,
+          "disabledPersonsShare": 0.05,
+          "bplShare": 0.36,
+          "scStShare": 0.17,
+          "literacyRate": 0.69
+        },
+        "structures": {
+          "kutchaHousingShare": 0.13,
+          "avgBuildingAgeYears": 25.0,
+          "predominantFoundationType": "RCC"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 1.05,
+          "distanceToPhcKm": 4.1,
+          "mobileNetworkCoverage": 0.86,
+          "evacuationRouteCount": 2
+        },
+        "livelihood": {
+          "primaryOccupation": "GOVERNMENT_SERVICE",
+          "distanceToLivelihoodAssetKm": 0.59,
+          "primaryLivelihoodDependenceShare": 0.52
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 97.0,
+          "shelterWithin2km": true,
+          "communityTaskForcePresent": true,
+          "earlyWarningCoverage": 0.65
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.595101,
+          30.189014
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H040",
+        "name": "Wan",
+        "block": "Dewal",
+        "panchayat": "Wan",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 356,
+        "households": 76,
+        "demographics": {
+          "shareUnder5": 0.06,
+          "shareSchoolAge6to14": 0.11,
+          "shareOver60": 0.23,
+          "womenHeadedHouseholdShare": 0.34,
+          "disabledPersonsShare": 0.04,
+          "bplShare": 0.44,
+          "scStShare": 0.15,
+          "literacyRate": 0.72
+        },
+        "structures": {
+          "kutchaHousingShare": 0.58,
+          "avgBuildingAgeYears": 48.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.18,
+          "distanceToPhcKm": 8.99,
+          "mobileNetworkCoverage": 0.33,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "OTHER",
+          "distanceToLivelihoodAssetKm": 2.57,
+          "primaryLivelihoodDependenceShare": 0.69
+        },
+        "consentStatus": "NOT_ENGAGED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 167.2,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.2
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.565049,
+          30.126901
+        ]
+      },
+      "properties": {
+        "lgdHabitationCode": "DEMO-CHM-H041",
+        "name": "Kanioli",
+        "block": "Dewal",
+        "panchayat": "Kanioli",
+        "districtLgdCode": "DEMO-CHM-001",
+        "population": 289,
+        "households": 61,
+        "demographics": {
+          "shareUnder5": 0.05,
+          "shareSchoolAge6to14": 0.09,
+          "shareOver60": 0.13,
+          "womenHeadedHouseholdShare": 0.18,
+          "disabledPersonsShare": 0.03,
+          "bplShare": 0.2,
+          "scStShare": 0.16,
+          "literacyRate": 0.79
+        },
+        "structures": {
+          "kutchaHousingShare": 0.29,
+          "avgBuildingAgeYears": 22.0,
+          "predominantFoundationType": "STONE_MASONRY"
+        },
+        "access": {
+          "distanceToAllWeatherRoadKm": 5.44,
+          "distanceToPhcKm": 13.84,
+          "mobileNetworkCoverage": 0.37,
+          "evacuationRouteCount": 1
+        },
+        "livelihood": {
+          "primaryOccupation": "AGRICULTURE",
+          "distanceToLivelihoodAssetKm": 0.25,
+          "primaryLivelihoodDependenceShare": 0.66
+        },
+        "consentStatus": "CONSULTED",
+        "dataProvenance": "SYNTHETIC_DEMO",
+        "copingCapacity": {
+          "sdrfResponseTimeMinutes": 123.3,
+          "shelterWithin2km": false,
+          "communityTaskForcePresent": false,
+          "earlyWarningCoverage": 0.19
+        }
+      }
+    }
+  ]
+}

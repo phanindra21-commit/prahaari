@@ -64,4 +64,5 @@ export const JOB_TYPES = ["ZONING_RUN", "PIPELINE_RUN"] as const;
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },
   { name: "Ganjam", state: "Odisha", primaryHazard: "coastalErosion" },
+  { name: "Chamoli", state: "Uttarakhand", primaryHazard: "landslide" },
 ] as const;
