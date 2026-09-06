@@ -29,7 +29,15 @@ export function PrioritiesPage(): JSX.Element {
   return (
     <div className="scrollbar-thin h-full overflow-y-auto p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-sm font-semibold text-mist-50">Priority worklist</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-sm font-semibold text-mist-50">Priority worklist</h1>
+          {data && (
+            <span className="text-xs text-mist-400">
+              {data.total} matching {data.total === 1 ? "record" : "records"}
+              {bucket ? ` (${BUCKET_FILTERS.find((f) => f.value === bucket)?.label})` : ""}
+            </span>
+          )}
+        </div>
         <div className="flex gap-1">
           {BUCKET_FILTERS.map((f) => (
             <button

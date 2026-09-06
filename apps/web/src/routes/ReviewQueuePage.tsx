@@ -42,7 +42,16 @@ export function ReviewQueuePage(): JSX.Element {
   return (
     <div className="scrollbar-thin h-full overflow-y-auto p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h1 className="text-sm font-semibold text-mist-50">Officer review queue</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-sm font-semibold text-mist-50">Officer review queue</h1>
+          {data && (
+            <span className="text-xs text-mist-400">
+              {data.items.length} matching {data.items.length === 1 ? "record" : "records"}
+              {bucket ? ` · ${BUCKET_FILTERS.find((f) => f.value === bucket)?.label}` : ""}
+              {status ? ` · ${STATUS_FILTERS.find((f) => f.value === status)?.label}` : ""}
+            </span>
+          )}
+        </div>
         <div className="flex gap-1">
           {BUCKET_FILTERS.map((f) => (
             <button
