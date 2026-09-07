@@ -3,7 +3,7 @@ import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { GeoPoint } from "@prahari/shared";
 import type { RankedCandidateSiteDetail } from "../../lib/api";
-import { baseMapStyle } from "../map/mapStyle";
+import { baseMapStyle, ZONE_COLORS, MAP_INK, MAP_HALO, MAP_SIGNAL } from "../map/mapStyle";
 
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 
@@ -53,7 +53,7 @@ export function RecommendationMap({
         type: "line",
         source: "connectors",
         paint: {
-          "line-color": ["case", ["get", "isSelected"], "#45C9BF", "#5C6B78"],
+          "line-color": ["case", ["get", "isSelected"], MAP_SIGNAL, "#4C6884"],
           "line-width": ["case", ["get", "isSelected"], 2.5, 1],
           "line-dasharray": [2, 1.5],
           "line-opacity": 0.8,
@@ -67,9 +67,9 @@ export function RecommendationMap({
         source: "sites",
         paint: {
           "circle-radius": ["case", ["get", "isSelected"], 9, 6],
-          "circle-color": ["case", ["get", "isSelected"], "#45C9BF", "#DCE2E7"],
+          "circle-color": ["case", ["get", "isSelected"], MAP_SIGNAL, "#8FAFC9"],
           "circle-stroke-width": 2,
-          "circle-stroke-color": "#0A0E13",
+          "circle-stroke-color": MAP_INK,
         },
       });
       map.addLayer({
@@ -81,10 +81,7 @@ export function RecommendationMap({
           "text-size": 10,
           "text-offset": [0, -1.4],
         },
-        // Post-Step-10 basemap fix: flipped from light-text/dark-halo
-        // (tuned for the old near-black hillshade basemap) to dark-text/
-        // light-halo — legible against NatGeo's light cream/green terrain.
-        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 1.4 },
+        paint: { "text-color": MAP_INK, "text-halo-color": MAP_HALO, "text-halo-width": 1.4 },
       });
 
       map.addSource("origin", { type: "geojson", data: EMPTY_FC });
@@ -94,9 +91,9 @@ export function RecommendationMap({
         source: "origin",
         paint: {
           "circle-radius": 8,
-          "circle-color": "#C6483C",
+          "circle-color": ZONE_COLORS.Red!,
           "circle-stroke-width": 2,
-          "circle-stroke-color": "#0A0E13",
+          "circle-stroke-color": MAP_INK,
         },
       });
 
@@ -109,7 +106,7 @@ export function RecommendationMap({
         id: "direct-route-line",
         type: "line",
         source: "direct-route",
-        paint: { "line-color": "#C6483C", "line-width": 2.5, "line-dasharray": [2, 1.5], "line-opacity": 0.9 },
+        paint: { "line-color": ZONE_COLORS.Red!, "line-width": 2.5, "line-dasharray": [2, 1.5], "line-opacity": 0.9 },
       });
 
       map.addSource("safest-route", { type: "geojson", data: EMPTY_FC });
@@ -117,7 +114,7 @@ export function RecommendationMap({
         id: "safest-route-line",
         type: "line",
         source: "safest-route",
-        paint: { "line-color": "#4C9F73", "line-width": 3.5, "line-opacity": 0.95 },
+        paint: { "line-color": ZONE_COLORS.Green!, "line-width": 3.5, "line-opacity": 0.95 },
       });
 
       styleLoadedRef.current = true;

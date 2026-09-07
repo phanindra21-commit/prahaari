@@ -8,11 +8,17 @@ const HAZARD_LABELS: Record<string, string> = {
   coastalErosion: "Coastal erosion",
   cloudburst: "Cloudburst",
 };
+// A separate categorical palette from ZONE_COLORS — this chart is about
+// WHICH hazard governs a habitation, not how severe its zone class is, so
+// reusing the red/orange/yellow/green severity vocabulary here would
+// misleadingly suggest a severity ranking across hazard types that isn't
+// real. Distinct hues, chosen so none reads as "the app's blue accent"
+// (which would be confusable with UI chrome, not data).
 const HAZARD_COLORS: Record<string, string> = {
-  landslide: "#C6483C",
-  flood: "#3E7CB1",
-  coastalErosion: "#2FA9A0",
-  cloudburst: "#8A67C7",
+  landslide: "#B3261E",
+  flood: "#0E7490",
+  coastalErosion: "#0F9488",
+  cloudburst: "#7C3AED",
 };
 
 const CONSTRAINT_LABELS: Record<string, string> = {
@@ -23,21 +29,21 @@ const CONSTRAINT_LABELS: Record<string, string> = {
   ACCESS: "Access",
 };
 const CONSTRAINT_COLORS: Record<string, string> = {
-  LAND: "#8A97A3",
-  WATER: "#3E7CB1",
-  EDUCATION: "#CE8A3E",
-  HEALTH: "#C6483C",
-  ACCESS: "#2FA9A0",
+  LAND: "#6B7280",
+  WATER: "#0E7490",
+  EDUCATION: "#A85300",
+  HEALTH: "#B3261E",
+  ACCESS: "#1856C4",
 };
 
 const BUCKET_LABELS: Record<string, string> = { Immediate: "Immediate", ShortTerm: "Short-term", MediumTerm: "Medium-term" };
 
 const TOOLTIP_STYLE = {
-  background: "#141B23",
-  border: "1px solid #232E3A",
+  background: "#FFFFFF",
+  border: "1px solid #C7DAEA",
   borderRadius: 4,
   fontSize: 12,
-  color: "#DCE2E7",
+  color: "#26415A",
 };
 
 function ChartCard({ title, empty, children }: { title: string; empty?: boolean; children: React.ReactNode }): JSX.Element {
@@ -50,7 +56,7 @@ function ChartCard({ title, empty, children }: { title: string; empty?: boolean;
 }
 
 /** Step 9 Part 1B: three restrained bar charts, no decorative styling —
- * dark-theme axes/gridlines, one series each, direct value labels via
+ * light-theme axes/gridlines, one series each, direct value labels via
  * tooltip rather than a legend. */
 export function DashboardCharts({ district }: { district: DashboardDistrict }): JSX.Element {
   const bucketData = (Object.keys(district.bucketCounts) as Array<keyof typeof district.bucketCounts>).map((bucket) => ({
@@ -62,13 +68,13 @@ export function DashboardCharts({ district }: { district: DashboardDistrict }): 
   const hazardData = (district.hazardDistribution ?? []).map((h) => ({
     hazard: HAZARD_LABELS[h.hazardType] ?? h.hazardType,
     count: h.count,
-    fill: HAZARD_COLORS[h.hazardType] ?? "#8A97A3",
+    fill: HAZARD_COLORS[h.hazardType] ?? "#4C6884",
   }));
 
   const constraintData = (district.bindingConstraintDistribution ?? []).map((c) => ({
     constraint: CONSTRAINT_LABELS[c.bindingConstraint] ?? c.bindingConstraint,
     count: c.count,
-    fill: CONSTRAINT_COLORS[c.bindingConstraint] ?? "#8A97A3",
+    fill: CONSTRAINT_COLORS[c.bindingConstraint] ?? "#4C6884",
   }));
 
   return (
@@ -76,10 +82,10 @@ export function DashboardCharts({ district }: { district: DashboardDistrict }): 
       <ChartCard title="Priority bucket distribution" empty={bucketData.every((d) => d.count === 0)}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={bucketData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#232E3A" vertical={false} />
-            <XAxis dataKey="bucket" tick={{ fill: "#8A97A3", fontSize: 11 }} axisLine={{ stroke: "#232E3A" }} tickLine={false} />
-            <YAxis tick={{ fill: "#8A97A3", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-            <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#1B242E" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#C7DAEA" vertical={false} />
+            <XAxis dataKey="bucket" tick={{ fill: "#4C6884", fontSize: 11 }} axisLine={{ stroke: "#C7DAEA" }} tickLine={false} />
+            <YAxis tick={{ fill: "#4C6884", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+            <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#D8E6F2" }} />
             <Bar dataKey="count" radius={[2, 2, 0, 0]}>
               {bucketData.map((entry) => (
                 <Cell key={entry.bucket} fill={entry.fill} />
@@ -95,10 +101,10 @@ export function DashboardCharts({ district }: { district: DashboardDistrict }): 
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={hazardData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#232E3A" vertical={false} />
-              <XAxis dataKey="hazard" tick={{ fill: "#8A97A3", fontSize: 11 }} axisLine={{ stroke: "#232E3A" }} tickLine={false} />
-              <YAxis tick={{ fill: "#8A97A3", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#1B242E" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#C7DAEA" vertical={false} />
+              <XAxis dataKey="hazard" tick={{ fill: "#4C6884", fontSize: 11 }} axisLine={{ stroke: "#C7DAEA" }} tickLine={false} />
+              <YAxis tick={{ fill: "#4C6884", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#D8E6F2" }} />
               <Bar dataKey="count" radius={[2, 2, 0, 0]}>
                 {hazardData.map((entry) => (
                   <Cell key={entry.hazard} fill={entry.fill} />
@@ -120,17 +126,17 @@ export function DashboardCharts({ district }: { district: DashboardDistrict }): 
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={constraintData} layout="vertical" margin={{ top: 4, right: 16, left: 8, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#232E3A" horizontal={false} />
-              <XAxis type="number" tick={{ fill: "#8A97A3", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#C7DAEA" horizontal={false} />
+              <XAxis type="number" tick={{ fill: "#4C6884", fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
               <YAxis
                 type="category"
                 dataKey="constraint"
-                tick={{ fill: "#8A97A3", fontSize: 11 }}
-                axisLine={{ stroke: "#232E3A" }}
+                tick={{ fill: "#4C6884", fontSize: 11 }}
+                axisLine={{ stroke: "#C7DAEA" }}
                 tickLine={false}
                 width={64}
               />
-              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#1B242E" }} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "#D8E6F2" }} />
               <Bar dataKey="count" radius={[0, 2, 2, 0]}>
                 {constraintData.map((entry) => (
                   <Cell key={entry.constraint} fill={entry.fill} />

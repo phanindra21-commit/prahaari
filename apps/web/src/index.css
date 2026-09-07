@@ -41,7 +41,10 @@
   }
 }
 
-/* MapLibre's own stylesheet controls, restyled to the ink palette instead of its default light chrome. */
+/* MapLibre's own stylesheet controls, restyled to the ink palette (a light
+ * card now, matching the rest of the app chrome, instead of MapLibre's own
+ * default light chrome — coincidentally similar now, but still centrally
+ * controlled here rather than left to the library's defaults). */
 .maplibregl-ctrl-group {
   background: theme("colors.ink.800") !important;
   border: 1px solid theme("colors.ink.600") !important;
@@ -53,9 +56,10 @@
 .maplibregl-ctrl-group button:hover {
   background: theme("colors.ink.700") !important;
 }
-.maplibregl-ctrl-icon {
-  filter: invert(1) brightness(1.5);
-}
+/* No inversion needed on a light theme — MapLibre's built-in control icons
+ * are already dark and read correctly against the light ink-800 chip above
+ * (the dark theme inverted them to white for contrast against a near-black
+ * chip; that no longer applies). */
 .maplibregl-popup-content {
   background: theme("colors.ink.800") !important;
   color: theme("colors.mist.100") !important;

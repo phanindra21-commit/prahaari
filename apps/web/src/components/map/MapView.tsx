@@ -4,18 +4,29 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { HazardType, RecommendationStatus } from "@prahari/shared";
 import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite, ScenarioRun } from "../../lib/api";
 import type { ScenarioViewMode } from "../../stores/scenarioStore";
-import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR, LABEL_FONT } from "./mapStyle";
+import {
+  baseMapStyle,
+  ZONE_COLORS,
+  ZONE_OPACITY,
+  BUCKET_COLORS,
+  UNBUCKETED_COLOR,
+  LABEL_FONT,
+  MAP_INK,
+  MAP_HALO,
+  MAP_SIGNAL,
+  MAP_BOUNDARY,
+} from "./mapStyle";
 
 /** Step 7 Commit 3F: ring color for a habitation with a recorded decision
  * (a Recommendation whose status moved off PENDING_REVIEW) — independent
  * of the priority-bucket fill color, so a decided habitation's fill still
  * shows its hazard priority while the ring shows what an officer did about it. */
 export const DECISION_RING_COLORS: Record<RecommendationStatus, string> = {
-  PENDING_REVIEW: "#0A0E13",
-  APPROVED: "#4C9F73",
-  MODIFIED: "#CE8A3E",
-  REJECTED: "#C6483C",
-  DEFERRED: "#C9B454",
+  PENDING_REVIEW: MAP_INK,
+  APPROVED: ZONE_COLORS.Green!,
+  MODIFIED: ZONE_COLORS.Orange!,
+  REJECTED: ZONE_COLORS.Red!,
+  DEFERRED: ZONE_COLORS.Yellow!,
 };
 
 const ZONE_SEVERITY: Record<string, number> = { Green: 0, Yellow: 1, Orange: 2, Red: 3 };
@@ -238,13 +249,13 @@ export function MapView({
         id: "district-boundary-glow",
         type: "line",
         source: "district-boundary",
-        paint: { "line-color": "#1D3557", "line-width": 6, "line-opacity": 0.22, "line-blur": 2 },
+        paint: { "line-color": MAP_BOUNDARY, "line-width": 6, "line-opacity": 0.22, "line-blur": 2 },
       });
       map.addLayer({
         id: "district-boundary-line",
         type: "line",
         source: "district-boundary",
-        paint: { "line-color": "#1D3557", "line-width": 2, "line-dasharray": [3, 2] },
+        paint: { "line-color": MAP_BOUNDARY, "line-width": 2, "line-dasharray": [3, 2] },
       });
 
       map.addSource("zones", { type: "geojson", data: EMPTY_FC });
@@ -364,7 +375,7 @@ export function MapView({
         source: "scenario-changed",
         layout: { visibility: "none" },
         paint: {
-          "line-color": "#45C9BF",
+          "line-color": MAP_SIGNAL,
           "line-width": 2.5,
           "line-opacity": 0.9,
           "line-dasharray": [1.5, 1],
@@ -378,9 +389,9 @@ export function MapView({
         source: "relocation-sites",
         paint: {
           "circle-radius": 6,
-          "circle-color": "#0A0E13",
+          "circle-color": MAP_INK,
           "circle-stroke-width": 2,
-          "circle-stroke-color": "#DCE2E7",
+          "circle-stroke-color": MAP_HALO,
         },
       });
 
@@ -418,7 +429,7 @@ export function MapView({
             2,
             1,
           ],
-          "circle-stroke-color": "#0A0E13",
+          "circle-stroke-color": MAP_INK,
           "circle-opacity": 0.9,
         },
       });
@@ -449,8 +460,8 @@ export function MapView({
           "text-transform": "uppercase",
         },
         paint: {
-          "text-color": "#1E6E68",
-          "text-halo-color": "#FFFFFF",
+          "text-color": MAP_SIGNAL,
+          "text-halo-color": MAP_HALO,
           "text-halo-width": 2.5,
         },
       });
@@ -468,7 +479,7 @@ export function MapView({
           "text-transform": "uppercase",
           "text-letter-spacing": 0.03,
         },
-        paint: { "text-color": "#141B23", "text-halo-color": "#FFFFFF", "text-halo-width": 1.8 },
+        paint: { "text-color": MAP_INK, "text-halo-color": MAP_HALO, "text-halo-width": 1.8 },
       });
 
       map.addSource("panchayat-labels", { type: "geojson", data: EMPTY_FC });
@@ -482,7 +493,10 @@ export function MapView({
           "text-font": LABEL_FONT,
           "text-size": 11,
         },
-        paint: { "text-color": "#3A4753", "text-halo-color": "#FFFFFF", "text-halo-width": 1.6 },
+        // A step lighter than MAP_INK for label hierarchy (district >
+        // block > panchayat, largest/darkest to smallest/lightest-dark) —
+        // mist-200's hex, not reused from an unrelated constant.
+        paint: { "text-color": "#46647F", "text-halo-color": MAP_HALO, "text-halo-width": 1.6 },
       });
 
       map.addLayer({
@@ -499,7 +513,7 @@ export function MapView({
           "text-justify": "auto",
           "symbol-sort-key": ["-", 0, ["get", "population"]],
         },
-        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 2 },
+        paint: { "text-color": MAP_INK, "text-halo-color": MAP_HALO, "text-halo-width": 2 },
       });
 
       map.addLayer({
@@ -514,7 +528,7 @@ export function MapView({
           "text-variable-anchor": ["top", "bottom", "left", "right"],
           "text-radial-offset": 0.7,
         },
-        paint: { "text-color": "#0A0E13", "text-halo-color": "#FFFFFF", "text-halo-width": 2 },
+        paint: { "text-color": MAP_INK, "text-halo-color": MAP_HALO, "text-halo-width": 2 },
       });
 
       map.on("mouseenter", "habitations-layer", () => {
@@ -713,7 +727,7 @@ export function MapView({
       map.setPaintProperty("habitations-layer", "circle-stroke-color", [
         "case",
         ["==", ["get", "id"], selectedHabitationId ?? ""],
-        "#45C9BF",
+        MAP_SIGNAL,
         ["==", ["get", "decisionStatus"], "APPROVED"],
         DECISION_RING_COLORS.APPROVED,
         ["==", ["get", "decisionStatus"], "MODIFIED"],
@@ -722,7 +736,7 @@ export function MapView({
         DECISION_RING_COLORS.REJECTED,
         ["==", ["get", "decisionStatus"], "DEFERRED"],
         DECISION_RING_COLORS.DEFERRED,
-        "#0A0E13",
+        MAP_INK,
       ]);
     };
     if (styleLoadedRef.current) apply();

@@ -76,19 +76,30 @@ export const baseMapStyle: StyleSpecification = {
   layers: [{ id: "esri-natgeo-layer", type: "raster", source: "esri-natgeo" }],
 };
 
+/**
+ * Light-theme retune (white/light-blue chrome). MapLibre paint properties
+ * and Recharts SVG props need literal hex — they cannot consume Tailwind
+ * classes — so this file (not tailwind.config.js) is the single source of
+ * truth for every raw color the map layers and the dashboard charts use;
+ * MapView.tsx, RecommendationMap.tsx, ZoneLegend.tsx, and
+ * DashboardCharts.tsx all import from here rather than re-declaring hex.
+ * Values match tailwind.config.js's zone/signal scales exactly where the
+ * same color is meant, so a badge and a map fill for the same zone class
+ * always agree.
+ */
 export const ZONE_COLORS: Record<string, string> = {
-  Red: "#C6483C",
-  Orange: "#CE8A3E",
-  Yellow: "#C9B454",
-  Green: "#4C9F73",
+  Red: "#B3261E",
+  Orange: "#A85300",
+  Yellow: "#7A6900",
+  Green: "#1E7A3D",
 };
 
 /**
- * Step 10 Part 2B: lowered from the original 0.55/0.45/0.3/0.15 — at those
- * levels the Esri dark-gray reference layer's baked-in town/road labels
- * underneath were unreadable through Red/Orange fills. Red still reads as
- * clearly the most severe (highest opacity of the four), just not opaque
- * enough to blot out the basemap underneath it.
+ * Unchanged from the dark-theme tuning — Red still reads as clearly the
+ * most severe (highest opacity), Green the least, and these darker,
+ * more-saturated fill colors read cleanly as a wash over NatGeo's light
+ * terrain at the same opacities that worked over the old dark basemap
+ * (verified visually with Playwright screenshots while building this).
  */
 export const ZONE_OPACITY: Record<string, number> = {
   Red: 0.4,
@@ -98,9 +109,27 @@ export const ZONE_OPACITY: Record<string, number> = {
 };
 
 export const BUCKET_COLORS: Record<string, string> = {
-  Immediate: "#C6483C",
-  ShortTerm: "#CE8A3E",
-  MediumTerm: "#2FA9A0",
+  Immediate: ZONE_COLORS.Red!,
+  ShortTerm: ZONE_COLORS.Orange!,
+  MediumTerm: "#1856C4", // signal.DEFAULT
 };
 
-export const UNBUCKETED_COLOR = "#5C6B78";
+export const UNBUCKETED_COLOR = "#46647F"; // mist-200 — a clearly-visible neutral slate dot
+
+/** A dark, high-contrast mark color for foreground icons/text/default
+ * strokes on the map canvas — independent of the app-chrome "ink" scale,
+ * which is now white-dominant and would make these invisible if reused
+ * directly. Pairs with MAP_HALO (white) for label text, matching
+ * NatGeo's light terrain regardless of the surrounding app theme. */
+export const MAP_INK = "#0F1F2E"; // mist-50
+export const MAP_HALO = "#FFFFFF";
+/** The app's blue accent, for interactive/selected map elements (the
+ * selected-habitation ring, the scenario "what changed" outline) — kept
+ * in sync with tailwind.config.js's signal.DEFAULT by hand, since
+ * MapLibre paint values can't reference it directly. */
+export const MAP_SIGNAL = "#1856C4"; // signal.DEFAULT
+/** A dedicated administrative-boundary navy, deliberately NOT the same
+ * hue as MAP_SIGNAL — kept from the dark-theme tuning, since it already
+ * reads clearly on light terrain and stays visually distinct from the
+ * brighter, more saturated signal-blue used for interactive elements. */
+export const MAP_BOUNDARY = "#1D3557";

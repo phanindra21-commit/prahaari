@@ -1,24 +1,26 @@
+import { ZONE_COLORS, BUCKET_COLORS, UNBUCKETED_COLOR } from "./mapStyle";
+
 const ZONE_ROWS: Array<{ label: string; color: string }> = [
-  { label: "Red — highest susceptibility", color: "#C6483C" },
-  { label: "Orange", color: "#CE8A3E" },
-  { label: "Yellow", color: "#C9B454" },
-  { label: "Green — lowest susceptibility", color: "#4C9F73" },
+  { label: "Red — highest susceptibility", color: ZONE_COLORS.Red! },
+  { label: "Orange", color: ZONE_COLORS.Orange! },
+  { label: "Yellow", color: ZONE_COLORS.Yellow! },
+  { label: "Green — lowest susceptibility", color: ZONE_COLORS.Green! },
 ];
 
 const BUCKET_ROWS: Array<{ label: string; color: string }> = [
-  { label: "Immediate priority", color: "#C6483C" },
-  { label: "Short-term priority", color: "#CE8A3E" },
-  { label: "Medium-term priority", color: "#2FA9A0" },
-  { label: "Not bucketed (Yellow/Green)", color: "#5C6B78" },
+  { label: "Immediate priority", color: BUCKET_COLORS.Immediate! },
+  { label: "Short-term priority", color: BUCKET_COLORS.ShortTerm! },
+  { label: "Medium-term priority", color: BUCKET_COLORS.MediumTerm! },
+  { label: "Not bucketed (Yellow/Green)", color: UNBUCKETED_COLOR },
 ];
 
 /** Step 7 Commit 3F: ring color around a habitation dot once it has a
  * recorded decision — see MapView.tsx's DECISION_RING_COLORS. */
 const DECISION_ROWS: Array<{ label: string; color: string }> = [
-  { label: "Approved", color: "#4C9F73" },
-  { label: "Modified", color: "#CE8A3E" },
-  { label: "Rejected", color: "#C6483C" },
-  { label: "Deferred", color: "#C9B454" },
+  { label: "Approved", color: ZONE_COLORS.Green! },
+  { label: "Modified", color: ZONE_COLORS.Orange! },
+  { label: "Rejected", color: ZONE_COLORS.Red! },
+  { label: "Deferred", color: ZONE_COLORS.Yellow! },
 ];
 
 export function ZoneLegend({ showDecisionRing = false }: { showDecisionRing?: boolean }): JSX.Element {
