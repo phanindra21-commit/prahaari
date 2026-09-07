@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { LAND_OWNERSHIP_TYPES, DATA_PROVENANCE_VALUES } from "@punarvas/shared";
-import type { LandOwnershipType, DataProvenance, GeoPoint, GeoPolygon } from "@punarvas/shared";
+import { LAND_OWNERSHIP_TYPES, DATA_PROVENANCE_VALUES } from "@prahari/shared";
+import type { LandOwnershipType, DataProvenance, GeoPoint, GeoPolygon } from "@prahari/shared";
 import { geoPointSchema, geoPolygonalSchema } from "./geoSchemas";
 
 export type BindingConstraint = "LAND" | "WATER" | "EDUCATION" | "HEALTH" | "ACCESS";

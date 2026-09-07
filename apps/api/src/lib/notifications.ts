@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
+import type { DecisionAction, DecisionLevel } from "@prahari/shared";
 import { User } from "../models/User";
 import { Notification } from "../models/Notification";
 

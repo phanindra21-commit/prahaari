@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { DECISION_ACTIONS, DECISION_LEVELS } from "@punarvas/shared";
-import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
+import { DECISION_ACTIONS, DECISION_LEVELS } from "@prahari/shared";
+import type { DecisionAction, DecisionLevel } from "@prahari/shared";
 
 export interface OverriddenField {
   field: string;

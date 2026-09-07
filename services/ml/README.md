@@ -1,4 +1,4 @@
-# PunarVas ML Service
+# PRAHARI ML Service
 
 Python 3.11 + FastAPI service for hazard susceptibility, vulnerability scoring,
 and site-suitability models. See the root `CLAUDE.md` and `docs/METHODOLOGY.md`

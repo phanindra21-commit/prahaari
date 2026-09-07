@@ -71,6 +71,9 @@ export function HabitationReportPage(): JSX.Element {
       </div>
 
       <div className="mx-auto max-w-3xl px-8 py-6 text-sm leading-relaxed">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+          PRAHARI — प्रहरी, &ldquo;sentinel&rdquo;
+        </p>
         <p className="mb-1 inline-block rounded border border-black px-2 py-0.5 font-mono text-[10px] font-semibold">
           SYNTHETIC_DEMO
         </p>
@@ -297,7 +300,7 @@ export function HabitationReportPage(): JSX.Element {
         )}
 
         <p className="mt-6 border-t border-gray-400 pt-2 text-[10px] text-gray-500">
-          SYNTHETIC_DEMO — PunarVas is a decision-support tool. Every recommendation is advisory and requires review
+          SYNTHETIC_DEMO — PRAHARI is a decision-support tool. Every recommendation is advisory and requires review
           and written justification from an authorized officer before it takes effect.
         </p>
       </div>

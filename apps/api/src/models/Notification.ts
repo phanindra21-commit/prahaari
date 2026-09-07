@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { NOTIFICATION_TYPES } from "@punarvas/shared";
-import type { NotificationType } from "@punarvas/shared";
+import { NOTIFICATION_TYPES } from "@prahari/shared";
+import type { NotificationType } from "@prahari/shared";
 
 /**
  * In-app notification (Step 10 Part 6). Always read/written scoped to the

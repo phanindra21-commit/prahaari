@@ -3,8 +3,8 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 let mongod: MongoMemoryServer | undefined;
 
 export async function setup(): Promise<void> {
-  mongod = await MongoMemoryServer.create({ instance: { dbName: "punarvas-test" } });
-  process.env.MONGODB_URI = mongod.getUri("punarvas-test");
+  mongod = await MongoMemoryServer.create({ instance: { dbName: "prahari-test" } });
+  process.env.MONGODB_URI = mongod.getUri("prahari-test");
   process.env.JWT_ACCESS_SECRET ??= "test-only-access-secret-not-for-real-use-00000000";
   process.env.JWT_REFRESH_SECRET ??= "test-only-refresh-secret-not-for-real-use-00000000";
   // Fixed port so zoning.routes.test.ts's mock ML service (a local http.Server)

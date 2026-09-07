@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SafeUser } from "@punarvas/shared";
+import type { SafeUser } from "@prahari/shared";
 import { API_BASE_URL } from "../lib/apiClient";
 import { queryClient } from "../lib/queryClient";
 import { useDistrictStore } from "./districtStore";

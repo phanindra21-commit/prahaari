@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { Types } from "mongoose";
-import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ESCALATION_STATUSES } from "@punarvas/shared";
+import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ESCALATION_STATUSES } from "@prahari/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";

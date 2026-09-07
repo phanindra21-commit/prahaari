@@ -6,7 +6,7 @@ import { hashPassword } from "../lib/password";
 
 const app = createApp();
 
-const TEST_EMAIL = "officer.test@punarvas.gov.in";
+const TEST_EMAIL = "officer.test@prahari.gov.in";
 const TEST_PASSWORD = "CorrectHorseBattery9!";
 
 async function seedUser(): Promise<void> {

@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import type { UserRole } from "@punarvas/shared";
+import type { UserRole } from "@prahari/shared";
 
 declare global {
   namespace Express {

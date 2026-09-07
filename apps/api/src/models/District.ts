@@ -1,5 +1,5 @@
 import { Schema, model, type Document } from "mongoose";
-import { HAZARD_TYPES, type HazardType, type GeoPolygonal } from "@punarvas/shared";
+import { HAZARD_TYPES, type HazardType, type GeoPolygonal } from "@prahari/shared";
 import { geoPolygonalSchema } from "./geoSchemas";
 
 export interface DmAuthorityContact {

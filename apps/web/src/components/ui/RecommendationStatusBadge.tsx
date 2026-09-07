@@ -1,4 +1,4 @@
-import type { RecommendationStatus } from "@punarvas/shared";
+import type { RecommendationStatus } from "@prahari/shared";
 
 const STATUS_STYLES: Record<RecommendationStatus, string> = {
   PENDING_REVIEW: "border-ink-500 text-mist-300",

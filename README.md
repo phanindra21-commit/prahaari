@@ -1,4 +1,4 @@
-# PunarVas
+# PRAHARI — प्रहरी, "sentinel"
 
 Human-in-the-Loop AI + GIS decision-support platform for proactive hazard
 zoning and relocation of vulnerable habitations in India. Built for Smart
@@ -79,7 +79,7 @@ npm run dev
 ```
 
 Wait for all five to report ready (`[mongo]`, `[shared]`, `[web]`,
-`[api] PunarVas API listening...`, `[ml]` uvicorn's "Application startup
+`[api] PRAHARI API listening...`, `[ml]` uvicorn's "Application startup
 complete"), then in a second terminal:
 
 ```bash
@@ -103,10 +103,10 @@ is currently in:
 
 ```bash
 # 1. Seed districts, habitations, hazard zones/events, relocation sites, and demo users
-npm run seed --workspace=@punarvas/api
+npm run seed --workspace=@prahari/api
 
 # 2. Fill each district's boundary with an H3 grid (writes data/processed/*-grid.json)
-npm run generate-grid --workspace=@punarvas/api
+npm run generate-grid --workspace=@prahari/api
 
 # 3. Derive synthetic-but-spatially-coherent causative factors for every grid cell
 cd services/ml
@@ -115,11 +115,11 @@ venv\Scripts\python scripts/derive_factors.py     # Windows
 cd ../..
 
 # 4. Load those factors onto each GridCell document
-npm run ingest-factors --workspace=@punarvas/api
+npm run ingest-factors --workspace=@prahari/api
 
 # 5. Run the full pipeline (hazard zoning -> vulnerability/priority -> site
 #    matching) for every seeded district, over HTTP, and wait for it to finish
-npm run run-pipeline --workspace=@punarvas/api
+npm run run-pipeline --workspace=@prahari/api
 ```
 
 Then open **http://localhost:5173** and sign in — the dashboard is the
@@ -132,15 +132,15 @@ never reuse these anywhere real):
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Super Admin | `superadmin@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| State Admin (Kerala) | `stateadmin.kerala@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| State Admin (Uttarakhand) | `stateadmin.uttarakhand@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| District Officer (Wayanad) | `officer.wayanad@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| District Officer (Ganjam) | `officer.ganjam@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| District Officer (Chamoli) | `officer.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| Analyst (Wayanad / Ganjam / Chamoli) | `analyst.wayanad@`, `analyst.ganjam@`, `analyst.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| Analyst, state-level (Kerala / Odisha / Uttarakhand) | `analyst.kerala@`, `analyst.odisha@`, `analyst.uttarakhand@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| Field Volunteer (Wayanad / Ganjam / Chamoli) | `volunteer.wayanad@`, `volunteer.ganjam@`, `volunteer.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| Super Admin | `superadmin@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| State Admin (Kerala) | `stateadmin.kerala@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| State Admin (Uttarakhand) | `stateadmin.uttarakhand@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| District Officer (Wayanad) | `officer.wayanad@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| District Officer (Ganjam) | `officer.ganjam@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| District Officer (Chamoli) | `officer.chamoli@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| Analyst (Wayanad / Ganjam / Chamoli) | `analyst.wayanad@`, `analyst.ganjam@`, `analyst.chamoli@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| Analyst, state-level (Kerala / Odisha / Uttarakhand) | `analyst.kerala@`, `analyst.odisha@`, `analyst.uttarakhand@prahari.gov.in` | `PRAHARI@DevDefault123` |
+| Field Volunteer (Wayanad / Ganjam / Chamoli) | `volunteer.wayanad@`, `volunteer.ganjam@`, `volunteer.chamoli@prahari.gov.in` | `PRAHARI@DevDefault123` |
 
 Override the shared default via `SEED_DEFAULT_PASSWORD` (or
 `SEED_PASSWORD_<ROLE>`) in `apps/api/.env` before seeding, if you want a
@@ -154,7 +154,7 @@ relief) → click a habitation (e.g. Chooralmala or Mundakkai, the real
 2024 landslide site) → open its recommendation → Approve with a
 justification → see the chain-verified audit badge → open the scenario
 panel, run a preset (e.g. "2024 Wayanad event: 372 mm/24h") → see the
-delta. `apps/web/e2e/*.spec.ts` (run with `PUNARVAS_E2E_BACKEND=1`)
+delta. `apps/web/e2e/*.spec.ts` (run with `PRAHARI_E2E_BACKEND=1`)
 exercises this same path as a standing regression check.
 
 ## Running Services Individually
@@ -175,8 +175,8 @@ npm run dev            # mongo + shared watcher + web + api + ml, all together
 ## Verifying Services Are Up
 
 ```bash
-curl http://localhost:4000/health   # {"status":"ok","service":"punarvas-api",...}
-curl http://localhost:8000/health   # {"status":"ok","service":"punarvas-ml",...}
+curl http://localhost:4000/health   # {"status":"ok","service":"prahari-api",...}
+curl http://localhost:8000/health   # {"status":"ok","service":"prahari-ml",...}
 ```
 
 `http://localhost:8000/docs` has the FastAPI interactive API docs.
@@ -188,9 +188,9 @@ npm run lint         # ESLint across web/api/shared
 npm run format        # Prettier write across the repo
 npm run typecheck     # TypeScript project references, all workspaces
 npm run build          # Build shared, then web, then api
-npm run test --workspace=@punarvas/api   # Vitest (apps/api) — ephemeral in-memory Mongo, isolated from data/db/
+npm run test --workspace=@prahari/api   # Vitest (apps/api) — ephemeral in-memory Mongo, isolated from data/db/
 cd services/ml && venv\Scripts\python -m pytest   # pytest (services/ml)
-cd apps/web && PUNARVAS_E2E_BACKEND=1 npx playwright test   # Playwright against a real running stack
+cd apps/web && PRAHARI_E2E_BACKEND=1 npx playwright test   # Playwright against a real running stack
 ```
 
 ## Contributing

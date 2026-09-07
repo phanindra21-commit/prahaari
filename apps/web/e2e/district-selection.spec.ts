@@ -23,16 +23,16 @@ import { test, expect } from "@playwright/test";
  */
 test.describe("district selection does not leak across sessions (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
   );
 
   test("switching users in the same tab shows the new user's district, not the previous one's", async ({
     page,
   }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.wayanad@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 
@@ -43,8 +43,8 @@ test.describe("district selection does not leak across sessions (requires the de
     await page.getByRole("button", { name: "Sign out" }).click();
     await expect(page).toHaveURL(/\/login/);
 
-    await page.getByLabel("Email").fill("officer.ganjam@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.ganjam@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 

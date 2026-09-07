@@ -19,7 +19,7 @@ const envSchema = z.object({
   COOKIE_SECURE: boolFromString,
   COOKIE_DOMAIN: z.string().optional(),
 
-  SEED_DEFAULT_PASSWORD: z.string().min(8).default("PunarVas@DevDefault123"),
+  SEED_DEFAULT_PASSWORD: z.string().min(8).default("PRAHARI@DevDefault123"),
 
   ML_SERVICE_URL: z.string().url().default("http://localhost:8000"),
 });

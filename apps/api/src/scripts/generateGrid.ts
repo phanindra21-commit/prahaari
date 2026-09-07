@@ -16,7 +16,7 @@ import "dotenv/config";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import type { AnyBulkWriteOperation, Types } from "mongoose";
-import type { GeoPolygonal } from "@punarvas/shared";
+import type { GeoPolygonal } from "@prahari/shared";
 import { connectDb, disconnectDb } from "../lib/db";
 import { env } from "../lib/env";
 import { District, GridCell, type GridCellDoc } from "../models";

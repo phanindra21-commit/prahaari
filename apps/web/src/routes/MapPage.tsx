@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { HazardType, RecommendationStatus } from "@punarvas/shared";
+import type { HazardType, RecommendationStatus } from "@prahari/shared";
 import { useDistrictStore } from "../stores/districtStore";
 import { useScenarioStore } from "../stores/scenarioStore";
 import { useAuthStore } from "../stores/authStore";

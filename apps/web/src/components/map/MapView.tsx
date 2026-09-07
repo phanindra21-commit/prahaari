@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { HazardType, RecommendationStatus } from "@punarvas/shared";
+import type { HazardType, RecommendationStatus } from "@prahari/shared";
 import type { District, ZonePolygon, HabitationFeatureCollection, RelocationSite, ScenarioRun } from "../../lib/api";
 import type { ScenarioViewMode } from "../../stores/scenarioStore";
 import { baseMapStyle, ZONE_COLORS, ZONE_OPACITY, BUCKET_COLORS, UNBUCKETED_COLOR, LABEL_FONT } from "./mapStyle";

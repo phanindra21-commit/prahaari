@@ -7,7 +7,7 @@ describe("Job model", () => {
   it("defaults to PENDING with 0 progress", async () => {
     const user = await User.create({
       name: "Analyst",
-      email: "job-model-test@punarvas.gov.in",
+      email: "job-model-test@prahari.gov.in",
       passwordHash: await hashPassword("SomePassw0rd!23"),
       role: "ANALYST",
       scope: {},

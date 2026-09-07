@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { HazardType, RelocationPriorityBucket } from "@punarvas/shared";
+import type { HazardType, RelocationPriorityBucket } from "@prahari/shared";
 import { Habitation } from "../../models/Habitation";
 import { HazardEvent } from "../../models/HazardEvent";
 import { getActiveZones } from "../zoneVersioning";

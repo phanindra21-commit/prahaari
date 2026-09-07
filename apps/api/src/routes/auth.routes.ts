@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from "express";
-import { loginRequestSchema, changePasswordRequestSchema } from "@punarvas/shared";
+import { loginRequestSchema, changePasswordRequestSchema } from "@prahari/shared";
 import { User } from "../models/User";
 import { RefreshToken } from "../models/RefreshToken";
 import { verifyPassword, hashPassword } from "../lib/password";

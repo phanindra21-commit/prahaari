@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { z } from "zod";
 import { Types } from "mongoose";
-import { DECISION_ACTIONS, justificationSchema } from "@punarvas/shared";
-import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
+import { DECISION_ACTIONS, justificationSchema } from "@prahari/shared";
+import type { DecisionAction, DecisionLevel } from "@prahari/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission, requireAnyPermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";

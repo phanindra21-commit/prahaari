@@ -1,6 +1,6 @@
 # Methodology
 
-This document defines the analytical methods behind PunarVas. It is the
+This document defines the analytical methods behind PRAHARI. It is the
 specification that `services/ml` implements.
 
 **Single source of truth for numbers:** every weight, threshold, and norm

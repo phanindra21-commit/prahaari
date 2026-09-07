@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { CONSENT_STATUSES, DATA_PROVENANCE_VALUES } from "@punarvas/shared";
-import type { ConsentStatus, DataProvenance, GeoPoint, GeoPolygon } from "@punarvas/shared";
+import { CONSENT_STATUSES, DATA_PROVENANCE_VALUES } from "@prahari/shared";
+import type { ConsentStatus, DataProvenance, GeoPoint, GeoPolygon } from "@prahari/shared";
 import { geoPointSchema, geoPolygonalSchema } from "./geoSchemas";
 
 export type FoundationType = "NONE" | "RUBBLE" | "STONE_MASONRY" | "RCC";

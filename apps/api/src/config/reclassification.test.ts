@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { factorReclassification, hazardWeights } from "@punarvas/shared";
+import { factorReclassification, hazardWeights } from "@prahari/shared";
 
 describe("factor-reclassification.json", () => {
   it("declares a reclassification entry for every hazard-weights factor", () => {

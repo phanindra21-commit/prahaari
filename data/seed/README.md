@@ -130,7 +130,7 @@ second Uttarakhand district is ever added.
 No `users.json` entry carries a password. `seed.ts` resolves each user's
 password from environment variables: `SEED_DEFAULT_PASSWORD`
 (`apps/api/.env.example`, documented dev default
-`PunarVas@DevDefault123`) unless a per-role override
+`PRAHARI@DevDefault123`) unless a per-role override
 `SEED_PASSWORD_<ROLE>` is set (e.g. `SEED_PASSWORD_SUPER_ADMIN`). The
 resolved passwords are hashed with bcrypt (cost 12) before being stored,
 and the plaintext values are printed as a table at the end of the seed

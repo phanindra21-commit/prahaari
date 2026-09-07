@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { ZONE_CLASSES, DATA_PROVENANCE_VALUES, EXPLANATION_DIRECTIONS } from "@punarvas/shared";
-import type { ZoneClass, DataProvenance, GeoPoint, GeoPolygonal } from "@punarvas/shared";
+import { ZONE_CLASSES, DATA_PROVENANCE_VALUES, EXPLANATION_DIRECTIONS } from "@prahari/shared";
+import type { ZoneClass, DataProvenance, GeoPoint, GeoPolygonal } from "@prahari/shared";
 import { geoPointSchema, geoPolygonalSchema } from "./geoSchemas";
 
 export interface HazardScoreEntry {

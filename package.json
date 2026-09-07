@@ -1,28 +1,28 @@
 {
-  "name": "punarvas",
+  "name": "prahari",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "PunarVas — Human-in-the-Loop AI + GIS decision-support platform for proactive hazard zoning and relocation of vulnerable habitations in India.",
+  "description": "PRAHARI — Human-in-the-Loop AI + GIS decision-support platform for proactive hazard zoning and relocation of vulnerable habitations in India.",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "predev": "npm run build --workspace=@punarvas/shared",
+    "predev": "npm run build --workspace=@prahari/shared",
     "dev": "concurrently -n mongo,shared,web,api,ml -c gray,magenta,blue,green,yellow \"npm:dev:mongo\" \"npm:dev:shared\" \"npm:dev:web\" \"npm:dev:api\" \"npm:dev:ml\"",
-    "dev:mongo": "npm run dev:mongo --workspace=@punarvas/api",
-    "dev:shared": "npm run dev --workspace=@punarvas/shared",
-    "dev:web": "npm run dev --workspace=@punarvas/web",
-    "dev:api": "npm run dev --workspace=@punarvas/api",
+    "dev:mongo": "npm run dev:mongo --workspace=@prahari/api",
+    "dev:shared": "npm run dev --workspace=@prahari/shared",
+    "dev:web": "npm run dev --workspace=@prahari/web",
+    "dev:api": "npm run dev --workspace=@prahari/api",
     "dev:ml": "cd services/ml && venv\\Scripts\\python -m uvicorn app.main:app --reload --port 8000",
-    "build": "npm run build --workspace=@punarvas/shared && npm run build --workspace=@punarvas/web && npm run build --workspace=@punarvas/api",
+    "build": "npm run build --workspace=@prahari/shared && npm run build --workspace=@prahari/web && npm run build --workspace=@prahari/api",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "eslint .",
     "format": "prettier --write .",
     "setup": "node scripts/setup-env.js",
-    "seed": "npm run seed --workspace=@punarvas/api",
-    "seed:reset": "npm run seed:reset --workspace=@punarvas/api",
+    "seed": "npm run seed --workspace=@prahari/api",
+    "seed:reset": "npm run seed:reset --workspace=@prahari/api",
     "demo:reset": "node scripts/resetDemo.mjs"
   },
   "devDependencies": {

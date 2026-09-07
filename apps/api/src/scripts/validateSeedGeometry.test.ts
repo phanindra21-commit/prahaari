@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { GeoPolygonal } from "@punarvas/shared";
+import type { GeoPolygonal } from "@prahari/shared";
 import {
   findHabitationsOutsideDistrict,
   assertHabitationsWithinDistricts,

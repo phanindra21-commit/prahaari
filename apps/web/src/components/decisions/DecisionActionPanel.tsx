@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { DecisionAction } from "@punarvas/shared";
+import type { DecisionAction } from "@prahari/shared";
 import { useAuthStore } from "../../stores/authStore";
 import { hasPermission } from "../../lib/permissions";
 import { useCreateDecision } from "../../hooks/useApi";

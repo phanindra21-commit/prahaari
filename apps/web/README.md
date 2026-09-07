@@ -1,4 +1,4 @@
-# PunarVas Web
+# PRAHARI Web
 
 React 18 + Vite + TypeScript + Tailwind CSS + MapLibre GL JS + Zustand + TanStack Query.
 

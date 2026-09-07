@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as h3 from "h3-js";
 import { cellsForBoundary, cellGeometry, slugify } from "./h3Grid";
-import type { GeoPolygonal } from "@punarvas/shared";
+import type { GeoPolygonal } from "@prahari/shared";
 
 const SMALL_SQUARE: GeoPolygonal = {
   type: "Polygon",

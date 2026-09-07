@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import type { HazardType, ZoneClass, GeneratedBy, DataProvenance, GeoPolygonal } from "@punarvas/shared";
+import type { HazardType, ZoneClass, GeneratedBy, DataProvenance, GeoPolygonal } from "@prahari/shared";
 import { HazardZone, type HazardZoneDoc } from "../models/HazardZone";
 
 /**

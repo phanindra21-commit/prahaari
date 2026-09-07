@@ -4,14 +4,14 @@ import {
   ZONE_CLASSES,
   GENERATED_BY_VALUES,
   DATA_PROVENANCE_VALUES,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import type {
   HazardType,
   ZoneClass,
   GeneratedBy,
   DataProvenance,
   GeoPolygonal,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { geoPolygonalSchema } from "./geoSchemas";
 
 /**

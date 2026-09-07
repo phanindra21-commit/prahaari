@@ -1,5 +1,5 @@
-import { permissionsConfig } from "@punarvas/shared";
-import type { UserRole } from "@punarvas/shared";
+import { permissionsConfig } from "@prahari/shared";
+import type { UserRole } from "@prahari/shared";
 
 /** Mirrors apps/api/src/lib/permissions.ts's check — same single-source-of-truth
  * config (packages/shared/src/config/permissions.json), read here only to

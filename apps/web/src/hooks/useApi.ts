@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { RecommendationStatus, RelocationPriorityBucket, ZoneClass, EscalationStatus } from "@punarvas/shared";
+import type { RecommendationStatus, RelocationPriorityBucket, ZoneClass, EscalationStatus } from "@prahari/shared";
 import * as api from "../lib/api";
 
 export function useDistricts() {

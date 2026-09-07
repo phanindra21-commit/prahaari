@@ -7,7 +7,7 @@ async function main(): Promise<void> {
   await connectDb(env.MONGODB_URI);
   const app = createApp();
   app.listen(env.PORT, () => {
-    console.log(`[api] PunarVas API listening on http://localhost:${env.PORT}`);
+    console.log(`[api] PRAHARI API listening on http://localhost:${env.PORT}`);
   });
 }
 

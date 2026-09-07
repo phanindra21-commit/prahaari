@@ -1,4 +1,4 @@
-"""PunarVas ML service — FastAPI entrypoint.
+"""PRAHARI ML service — FastAPI entrypoint.
 
 Hazard zoning (weighted-overlay + ML susceptibility, Step 4) is live at
 /zoning/run. Vulnerability/risk/priority scoring (Step 5) is live at
@@ -18,8 +18,8 @@ from app.routes.sites import router as sites_router
 from app.routes.zoning import router as zoning_router
 
 app = FastAPI(
-    title="PunarVas ML Service",
-    description="Hazard susceptibility, vulnerability, and site-suitability models for PunarVas.",
+    title="PRAHARI ML Service",
+    description="Hazard susceptibility, vulnerability, and site-suitability models for PRAHARI.",
     version="0.1.0",
 )
 
@@ -39,6 +39,6 @@ class HealthCheckResponse(BaseModel):
 def health() -> HealthCheckResponse:
     return HealthCheckResponse(
         status="ok",
-        service="punarvas-ml",
+        service="prahari-ml",
         timestamp=datetime.now(timezone.utc).isoformat(),
     )

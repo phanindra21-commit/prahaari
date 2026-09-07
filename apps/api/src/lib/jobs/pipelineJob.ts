@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { HazardType } from "@punarvas/shared";
+import type { HazardType } from "@prahari/shared";
 import { District } from "../../models/District";
 import { Job } from "../../models/Job";
 import { audit } from "../audit";

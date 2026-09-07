@@ -4,7 +4,7 @@ import {
   HAZARD_EVENT_SOURCES,
   EVENT_CONFIDENCE_LEVELS,
   DATA_PROVENANCE_VALUES,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import type {
   HazardType,
   HazardEventSource,
@@ -12,7 +12,7 @@ import type {
   DataProvenance,
   GeoPoint,
   GeoPolygonal,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 export interface HazardEventDoc extends Document {
   districtId: Types.ObjectId;
   hazardType: HazardType;

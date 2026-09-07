@@ -5,7 +5,7 @@ Read this file in full before making changes.
 
 ## Project Purpose
 
-**PunarVas** ("पुनर्वास" — resettlement/rehabilitation) is a Human-in-the-Loop
+**PRAHARI** ("प्रहरी" — sentinel/watchman) is a Human-in-the-Loop
 AI + GIS decision-support platform built for Smart India Hackathon. It helps
 Indian state disaster-management authorities move from _reactive_ disaster
 response to _proactive_ hazard zoning and planned relocation of vulnerable
@@ -448,7 +448,7 @@ completed.
   and suitability/capacity panels rendering, submitting an Approve
   decision with a justification, and the chain-verified badge appearing —
   kept as `apps/web/e2e/decision-workbench.spec.ts` (same
-  `PUNARVAS_E2E_BACKEND=1`-gated pattern as the existing smoke test).
+  `PRAHARI_E2E_BACKEND=1`-gated pattern as the existing smoke test).
   Also manually verified and then discarded (not kept as standing tests):
   an `ANALYST` sees the read-only restricted note instead of decision
   controls; a `DISTRICT_OFFICER`'s district switcher never lists another
@@ -518,7 +518,7 @@ completed.
   panel, and a persistent "hypothetical, not official" banner. Verified
   in a real browser (Playwright, built production bundle) against the
   live stack — kept as `apps/web/e2e/scenario-simulator.spec.ts` (same
-  `PUNARVAS_E2E_BACKEND=1`-gated pattern as the other standing e2e specs).
+  `PRAHARI_E2E_BACKEND=1`-gated pattern as the other standing e2e specs).
 
   ### Step 9 (authority dashboard, reports, demo hardening) — DONE
 

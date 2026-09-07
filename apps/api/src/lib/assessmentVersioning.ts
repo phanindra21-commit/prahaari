@@ -1,5 +1,5 @@
 import type { Types } from "mongoose";
-import type { HazardType, ZoneClass, RelocationPriorityBucket } from "@punarvas/shared";
+import type { HazardType, ZoneClass, RelocationPriorityBucket } from "@prahari/shared";
 import { Assessment, type AssessmentDoc, type ExplanationEntry, type CompoundHazardEntry } from "../models/Assessment";
 
 /**

@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { HAZARD_TYPES, ZONE_CLASSES, PRIORITY_BUCKETS } from "@punarvas/shared";
-import type { HazardType, ZoneClass, RelocationPriorityBucket } from "@punarvas/shared";
+import { HAZARD_TYPES, ZONE_CLASSES, PRIORITY_BUCKETS } from "@prahari/shared";
+import type { HazardType, ZoneClass, RelocationPriorityBucket } from "@prahari/shared";
 
 /**
  * A saved what-if scenario (Step 8 Part 2), e.g. "2024 Wayanad event:

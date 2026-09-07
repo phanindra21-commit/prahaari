@@ -30,12 +30,12 @@ const steps = [
   {
     label: "1/5 Seed districts, habitations, hazard zones/events, relocation sites, and demo users",
     command: npmCmd,
-    args: ["run", "seed", "--workspace=@punarvas/api"],
+    args: ["run", "seed", "--workspace=@prahari/api"],
   },
   {
     label: "2/5 Fill every district's boundary with an H3 grid",
     command: npmCmd,
-    args: ["run", "generate-grid", "--workspace=@punarvas/api"],
+    args: ["run", "generate-grid", "--workspace=@prahari/api"],
   },
   {
     label: "3/5 Derive synthetic-but-spatially-coherent causative factors",
@@ -46,12 +46,12 @@ const steps = [
   {
     label: "4/5 Load those factors onto every GridCell",
     command: npmCmd,
-    args: ["run", "ingest-factors", "--workspace=@punarvas/api"],
+    args: ["run", "ingest-factors", "--workspace=@prahari/api"],
   },
   {
     label: "5/5 Run the full pipeline (zoning -> assessments -> site matching) for every district",
     command: npmCmd,
-    args: ["run", "run-pipeline", "--workspace=@punarvas/api"],
+    args: ["run", "run-pipeline", "--workspace=@prahari/api"],
   },
 ];
 

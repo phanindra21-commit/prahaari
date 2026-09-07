@@ -203,7 +203,7 @@ Create `apps/api/src/config/blendConfig.test.ts`:
 
 ```typescript
 import { describe, it, expect } from "vitest";
-import { blendConfig } from "@punarvas/shared";
+import { blendConfig } from "@prahari/shared";
 
 describe("blend-config.json (Step 4 Part D5)", () => {
   it("alpha is in [0, 1] and defaults to 0.6 favoring the interpretable overlay", () => {
@@ -243,7 +243,7 @@ Claude-Session: https://claude.ai/code/session_01Nxix1Pe4bu8FYr3zL3Fb1c"
 
 **Interfaces:**
 - Consumes: `hazardTypeSchema`, `zoneClassSchema`, `objectIdSchema`, `geoPointSchema`, `geoPolygonalSchema`, `dataProvenanceSchema`, `timestampsSchema` from `./common`.
-- Produces: `gridCellSchema`/`GridCell`, `hazardScoreEntrySchema`/`HazardScoreEntry`, `modelRunSchema`/`ModelRun`, `modelMetricsSchema`/`ModelMetrics`, `jobSchema`/`Job`, `jobStatusSchema`, `JOB_STATUSES`, `JOB_TYPES` — all re-exported from `@punarvas/shared` via `schemas/index.ts` and the top-level `src/index.ts` (already does `export * from "./schemas"`).
+- Produces: `gridCellSchema`/`GridCell`, `hazardScoreEntrySchema`/`HazardScoreEntry`, `modelRunSchema`/`ModelRun`, `modelMetricsSchema`/`ModelMetrics`, `jobSchema`/`Job`, `jobStatusSchema`, `JOB_STATUSES`, `JOB_TYPES` — all re-exported from `@prahari/shared` via `schemas/index.ts` and the top-level `src/index.ts` (already does `export * from "./schemas"`).
 
 - [ ] **Step 1: Add JOB_STATUSES and JOB_TYPES constants**
 
@@ -402,7 +402,7 @@ Claude-Session: https://claude.ai/code/session_01Nxix1Pe4bu8FYr3zL3Fb1c"
 - Modify: `apps/api/src/models/index.ts`
 
 **Interfaces:**
-- Consumes: `HAZARD_TYPES`, `ZONE_CLASSES`, `DATA_PROVENANCE_VALUES` from `@punarvas/shared`; `geoPointSchema`, `geoPolygonalSchema` from `./geoSchemas`.
+- Consumes: `HAZARD_TYPES`, `ZONE_CLASSES`, `DATA_PROVENANCE_VALUES` from `@prahari/shared`; `geoPointSchema`, `geoPolygonalSchema` from `./geoSchemas`.
 - Produces: `GridCell` model (Mongoose), collection `gridCells`, exported `GridCellDoc`, `HazardScoreEntry` types. Later tasks (8, 9, 15–18, 21) read/write `GridCell.factors`, `GridCell.hazardScores`, `GridCell.h3Index`.
 
 - [ ] **Step 1: Write the model**
@@ -411,8 +411,8 @@ Create `apps/api/src/models/GridCell.ts`:
 
 ```typescript
 import { Schema, model, type Document, type Types } from "mongoose";
-import { ZONE_CLASSES, DATA_PROVENANCE_VALUES } from "@punarvas/shared";
-import type { ZoneClass, DataProvenance, GeoPoint, GeoPolygonal } from "@punarvas/shared";
+import { ZONE_CLASSES, DATA_PROVENANCE_VALUES } from "@prahari/shared";
+import type { ZoneClass, DataProvenance, GeoPoint, GeoPolygonal } from "@prahari/shared";
 import { geoPointSchema, geoPolygonalSchema } from "./geoSchemas";
 
 export interface HazardScoreEntry {
@@ -594,8 +594,8 @@ Create `apps/api/src/models/ModelRun.ts`:
 
 ```typescript
 import { Schema, model, type Document } from "mongoose";
-import { HAZARD_TYPES } from "@punarvas/shared";
-import type { HazardType } from "@punarvas/shared";
+import { HAZARD_TYPES } from "@prahari/shared";
+import type { HazardType } from "@prahari/shared";
 
 export interface ModelMetrics {
   aucRoc: number;
@@ -728,8 +728,8 @@ Create `apps/api/src/models/Job.ts`:
 
 ```typescript
 import { Schema, model, type Document, type Types } from "mongoose";
-import { JOB_STATUSES, JOB_TYPES } from "@punarvas/shared";
-import type { JobStatus, JobType } from "@punarvas/shared";
+import { JOB_STATUSES, JOB_TYPES } from "@prahari/shared";
+import type { JobStatus, JobType } from "@prahari/shared";
 
 export interface JobDoc extends Document {
   type: JobType;
@@ -799,7 +799,7 @@ describe("Job model", () => {
   it("defaults to PENDING with 0 progress", async () => {
     const user = await User.create({
       name: "Analyst",
-      email: "job-model-test@punarvas.gov.in",
+      email: "job-model-test@prahari.gov.in",
       passwordHash: await hashPassword("SomePassw0rd!23"),
       role: "ANALYST",
       scope: {},
@@ -1066,7 +1066,7 @@ Create `apps/api/src/config/reclassification.test.ts`:
 
 ```typescript
 import { describe, it, expect } from "vitest";
-import { factorReclassification, hazardWeights } from "@punarvas/shared";
+import { factorReclassification, hazardWeights } from "@prahari/shared";
 
 describe("factor-reclassification.json (Step 4 Part C1)", () => {
   it("declares a reclassification entry for every hazard-weights factor", () => {
@@ -1125,7 +1125,7 @@ Create `apps/api/src/lib/h3Grid.test.ts`:
 import { describe, it, expect } from "vitest";
 import * as h3 from "h3-js";
 import { cellsForBoundary, cellGeometry, slugify } from "./h3Grid";
-import type { GeoPolygonal } from "@punarvas/shared";
+import type { GeoPolygonal } from "@prahari/shared";
 
 const SMALL_SQUARE: GeoPolygonal = {
   type: "Polygon",
@@ -1180,7 +1180,7 @@ Create `apps/api/src/lib/h3Grid.ts`:
 
 ```typescript
 import * as h3 from "h3-js";
-import type { GeoPolygonal, GeoPoint, GeoPolygon } from "@punarvas/shared";
+import type { GeoPolygonal, GeoPoint, GeoPolygon } from "@prahari/shared";
 
 /** Every ring in GeoPolygonal.coordinates, grouped per polygon (so each group can be passed to h3.polygonToCells individually, since it takes one polygon's [outerRing, ...holeRings] at a time). */
 function polygonsOf(boundary: GeoPolygonal): number[][][][] {
@@ -1238,7 +1238,7 @@ Create `apps/api/src/scripts/generateGrid.ts`:
  * (upsert on h3Index, $setOnInsert) so it never clobbers factors or
  * hazardScores a later step has already computed.
  *
- * Usage (from repo root): npm run generate-grid --workspace=@punarvas/api
+ * Usage (from repo root): npm run generate-grid --workspace=@prahari/api
  */
 import "dotenv/config";
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -1341,7 +1341,7 @@ In `apps/api/package.json`, add to `"scripts"` (after `"seed:reset"`):
 
 Run (from repo root, MongoDB running and seeded — `npm run seed` first if not already):
 ```
-npm run generate-grid --workspace=@punarvas/api
+npm run generate-grid --workspace=@prahari/api
 ```
 Expected: prints a table with `Wayanad` and `Ganjam` rows and nonzero cell counts (Wayanad's ~3344 sq km bounding box at H3 res 8, ~0.737 sq km/cell, is expected to land somewhere in the 3,500–5,500 range; Ganjam's ~9,879 sq km bbox in the 11,000–16,000 range — report whatever the run actually prints, this is just a sanity band, not an assertion). Confirms `data/processed/wayanad-grid.json` and `data/processed/ganjam-grid.json` now exist.
 
@@ -1664,7 +1664,7 @@ def derive_district_factors(slug: str) -> dict[str, dict[str, dict[str, float]]]
     if not grid_path.exists():
         raise FileNotFoundError(
             f"[derive_factors] {grid_path} not found — run "
-            "`npm run generate-grid --workspace=@punarvas/api` first"
+            "`npm run generate-grid --workspace=@prahari/api` first"
         )
     cells: list[dict[str, Any]] = json.loads(grid_path.read_text(encoding="utf-8"))
     factor_fn = FACTOR_FUNCTIONS[slug]
@@ -1752,7 +1752,7 @@ Expected: all 5 pass.
 
 - [ ] **Step 5: Run against the real grid export and report**
 
-Prerequisite: Task 8's `npm run generate-grid --workspace=@punarvas/api` has already been run (so `data/processed/wayanad-grid.json` and `data/processed/ganjam-grid.json` exist).
+Prerequisite: Task 8's `npm run generate-grid --workspace=@prahari/api` has already been run (so `data/processed/wayanad-grid.json` and `data/processed/ganjam-grid.json` exist).
 
 Run: `cd services/ml && venv\Scripts\python scripts/derive_factors.py`
 Expected: prints `wayanad: wrote factors for N cells` and `ganjam: wrote factors for M cells`, matching the cell counts Task 8 reported. Confirms `data/processed/wayanad-factors.json` and `data/processed/ganjam-factors.json` now exist.
@@ -1769,7 +1769,7 @@ Create `apps/api/src/scripts/ingestFactors.ts`:
  * remains the sole owner of MongoDB persistence (docs/ARCHITECTURE.md);
  * services/ml itself never connects to the database.
  *
- * Usage (from repo root): npm run ingest-factors --workspace=@punarvas/api
+ * Usage (from repo root): npm run ingest-factors --workspace=@prahari/api
  */
 import "dotenv/config";
 import { readFileSync, existsSync } from "node:fs";
@@ -1827,7 +1827,7 @@ main().catch((error: unknown) => {
 
 In `apps/api/package.json`, add to `"scripts"`: `"ingest-factors": "ts-node --transpile-only src/scripts/ingestFactors.ts"`.
 
-Run: `npm run ingest-factors --workspace=@punarvas/api`
+Run: `npm run ingest-factors --workspace=@prahari/api`
 Expected: prints a table with `wayanad`/`ganjam` rows and `cellsUpdated` matching the cell counts from Task 8's `generate-grid` run.
 
 - [ ] **Step 8: Typecheck and lint**
@@ -2180,7 +2180,7 @@ Create `services/ml/app/engine/labels.py`:
 """Generates training labels for the per-hazard XGBoost susceptibility
 models (Step 4 Part D1).
 
-HONESTY NOTE: PunarVas has three real recorded hazard events for the two
+HONESTY NOTE: PRAHARI has three real recorded hazard events for the two
 pilot districts (data/seed/hazard-events.json) — not a training set by any
 reasonable standard. Every label this module produces is synthetic:
 positive samples come from (a) cells near a recorded event and (b) cells
@@ -3368,7 +3368,7 @@ Mirror this in `packages/shared/src/schemas/hazardZone.ts` — add `geometrySimp
 - [ ] **Step 2: Typecheck both packages**
 
 Run: `cd packages/shared && npm run typecheck && cd ../../apps/api && npm run typecheck`
-Expected: no errors (both files are additive — no existing HazardZone-creating code is broken since `geometrySimplified` doesn't exist in `data/seed/*-hazard-zones.geojson` yet... check this: **if the Step 2 seed script or seed fixtures create `HazardZone` docs without `geometrySimplified`, this new `required: true` field will make `npm run seed` fail.** Handle it: either make the field optional (`geometrySimplified?: GeoPolygonal` / not `required: true`) if the seed fixtures aren't being touched, OR update the seed schema/fixtures to include it. Check `apps/api/src/scripts/seedSchemas.ts` and `data/seed/wayanad-hazard-zones.geojson` / `ganjam-hazard-zones.geojson` first — if they set `geometry` from `feature.geometry` directly, the simplest fix that doesn't touch seed data is defaulting `geometrySimplified` to the same value as `geometry` at the Mongoose schema level: `geometrySimplified: { type: geoPolygonalSchema, required: true, default: function (this: HazardZoneDoc) { return this.geometry; } }`. Use whichever approach keeps `npm run seed` passing — confirm by actually running `npm run seed:reset --workspace=@punarvas/api` after this change and checking it still succeeds.
+Expected: no errors (both files are additive — no existing HazardZone-creating code is broken since `geometrySimplified` doesn't exist in `data/seed/*-hazard-zones.geojson` yet... check this: **if the Step 2 seed script or seed fixtures create `HazardZone` docs without `geometrySimplified`, this new `required: true` field will make `npm run seed` fail.** Handle it: either make the field optional (`geometrySimplified?: GeoPolygonal` / not `required: true`) if the seed fixtures aren't being touched, OR update the seed schema/fixtures to include it. Check `apps/api/src/scripts/seedSchemas.ts` and `data/seed/wayanad-hazard-zones.geojson` / `ganjam-hazard-zones.geojson` first — if they set `geometry` from `feature.geometry` directly, the simplest fix that doesn't touch seed data is defaulting `geometrySimplified` to the same value as `geometry` at the Mongoose schema level: `geometrySimplified: { type: geoPolygonalSchema, required: true, default: function (this: HazardZoneDoc) { return this.geometry; } }`. Use whichever approach keeps `npm run seed` passing — confirm by actually running `npm run seed:reset --workspace=@prahari/api` after this change and checking it still succeeds.
 
 - [ ] **Step 3: Write the failing zoneVersioning tests**
 
@@ -3476,7 +3476,7 @@ Create `apps/api/src/lib/zoneVersioning.ts`:
 ```typescript
 import type { Types } from "mongoose";
 import { HazardZone, type HazardZoneDoc } from "../models/HazardZone";
-import type { HazardType, ZoneClass, GeneratedBy, DataProvenance, GeoPolygonal } from "@punarvas/shared";
+import type { HazardType, ZoneClass, GeneratedBy, DataProvenance, GeoPolygonal } from "@prahari/shared";
 
 /**
  * HazardZone docs are NEVER mutated in place (CLAUDE.md, METHODOLOGY §1.3,
@@ -3579,7 +3579,7 @@ Claude-Session: https://claude.ai/code/session_01Nxix1Pe4bu8FYr3zL3Fb1c"
 - Create: `apps/api/src/lib/hazardAggregation.test.ts`
 
 **Interfaces:**
-- Consumes: `zoneThresholds.multiHazardAggregation` (`@punarvas/shared`), `buildActiveZoneFilter` (Task 18), `Habitation`/`HazardZone` models.
+- Consumes: `zoneThresholds.multiHazardAggregation` (`@prahari/shared`), `buildActiveZoneFilter` (Task 18), `Habitation`/`HazardZone` models.
 - Produces: `aggregateZoneClasses(classesByHazard: Partial<Record<HazardType, ZoneClass>>) -> ZoneClass` (pure), `habitationZoneClasses(habitationId: string, at?: Date) -> Promise<{habitationId, classesByHazard, overallClass}>` — consumed by Task 23 (the end-to-end pipeline report, which counts how many seeded habitations land in each zone class).
 
 - [ ] **Step 1: Write the failing tests**
@@ -3691,8 +3691,8 @@ Expected: FAIL — `Cannot find module './hazardAggregation'`.
 Create `apps/api/src/lib/hazardAggregation.ts`:
 
 ```typescript
-import { zoneThresholds } from "@punarvas/shared";
-import type { HazardType, ZoneClass } from "@punarvas/shared";
+import { zoneThresholds } from "@prahari/shared";
+import type { HazardType, ZoneClass } from "@prahari/shared";
 import { HazardZone, type HazardZoneDoc } from "../models/HazardZone";
 import { Habitation } from "../models/Habitation";
 import { buildActiveZoneFilter } from "./zoneVersioning";
@@ -3937,7 +3937,7 @@ Create `apps/api/src/lib/mlServiceClient.ts`:
 
 ```typescript
 import { z } from "zod";
-import { geoPolygonalSchema, zoneClassSchema, hazardTypeSchema } from "@punarvas/shared";
+import { geoPolygonalSchema, zoneClassSchema, hazardTypeSchema } from "@prahari/shared";
 
 const zoneOutputSchema = z.object({
   zoneClass: zoneClassSchema,
@@ -4231,7 +4231,7 @@ async function seedDistrictWithCells(): Promise<{ districtId: Types.ObjectId }> 
 async function seedActor(): Promise<Types.ObjectId> {
   const user = await User.create({
     name: "Zoning Job Test User",
-    email: `zoning-job-test-${Date.now()}@punarvas.gov.in`,
+    email: `zoning-job-test-${Date.now()}@prahari.gov.in`,
     passwordHash: await hashPassword("SomePassw0rd!23"),
     role: "ANALYST",
     scope: {},
@@ -4359,7 +4359,7 @@ Create `apps/api/src/lib/jobs/zoningJob.ts`:
 
 ```typescript
 import { Types } from "mongoose";
-import type { HazardType, ZoneClass, GeoPolygonal } from "@punarvas/shared";
+import type { HazardType, ZoneClass, GeoPolygonal } from "@prahari/shared";
 import { Job } from "../../models/Job";
 import { GridCell } from "../../models/GridCell";
 import { ModelRun } from "../../models/ModelRun";
@@ -4624,7 +4624,7 @@ async function seedDistrict(): Promise<Types.ObjectId> {
 }
 
 async function loginAs(role: "ANALYST" | "FIELD_VOLUNTEER", districtId: Types.ObjectId): Promise<string> {
-  const email = `zoning-route-${role}-${Date.now()}-${Math.random()}@punarvas.gov.in`;
+  const email = `zoning-route-${role}-${Date.now()}-${Math.random()}@prahari.gov.in`;
   await User.create({
     name: `Test ${role}`,
     email,
@@ -4778,7 +4778,7 @@ Create `apps/api/src/routes/zoning.routes.ts`:
 ```typescript
 import { Router } from "express";
 import { z } from "zod";
-import { hazardTypeSchema, zoneClassSchema, objectIdSchema } from "@punarvas/shared";
+import { hazardTypeSchema, zoneClassSchema, objectIdSchema } from "@prahari/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
@@ -5108,7 +5108,7 @@ wired together by `services/ml/app/routes/zoning.py`'s `POST /pipeline/run`
 (called by `apps/api`'s `POST /api/v1/zoning/run` — see
 `docs/ZONING_PIPELINE.md` for the full flow).
 
-**Honesty note on labels.** PunarVas has three real recorded hazard
+**Honesty note on labels.** PRAHARI has three real recorded hazard
 events for the two pilot districts (`data/seed/hazard-events.json`) — not
 a training set by any reasonable standard. `labels.py` generates
 SYNTHETIC_DEMO training labels for the demo: positive samples come from
@@ -5334,9 +5334,9 @@ Claude-Session: https://claude.ai/code/session_01Nxix1Pe4bu8FYr3zL3Fb1c"
 - Produces: a printed report — no new code interface, this is the final manual verification step.
 
 **Prerequisites (all prior tasks' manual run steps must have already been completed):**
-- MongoDB running and seeded: `npm run seed --workspace=@punarvas/api`
-- H3 grid generated: `npm run generate-grid --workspace=@punarvas/api` (Task 8)
-- Factors derived and ingested: `cd services/ml && venv\Scripts\python scripts/derive_factors.py`, then `npm run ingest-factors --workspace=@punarvas/api` (Task 9)
+- MongoDB running and seeded: `npm run seed --workspace=@prahari/api`
+- H3 grid generated: `npm run generate-grid --workspace=@prahari/api` (Task 8)
+- Factors derived and ingested: `cd services/ml && venv\Scripts\python scripts/derive_factors.py`, then `npm run ingest-factors --workspace=@prahari/api` (Task 9)
 - `services/ml` running: `npm run dev:ml` from the repo root (separate terminal), listening on the URL in `ML_SERVICE_URL` (default `http://localhost:8000`)
 
 - [ ] **Step 1: Write runZoningPipelineReport.ts**
@@ -5352,11 +5352,11 @@ Create `apps/api/src/scripts/runZoningPipelineReport.ts`:
  * class. See this file's Task 23 prerequisites for what must already be
  * running before this script is invoked.
  *
- * Usage (from repo root): npm run report:zoning --workspace=@punarvas/api
+ * Usage (from repo root): npm run report:zoning --workspace=@prahari/api
  */
 import "dotenv/config";
 import type { Types } from "mongoose";
-import type { HazardType, ZoneClass } from "@punarvas/shared";
+import type { HazardType, ZoneClass } from "@prahari/shared";
 import { connectDb, disconnectDb } from "../lib/db";
 import { env } from "../lib/env";
 import { District } from "../models/District";
@@ -5525,10 +5525,10 @@ In `apps/api/package.json`, add to `"scripts"`: `"report:zoning": "ts-node --tra
 From the repo root, in order (each in its own terminal where noted):
 
 ```bash
-npm run seed --workspace=@punarvas/api
-npm run generate-grid --workspace=@punarvas/api
+npm run seed --workspace=@prahari/api
+npm run generate-grid --workspace=@prahari/api
 cd services/ml && venv\Scripts\python scripts/derive_factors.py && cd ../..
-npm run ingest-factors --workspace=@punarvas/api
+npm run ingest-factors --workspace=@prahari/api
 ```
 
 In a separate terminal, start the ML service and leave it running:
@@ -5538,7 +5538,7 @@ npm run dev:ml
 
 Then, in the original terminal:
 ```bash
-npm run report:zoning --workspace=@punarvas/api
+npm run report:zoning --workspace=@prahari/api
 ```
 
 - [ ] **Step 4: Read the report output and sanity-check it**
@@ -5553,7 +5553,7 @@ Run all of:
 ```bash
 npm run typecheck
 npm run lint
-npm run test --workspace=@punarvas/api
+npm run test --workspace=@prahari/api
 cd services/ml && venv\Scripts\python -m pytest -v && cd ../..
 ```
 Expected: every command exits 0 with no failing tests.

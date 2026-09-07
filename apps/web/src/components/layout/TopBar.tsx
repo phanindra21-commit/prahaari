@@ -42,7 +42,7 @@ export function TopBar(): JSX.Element {
   return (
     <header className="flex h-12 flex-shrink-0 items-center justify-between border-b border-ink-600 bg-ink-900 px-4">
       <div className="flex items-center gap-6">
-        <span className="text-sm font-semibold tracking-tight text-mist-50">PunarVas</span>
+        <span className="text-sm font-semibold tracking-tight text-mist-50">PRAHARI</span>
 
         {data && data.items.length > 0 && (
           <select

@@ -11,7 +11,7 @@ import type {
   DecisionAction,
   DecisionLevel,
   EscalationStatus,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { apiRequest } from "./apiClient";
 
 export interface District {

@@ -11,18 +11,18 @@ import { test, expect } from "@playwright/test";
  *
  * Requires the full dev stack (mongo + api + services/ml, seeded, with a
  * pipeline run already completed for Wayanad so at least one PENDING_REVIEW
- * recommendation exists) — same PUNARVAS_E2E_BACKEND=1 gate as smoke.spec.ts.
+ * recommendation exists) — same PRAHARI_E2E_BACKEND=1 gate as smoke.spec.ts.
  */
 test.describe("officer decision workbench (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
   );
 
   test("review queue -> recommendation detail -> decision -> chain verified", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.wayanad@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 

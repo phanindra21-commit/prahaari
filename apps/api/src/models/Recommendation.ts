@@ -1,12 +1,12 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ZONE_CLASSES, ESCALATION_STATUSES } from "@punarvas/shared";
+import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ZONE_CLASSES, ESCALATION_STATUSES } from "@prahari/shared";
 import type {
   RelocationPriorityBucket,
   RecommendationStatus,
   ZoneClass,
   GeoLineString,
   EscalationStatus,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { geoLineStringSchema } from "./geoSchemas";
 
 /**

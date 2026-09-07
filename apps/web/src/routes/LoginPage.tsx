@@ -31,7 +31,9 @@ export function LoginPage(): JSX.Element {
     <div className="flex h-screen items-center justify-center bg-ink-950 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-lg font-semibold tracking-tight text-mist-50">PunarVas</h1>
+          <h1 className="text-lg font-semibold tracking-tight text-mist-50">
+            PRAHARI <span className="text-mist-400">— प्रहरी, &ldquo;sentinel&rdquo;</span>
+          </h1>
           <p className="mt-1 text-sm text-mist-300">Hazard zoning and relocation decision support</p>
         </div>
 

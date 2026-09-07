@@ -27,8 +27,8 @@ import { test, expect } from "@playwright/test";
  */
 test.describe("STATE_ADMIN approves any in-state recommendation (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Chamoli/Ganjam pipeline run.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Chamoli/Ganjam pipeline run.",
   );
 
   test("State Admin decides an ORDINARY, non-escalated recommendation directly; District Officer's escalation still works as a routing signal; cross-state stays blocked", async ({
@@ -36,8 +36,8 @@ test.describe("STATE_ADMIN approves any in-state recommendation (requires the de
   }) => {
     // --- Deepika Bhandari (Chamoli District Officer) escalates one recommendation, as a routing signal ---
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.chamoli@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.chamoli@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 
@@ -74,8 +74,8 @@ test.describe("STATE_ADMIN approves any in-state recommendation (requires the de
     await expect(page).toHaveURL(/\/login/);
 
     // --- Harish Rawat (Uttarakhand State Admin) ---
-    await page.getByLabel("Email").fill("stateadmin.uttarakhand@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("stateadmin.uttarakhand@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 
@@ -119,7 +119,7 @@ test.describe("STATE_ADMIN approves any in-state recommendation (requires the de
     // server this suite's baseURL points at, so these use absolute URLs.
     const API_BASE_URL = "http://localhost:4000/api/v1";
     const login = await request.post(`${API_BASE_URL}/auth/login`, {
-      data: { email: "superadmin@punarvas.gov.in", password: "PunarVas@DevDefault123" },
+      data: { email: "superadmin@prahari.gov.in", password: "PRAHARI@DevDefault123" },
     });
     const { accessToken } = (await login.json()) as { accessToken: string };
     const districts = await request.get(`${API_BASE_URL}/districts`, {
@@ -136,8 +136,8 @@ test.describe("STATE_ADMIN approves any in-state recommendation (requires the de
     const ganjamRecommendationId = recItems[0]!._id;
 
     await page.goto("/login");
-    await page.getByLabel("Email").fill("stateadmin.kerala@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("stateadmin.kerala@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 

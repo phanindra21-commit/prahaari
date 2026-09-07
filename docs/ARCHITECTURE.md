@@ -2,7 +2,7 @@
 
 ## System Overview
 
-PunarVas is three deployable services sharing one MongoDB database and one
+PRAHARI is three deployable services sharing one MongoDB database and one
 TypeScript type contract:
 
 - **`apps/web`** — the officer-facing map and decision workbench.

@@ -1,7 +1,7 @@
 # Data Sources
 
 Real Indian government/open datasets used (or planned to be used) by
-PunarVas. Every dataset placed under `data/raw/` should be traceable back
+PRAHARI. Every dataset placed under `data/raw/` should be traceable back
 to a row in this table. See `data/README.md` for provenance-recording
 conventions.
 

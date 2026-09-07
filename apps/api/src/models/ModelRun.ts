@@ -1,6 +1,6 @@
 import { Schema, model, type Document } from "mongoose";
-import { HAZARD_TYPES } from "@punarvas/shared";
-import type { HazardType } from "@punarvas/shared";
+import { HAZARD_TYPES } from "@prahari/shared";
+import type { HazardType } from "@prahari/shared";
 
 export interface ModelMetrics {
   aucRoc: number;

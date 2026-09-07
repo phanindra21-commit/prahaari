@@ -29,7 +29,7 @@ async function seedDistrict(lgdCode: string) {
 async function makeUser(role: "DISTRICT_OFFICER" | "FIELD_VOLUNTEER", districtId: Types.ObjectId) {
   return User.create({
     name: `Test ${role}`,
-    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@punarvas.gov.in`,
+    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@prahari.gov.in`,
     passwordHash: await hashPassword("SomePassw0rd!23"),
     role,
     scope: { districtId },

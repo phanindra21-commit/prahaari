@@ -4,19 +4,19 @@ import { test, expect } from "@playwright/test";
  * Step 8 Part 2 real-browser verification: runs a fresh what-if scenario
  * from a named preset and confirms the delta summary, the persistent
  * "hypothetical, not official" banner, and the baseline/scenario map
- * toggle all render — the same PUNARVAS_E2E_BACKEND=1-gated pattern as
+ * toggle all render — the same PRAHARI_E2E_BACKEND=1-gated pattern as
  * smoke.spec.ts and decision-workbench.spec.ts.
  */
 test.describe("scenario simulator (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with grid/factors generated for Wayanad.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with grid/factors generated for Wayanad.",
   );
 
   test("run a preset scenario and confirm the delta summary and scenario-mode banner render", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.wayanad@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
     await page.getByRole("link", { name: "Map" }).click();

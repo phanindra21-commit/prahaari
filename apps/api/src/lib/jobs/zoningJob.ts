@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { HazardType } from "@punarvas/shared";
+import type { HazardType } from "@prahari/shared";
 import { District } from "../../models/District";
 import { GridCell } from "../../models/GridCell";
 import { HazardEvent } from "../../models/HazardEvent";

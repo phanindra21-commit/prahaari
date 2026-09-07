@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { scenarioParametersConfig } from "@punarvas/shared";
-import type { HazardType } from "@punarvas/shared";
+import { scenarioParametersConfig } from "@prahari/shared";
+import type { HazardType } from "@prahari/shared";
 import { useRunScenario, useScenarios, useDeleteScenario } from "../../hooks/useApi";
 import { useScenarioStore } from "../../stores/scenarioStore";
 import { ApiError } from "../../lib/apiClient";

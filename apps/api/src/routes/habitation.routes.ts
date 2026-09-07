@@ -9,7 +9,7 @@ import {
   explanationEntrySchema,
   compoundHazardEntrySchema,
   geoPointSchema,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";

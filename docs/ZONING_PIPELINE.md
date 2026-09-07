@@ -194,12 +194,12 @@ current grid/model — see `docs/METHODOLOGY.md` §1.3 and
 
 ```bash
 # 1. Seed the two pilot districts + habitations (once)
-npm run seed --workspace=@punarvas/api
+npm run seed --workspace=@prahari/api
 
 # 2. Build the H3 grid + synthetic factors (once per district)
-npm run generate-grid --workspace=@punarvas/api
+npm run generate-grid --workspace=@prahari/api
 cd services/ml && venv\Scripts\python scripts\derive_factors.py && cd ../..
-npm run ingest-factors --workspace=@punarvas/api
+npm run ingest-factors --workspace=@prahari/api
 
 # 3. Start both services
 npm run dev:ml    # FastAPI on :8000

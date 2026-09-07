@@ -43,7 +43,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="w-full max-w-2xl rounded border border-zone-red/40 bg-ink-800 p-5 shadow-panel">
           <h1 className="mb-1 text-sm font-semibold text-zone-red">Something went wrong</h1>
           <p className="mb-3 text-xs text-mist-300">
-            PunarVas hit an unrecoverable rendering error. This is a bug, not something you can fix
+            PRAHARI hit an unrecoverable rendering error. This is a bug, not something you can fix
             by retrying — reload the page, and if it persists, report the message below.
           </p>
           <pre className="scrollbar-thin mb-3 max-h-32 overflow-auto rounded border border-ink-600 bg-ink-900 p-2 text-xs text-mist-100">

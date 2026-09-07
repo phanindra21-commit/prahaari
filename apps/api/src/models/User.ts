@@ -1,5 +1,5 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { USER_ROLES, type UserRole } from "@punarvas/shared";
+import { USER_ROLES, type UserRole } from "@prahari/shared";
 
 export interface UserScope {
   state?: string;

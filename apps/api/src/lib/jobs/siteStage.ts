@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { capacityNorms } from "@punarvas/shared";
-import type { RelocationPriorityBucket, ZoneClass } from "@punarvas/shared";
+import { capacityNorms } from "@prahari/shared";
+import type { RelocationPriorityBucket, ZoneClass } from "@prahari/shared";
 import { District } from "../../models/District";
 import { Habitation, type HabitationDoc } from "../../models/Habitation";
 import { RelocationSite } from "../../models/RelocationSite";

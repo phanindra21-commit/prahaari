@@ -1,13 +1,13 @@
 [
   {
     "name": "Anjali Menon",
-    "email": "superadmin@punarvas.gov.in",
+    "email": "superadmin@prahari.gov.in",
     "role": "SUPER_ADMIN",
     "scope": {}
   },
   {
     "name": "Ravi Varma",
-    "email": "stateadmin.kerala@punarvas.gov.in",
+    "email": "stateadmin.kerala@prahari.gov.in",
     "role": "STATE_ADMIN",
     "scope": {
       "state": "Kerala"
@@ -15,7 +15,7 @@
   },
   {
     "name": "Priya Nair",
-    "email": "officer.wayanad@punarvas.gov.in",
+    "email": "officer.wayanad@prahari.gov.in",
     "role": "DISTRICT_OFFICER",
     "scope": {
       "state": "Kerala",
@@ -24,7 +24,7 @@
   },
   {
     "name": "Satyabrata Mohanty",
-    "email": "officer.ganjam@punarvas.gov.in",
+    "email": "officer.ganjam@prahari.gov.in",
     "role": "DISTRICT_OFFICER",
     "scope": {
       "state": "Odisha",
@@ -33,7 +33,7 @@
   },
   {
     "name": "Suresh Babu",
-    "email": "analyst.wayanad@punarvas.gov.in",
+    "email": "analyst.wayanad@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Kerala",
@@ -42,7 +42,7 @@
   },
   {
     "name": "Nabanita Roy",
-    "email": "analyst.ganjam@punarvas.gov.in",
+    "email": "analyst.ganjam@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Odisha",
@@ -51,7 +51,7 @@
   },
   {
     "name": "Vikram Negi",
-    "email": "analyst.chamoli@punarvas.gov.in",
+    "email": "analyst.chamoli@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Uttarakhand",
@@ -60,7 +60,7 @@
   },
   {
     "name": "Meera Pillai",
-    "email": "analyst.kerala@punarvas.gov.in",
+    "email": "analyst.kerala@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Kerala"
@@ -68,7 +68,7 @@
   },
   {
     "name": "Sujata Dash",
-    "email": "analyst.odisha@punarvas.gov.in",
+    "email": "analyst.odisha@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Odisha"
@@ -76,7 +76,7 @@
   },
   {
     "name": "Ajay Bisht",
-    "email": "analyst.uttarakhand@punarvas.gov.in",
+    "email": "analyst.uttarakhand@prahari.gov.in",
     "role": "ANALYST",
     "scope": {
       "state": "Uttarakhand"
@@ -84,7 +84,7 @@
   },
   {
     "name": "Debika Patra",
-    "email": "volunteer.ganjam@punarvas.gov.in",
+    "email": "volunteer.ganjam@prahari.gov.in",
     "role": "FIELD_VOLUNTEER",
     "scope": {
       "state": "Odisha",
@@ -93,7 +93,7 @@
   },
   {
     "name": "Anoop Krishnan",
-    "email": "volunteer.wayanad@punarvas.gov.in",
+    "email": "volunteer.wayanad@prahari.gov.in",
     "role": "FIELD_VOLUNTEER",
     "scope": {
       "state": "Kerala",
@@ -102,7 +102,7 @@
   },
   {
     "name": "Bhuvan Rana",
-    "email": "volunteer.chamoli@punarvas.gov.in",
+    "email": "volunteer.chamoli@prahari.gov.in",
     "role": "FIELD_VOLUNTEER",
     "scope": {
       "state": "Uttarakhand",
@@ -111,7 +111,7 @@
   },
   {
     "name": "Harish Rawat",
-    "email": "stateadmin.uttarakhand@punarvas.gov.in",
+    "email": "stateadmin.uttarakhand@prahari.gov.in",
     "role": "STATE_ADMIN",
     "scope": {
       "state": "Uttarakhand"
@@ -119,7 +119,7 @@
   },
   {
     "name": "Deepika Bhandari",
-    "email": "officer.chamoli@punarvas.gov.in",
+    "email": "officer.chamoli@prahari.gov.in",
     "role": "DISTRICT_OFFICER",
     "scope": {
       "state": "Uttarakhand",

@@ -13,8 +13,8 @@ import { test, expect } from "@playwright/test";
  */
 test.describe("worklist and review queue filters actually filter (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
   );
 
   test("priority worklist bucket filters narrow the result set", async ({ page }) => {
@@ -29,8 +29,8 @@ test.describe("worklist and review queue filters actually filter (requires the d
     // deterministically tripped the 5-per-15-min limiter on a full,
     // single suite run — a self-inflicted side effect of adding new specs
     // in the same session, not a product bug).
-    await page.getByLabel("Email").fill("analyst.wayanad@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("analyst.wayanad@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 
@@ -55,8 +55,8 @@ test.describe("worklist and review queue filters actually filter (requires the d
 
   test("review queue bucket and status filters narrow the result set, together", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("superadmin@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("superadmin@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
 

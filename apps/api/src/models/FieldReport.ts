@@ -2,12 +2,12 @@ import { Schema, model, type Document, type Types } from "mongoose";
 import {
   FIELD_REPORT_OBSERVATION_TYPES,
   FIELD_REPORT_VERIFICATION_STATUSES,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import type {
   FieldReportObservationType,
   FieldReportVerificationStatus,
   GeoPoint,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { geoPointSchema } from "./geoSchemas";
 
 /** Lightweight ground-truth observation submitted by a FIELD_VOLUNTEER (RBAC Part C1). */

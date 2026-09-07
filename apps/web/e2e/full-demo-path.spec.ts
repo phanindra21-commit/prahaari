@@ -19,13 +19,13 @@ import { test, expect } from "@playwright/test";
  *
  * Requires the full dev stack (mongo + api + services/ml), seeded, with
  * a completed Wayanad pipeline run leaving at least one PENDING_REVIEW
- * recommendation — same PUNARVAS_E2E_BACKEND=1 gate as the other
+ * recommendation — same PRAHARI_E2E_BACKEND=1 gate as the other
  * standing e2e specs.
  */
 test.describe("the full demo path (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
   );
 
   test("login -> dashboard -> map -> habitation -> recommendation -> approve -> chain verified -> scenario -> delta", async ({
@@ -35,8 +35,8 @@ test.describe("the full demo path (requires the dev backend stack running)", () 
 
     // login -> dashboard
     await page.goto("/login");
-    await page.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("officer.wayanad@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
     await expect(page).toHaveURL(/\/dashboard/);
     await expect(page.getByText("Habitations assessed")).toBeVisible({ timeout: 15_000 });

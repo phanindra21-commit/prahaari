@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { RecommendationStatus, RelocationPriorityBucket, EscalationStatus } from "@punarvas/shared";
+import type { RecommendationStatus, RelocationPriorityBucket, EscalationStatus } from "@prahari/shared";
 import { useDistrictStore } from "../stores/districtStore";
 import { useAuthStore } from "../stores/authStore";
 import { hasPermission } from "../lib/permissions";

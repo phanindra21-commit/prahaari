@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { blendConfig } from "@punarvas/shared";
-import { HAZARD_TYPES } from "@punarvas/shared";
+import { blendConfig } from "@prahari/shared";
+import { HAZARD_TYPES } from "@prahari/shared";
 
 describe("blend-config.json", () => {
   it("declares a per-hazard alpha in [0, 1], defaulting to 0.6 favoring the interpretable overlay", () => {

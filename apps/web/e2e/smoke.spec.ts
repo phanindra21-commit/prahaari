@@ -33,7 +33,7 @@ test("the login page renders real content, not a blank #root", async ({ page }) 
   // The real regression signature: a module the browser could not
   // resolve/evaluate throws before React mounts, so #root stays empty
   // and nothing below ever appears.
-  await expect(page.getByRole("heading", { name: "PunarVas" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "PRAHARI" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible();
   await expect(page.locator("#root")).not.toBeEmpty();
 
@@ -43,14 +43,14 @@ test("the login page renders real content, not a blank #root", async ({ page }) 
 
 test.describe("authenticated (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally to include this test.",
   );
 
   test("logging in loads the dashboard, and the map link loads real hazard/habitation content", async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill("superadmin@punarvas.gov.in");
-    await page.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await page.getByLabel("Email").fill("superadmin@prahari.gov.in");
+    await page.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await page.getByRole("button", { name: "Sign in" }).click();
 
     // The dashboard is the landing page (Step 9 Part 1) — the map is one click away.

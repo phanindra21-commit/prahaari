@@ -1,5 +1,5 @@
 import * as h3 from "h3-js";
-import type { GeoPolygonal, GeoPoint, GeoPolygon } from "@punarvas/shared";
+import type { GeoPolygonal, GeoPoint, GeoPolygon } from "@prahari/shared";
 
 /** Every ring-set of a GeoPolygonal, grouped per polygon (h3.polygonToCells takes one polygon's [outerRing, ...holeRings] at a time). */
 function polygonsOf(boundary: GeoPolygonal): number[][][][] {

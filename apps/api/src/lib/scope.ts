@@ -1,5 +1,5 @@
 import { District } from "../models/District";
-import type { UserRole } from "@punarvas/shared";
+import type { UserRole } from "@prahari/shared";
 
 export interface AuthScope {
   role: UserRole;

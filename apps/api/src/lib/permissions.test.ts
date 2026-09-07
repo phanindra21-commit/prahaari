@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { permissionsConfig, USER_ROLES } from "@punarvas/shared";
-import type { UserRole } from "@punarvas/shared";
+import { permissionsConfig, USER_ROLES } from "@prahari/shared";
+import type { UserRole } from "@prahari/shared";
 import { hasPermission } from "./permissions";
 
 /**

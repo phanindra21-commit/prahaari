@@ -1,4 +1,4 @@
-import type { RelocationPriorityBucket } from "@punarvas/shared";
+import type { RelocationPriorityBucket } from "@prahari/shared";
 
 const BUCKET_STYLES: Record<RelocationPriorityBucket, string> = {
   Immediate: "bg-zone-red/20 text-zone-red border-zone-red/40",

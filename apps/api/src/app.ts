@@ -2,7 +2,7 @@ import express, { type Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import type { HealthCheckResponse } from "@punarvas/shared";
+import type { HealthCheckResponse } from "@prahari/shared";
 import { corsAllowedOrigins } from "./lib/env";
 import { requestId } from "./middleware/requestId";
 import { autoAudit } from "./middleware/autoAudit";
@@ -37,7 +37,7 @@ export function createApp(): Express {
   app.get("/health", (_req, res) => {
     const body: HealthCheckResponse = {
       status: "ok",
-      service: "punarvas-api",
+      service: "prahari-api",
       timestamp: new Date().toISOString(),
     };
     res.json(body);

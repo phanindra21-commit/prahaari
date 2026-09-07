@@ -18,7 +18,7 @@ import "dotenv/config";
 import { env } from "../lib/env";
 
 const API_BASE_URL = `http://localhost:${env.PORT}/api/v1`;
-const SUPERADMIN_EMAIL = "superadmin@punarvas.gov.in";
+const SUPERADMIN_EMAIL = "superadmin@prahari.gov.in";
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 120_000;
 

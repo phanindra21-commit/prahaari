@@ -53,7 +53,7 @@ async function seedHabitation(districtId: Types.ObjectId, code: string, name: st
 async function makeUser(role: "FIELD_VOLUNTEER" | "ANALYST" | "SUPER_ADMIN", districtId?: Types.ObjectId) {
   return User.create({
     name: `Test ${role}`,
-    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@punarvas.gov.in`,
+    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@prahari.gov.in`,
     passwordHash: await hashPassword("SomePassw0rd!23"),
     role,
     scope: districtId ? { districtId } : {},

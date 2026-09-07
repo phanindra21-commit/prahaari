@@ -1,4 +1,4 @@
-import type { ZoneClass } from "@punarvas/shared";
+import type { ZoneClass } from "@prahari/shared";
 
 const ZONE_STYLES: Record<ZoneClass, string> = {
   Red: "bg-zone-red/20 text-zone-red border-zone-red/40",

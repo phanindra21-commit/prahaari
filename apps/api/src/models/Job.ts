@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { JOB_STATUSES, JOB_TYPES } from "@punarvas/shared";
-import type { JobStatus, JobType } from "@punarvas/shared";
+import { JOB_STATUSES, JOB_TYPES } from "@prahari/shared";
+import type { JobStatus, JobType } from "@prahari/shared";
 
 export interface JobDoc extends Document {
   type: JobType;

@@ -10,7 +10,7 @@
  * Pure geometry, no MongoDB — runs against the raw seed files before any
  * database write, so a bad fixture is caught before it's ever persisted.
  */
-import type { GeoPolygonal } from "@punarvas/shared";
+import type { GeoPolygonal } from "@prahari/shared";
 
 function pointInRing(point: [number, number], ring: readonly (readonly [number, number])[]): boolean {
   const [x, y] = point;

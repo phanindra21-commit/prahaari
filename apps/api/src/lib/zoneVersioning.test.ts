@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { GeoPolygon } from "@punarvas/shared";
+import type { GeoPolygon } from "@prahari/shared";
 import { District } from "../models/District";
 import { HazardZone } from "../models/HazardZone";
 import { writeZoneVersion, getActiveZones, type ZoneVersionInput } from "./zoneVersioning";

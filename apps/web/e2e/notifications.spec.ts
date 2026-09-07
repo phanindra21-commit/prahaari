@@ -13,8 +13,8 @@ import { test, expect } from "@playwright/test";
  */
 test.describe("notification bell (requires the dev backend stack running)", () => {
   test.skip(
-    !process.env.PUNARVAS_E2E_BACKEND,
-    "Set PUNARVAS_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
+    !process.env.PRAHARI_E2E_BACKEND,
+    "Set PRAHARI_E2E_BACKEND=1 when mongo+api+ml are running locally, seeded, with a completed Wayanad pipeline run.",
   );
 
   test("approving a Wayanad recommendation notifies the Wayanad analyst but not the Ganjam officer", async ({
@@ -23,8 +23,8 @@ test.describe("notification bell (requires the dev backend stack running)", () =
     const officerContext = await browser.newContext();
     const officerPage = await officerContext.newPage();
     await officerPage.goto("/login");
-    await officerPage.getByLabel("Email").fill("officer.wayanad@punarvas.gov.in");
-    await officerPage.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await officerPage.getByLabel("Email").fill("officer.wayanad@prahari.gov.in");
+    await officerPage.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await officerPage.getByRole("button", { name: "Sign in" }).click();
     await expect(officerPage).toHaveURL(/\/dashboard/);
 
@@ -48,8 +48,8 @@ test.describe("notification bell (requires the dev backend stack running)", () =
     const analystContext = await browser.newContext();
     const analystPage = await analystContext.newPage();
     await analystPage.goto("/login");
-    await analystPage.getByLabel("Email").fill("analyst.wayanad@punarvas.gov.in");
-    await analystPage.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await analystPage.getByLabel("Email").fill("analyst.wayanad@prahari.gov.in");
+    await analystPage.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await analystPage.getByRole("button", { name: "Sign in" }).click();
     await expect(analystPage).toHaveURL(/\/dashboard/);
 
@@ -69,8 +69,8 @@ test.describe("notification bell (requires the dev backend stack running)", () =
     const ganjamContext = await browser.newContext();
     const ganjamPage = await ganjamContext.newPage();
     await ganjamPage.goto("/login");
-    await ganjamPage.getByLabel("Email").fill("officer.ganjam@punarvas.gov.in");
-    await ganjamPage.getByLabel("Password").fill("PunarVas@DevDefault123");
+    await ganjamPage.getByLabel("Email").fill("officer.ganjam@prahari.gov.in");
+    await ganjamPage.getByLabel("Password").fill("PRAHARI@DevDefault123");
     await ganjamPage.getByRole("button", { name: "Sign in" }).click();
     await expect(ganjamPage).toHaveURL(/\/dashboard/);
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { GeoPoint } from "@punarvas/shared";
+import type { GeoPoint } from "@prahari/shared";
 import type { RankedCandidateSiteDetail } from "../../lib/api";
 import { baseMapStyle } from "../map/mapStyle";
 

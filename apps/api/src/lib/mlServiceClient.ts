@@ -7,7 +7,7 @@ import {
   zoneClassSchema,
   priorityBucketSchema,
   bindingConstraintSchema,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import type {
   HazardType,
   GeoPolygonal,
@@ -17,7 +17,7 @@ import type {
   RelocationSiteRawAttributes,
   RelocationPriorityBucket,
   ScenarioParameters,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 import { env } from "./env";
 
 const cellScoreSchema = z.object({

@@ -58,7 +58,7 @@ async function seedSite(districtId: Types.ObjectId, name: string) {
 async function tokenForRole(role: "SUPER_ADMIN" | "DISTRICT_OFFICER", districtId?: Types.ObjectId): Promise<string> {
   const user = await User.create({
     name: `Test ${role}`,
-    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@punarvas.gov.in`,
+    email: `${role.toLowerCase()}-${new Types.ObjectId().toString()}@prahari.gov.in`,
     passwordHash: await hashPassword("SomePassw0rd!23"),
     role,
     scope: districtId ? { districtId } : {},

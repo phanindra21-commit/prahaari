@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { Types } from "mongoose";
-import { scenarioParametersSchema } from "@punarvas/shared";
+import { scenarioParametersSchema } from "@prahari/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";

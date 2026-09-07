@@ -26,7 +26,7 @@ import {
   habitationLivelihoodSchema,
   habitationCopingCapacitySchema,
   relocationSiteRawAttributesSchema,
-} from "@punarvas/shared";
+} from "@prahari/shared";
 
 export const seedDistrictSchema = z.object({
   lgdCode: z.string().min(1),

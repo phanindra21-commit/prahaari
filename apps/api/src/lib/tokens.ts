@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { randomBytes, createHash } from "node:crypto";
 import type { Types } from "mongoose";
-import type { UserRole } from "@punarvas/shared";
+import type { UserRole } from "@prahari/shared";
 import { env } from "./env";
 import type { UserDoc } from "../models/User";
 

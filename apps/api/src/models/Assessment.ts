@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { HAZARD_TYPES, PRIORITY_BUCKETS, EXPLANATION_DIRECTIONS, ZONE_CLASSES } from "@punarvas/shared";
-import type { HazardType, RelocationPriorityBucket, ExplanationDirection, ZoneClass } from "@punarvas/shared";
+import { HAZARD_TYPES, PRIORITY_BUCKETS, EXPLANATION_DIRECTIONS, ZONE_CLASSES } from "@prahari/shared";
+import type { HazardType, RelocationPriorityBucket, ExplanationDirection, ZoneClass } from "@prahari/shared";
 
 export interface HazardExposureEntry {
   hazardType: HazardType;

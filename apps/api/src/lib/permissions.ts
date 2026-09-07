@@ -1,5 +1,5 @@
-import { permissionsConfig } from "@punarvas/shared";
-import type { UserRole } from "@punarvas/shared";
+import { permissionsConfig } from "@prahari/shared";
+import type { UserRole } from "@prahari/shared";
 
 const grantsByRole: Record<UserRole, ReadonlySet<string>> = Object.fromEntries(
   Object.entries(permissionsConfig.roles).map(([role, granted]) => [role, new Set(granted)]),

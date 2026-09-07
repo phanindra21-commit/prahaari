@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { HazardType } from "@punarvas/shared";
+import type { HazardType } from "@prahari/shared";
 
 const HAZARD_LABELS: Record<HazardType, string> = {
   landslide: "landslide",
