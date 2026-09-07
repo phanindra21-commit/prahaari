@@ -901,6 +901,112 @@ completed.
   cleanly individually or with a fresh rate-limit window). Typecheck and
   lint clean on both workspaces throughout.
 
+### Post-demo-rehearsal: seed-script idempotency and STATE_ADMIN escalation — DONE
+
+Not one of this roadmap's original 14 steps; a later session's own scope
+(same reused-numbering situation as the blocks above — no step number
+assigned, since it isn't part of that sequence).
+
+**Part 1 (seed-script idempotency bug).** User-reported bug: a Chamoli
+recommendation showed all five candidate sites null-scored with a
+misleading "failed an exclusion criterion" message, for every role.
+Traced to `seedRelocationSites()` and `seedHazardZones()` in
+`apps/api/src/scripts/seed.ts` both using `$set` on an
+`updateOne`-with-`upsert` matched by natural key — unconditionally
+resetting pipeline-computed fields (site suitability scores, hazard zone
+geometry/scores) back to their unscored/seed-placeholder defaults on
+**every** plain `npm run seed` re-run, not just `--reset`. Live-pipeline
+output and seed placeholders carry identical `dataProvenance`/
+`generatedBy` tags, so re-seeding silently clobbered already-computed
+results with no error. Two `npm run seed` calls earlier in the Step 10
+demo-rehearsal session (adding new seed users) had wiped all three
+districts' relocation-site scores and hazard zones; Wayanad alone looked
+fine only because of unrelated later pipeline re-runs for e2e test data.
+Fixed by moving pipeline-owned fields to `$setOnInsert` (site scores) or
+the whole update to `$setOnInsert` (hazard zones, which are versioned
+and never mutated in place by design — the fix restores that invariant
+rather than introducing a new one). Verified the fix survives a real
+re-seed: ran `npm run seed` again post-fix and confirmed 0 documents
+touched (`matched: N, inserted: 0` for both collections) and all three
+districts' scores identical before/after.
+
+Also fixed the reported UI symptom itself, `SiteSuitabilityPanel` in
+`RecommendationDetailPage.tsx`: it printed "failed an exclusion
+criterion" whenever a site's score was merely null, regardless of
+`exclusionsFailed`. Now distinguishes a real exclusion failure (names the
+criterion) from `null score, no failed exclusions` ("scoring data
+unavailable — the site-scoring pipeline has not been run for this site
+yet").
+
+**One documented recovery command**, added per explicit request (a
+hackathon-day requirement — "I need to be able to recover if anything
+breaks"): `npm run demo:reset` (`scripts/resetDemo.mjs`) chains the five
+previously-separate README steps (seed → generate-grid →
+derive_factors.py → ingest-factors → run-pipeline) into one command,
+safe to run from any state since every step is independently idempotent
+(this fix included). README's demo path now leads with it.
+
+**Part 2 (STATE_ADMIN escalation exception).** `STATE_ADMIN` cannot
+approve a `Recommendation` — a deliberate separation-of-duties
+restriction (`STATE_ADMIN` holds every `*:write` permission over the
+evidence a recommendation is built from) already documented before this
+session. That restriction stayed; a documented, narrow exception was
+added for the real cases it blocks: an unavailable district officer, a
+cross-district recommendation, or a case an officer judges above their
+level.
+
+New `recommendation:approveEscalated` permission (`STATE_ADMIN`,
+`SUPER_ADMIN`); new `Recommendation.escalation` field (`status: "NONE" |
+"ESCALATED"`, `escalatedBy`, `escalatedAt`, `reason`); new `ESCALATE`
+`DecisionAction` (a `DISTRICT_OFFICER`, or `SUPER_ADMIN` on their behalf,
+escalates with the same >= 30-char justification every decision
+requires — writes a `Decision` and sets `escalation.status`, without
+deciding the recommendation itself, which stays `PENDING_REVIEW`). A
+`STATE_ADMIN` may record a real decision (Approve/Modify/Reject/Defer)
+**only** on a recommendation with `escalation.status === "ESCALATED"`,
+enforced server-side in `decision.routes.ts` after the recommendation is
+fetched (scope-checked first, so an out-of-state `STATE_ADMIN` gets 404,
+never reaching the escalation check) — not just hidden in the UI; tested
+directly (STATE_ADMIN blocked on non-escalated, allowed on
+same-state-escalated, blocked on different-state-escalated, cannot
+escalate itself, double-escalate rejected). Every such decision is
+marked `decisionLevel: "STATE"` (vs. `"DISTRICT"` otherwise, including an
+`ESCALATE`) on the `Decision` document and in the audit trail (a visible
+"STATE-LEVEL" badge), audited at `WARNING` severity instead of `INFO`.
+`packages/shared/src/config/permissions.json`'s `separationOfDuties`
+block documents both the restriction and the exception together, with
+`loader.ts` asserting the new permission's grant list at import time,
+mirroring the existing `recommendation:approve` assertion. Full reasoning
+in `docs/SECURITY.md` §4.1.
+
+Web: `DecisionActionPanel` gains an "Escalate to State" action for a
+`DISTRICT_OFFICER`/`SUPER_ADMIN` on a not-yet-escalated recommendation,
+an escalation-context note once escalated, and an updated restricted-view
+message for a `STATE_ADMIN` explaining the exception rather than just
+"restricted." `AuditTrailPanel` shows the STATE-LEVEL marking. Review
+queue gains an "Escalated" filter and a visual flag on escalated rows.
+Notifications: escalating notifies the state's `STATE_ADMIN`(s); a
+state-level decision explicitly notifies the originating district
+officer (`notifications.ts`'s `notifyOnEscalation`, and `notifyOnDecision`
+extended with an explicit, deduped recipient for this case).
+
+Verified: 281 API tests (was 264 — 9 new escalation route tests, 4 new
+permission-matrix tests, 1 pre-existing fixture updated for the new
+required `decisionLevel` field), typecheck and lint clean on every
+workspace (one pre-existing, untouched lint error in a build script,
+unrelated). Verified in a real browser (Playwright against the built
+production bundle): logged in as Priya Nair (Wayanad `DISTRICT_OFFICER`),
+escalated a recommendation with a justification; logged in as Ravi Varma
+(Kerala `STATE_ADMIN`), confirmed decision controls appeared on that one
+recommendation and not on an ordinary one, approved it, confirmed the
+audit trail's state-level marking and chain-verified badge — kept as
+`apps/web/e2e/escalation.spec.ts`, retargeted to Chamoli/Uttarakhand
+(same scenario, different pilot district) since every other standing e2e
+spec already logs in as `officer.wayanad@` at least once and that
+account's 5-attempts/15-min login-rate-limit budget was already fully
+spent by the rest of the suite in one run — full 10-spec e2e suite passes
+together in one clean run.
+
 ## Why Python Is a Separate Service
 
 See `docs/ARCHITECTURE.md` for the full rationale — in short: geospatial

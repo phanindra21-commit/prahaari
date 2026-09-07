@@ -355,6 +355,10 @@ export const permissionsConfigSchema = z.object({
   separationOfDuties: z.object({
     note: z.string(),
     approverRoles: z.array(z.enum(USER_ROLES)).min(1),
+    /** Escalation exception (docs/SECURITY.md): roles allowed to decide a
+     * recommendation a District Officer has explicitly escalated —
+     * disjoint from, not a repeal of, approverRoles above. */
+    escalatedApproverRoles: z.array(z.enum(USER_ROLES)).min(1),
   }),
 });
 export type PermissionsConfig = z.infer<typeof permissionsConfigSchema>;

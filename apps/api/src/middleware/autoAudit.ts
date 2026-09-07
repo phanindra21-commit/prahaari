@@ -1,12 +1,17 @@
 import type { RequestHandler } from "express";
 import { Types } from "mongoose";
 import { audit } from "../lib/audit";
+import type { AuditSeverity } from "../models/AuditLog";
 
 export interface AuditEntityLocals {
   entityType?: string;
   entityId?: string | null;
   before?: unknown;
   after?: unknown;
+  /** Overrides the default INFO severity — e.g. a state-level decision
+   * (STATE_ADMIN acting on an escalated recommendation) is WARNING, per
+   * docs/SECURITY.md's escalation section. */
+  severity?: AuditSeverity;
 }
 
 function toObjectId(value: string | null | undefined): Types.ObjectId | null {
@@ -59,7 +64,7 @@ export const autoAudit: RequestHandler = (req, res, next) => {
       requestId: req.requestId,
       ipAddress: req.ip ?? "unknown",
       userAgent: req.header("User-Agent") ?? "unknown",
-      severity: "INFO",
+      severity: entity?.severity ?? "INFO",
     }).catch((err: unknown) => {
       console.error("[autoAudit] failed to write audit entry", err);
     });

@@ -1,6 +1,12 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ZONE_CLASSES } from "@punarvas/shared";
-import type { RelocationPriorityBucket, RecommendationStatus, ZoneClass, GeoLineString } from "@punarvas/shared";
+import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ZONE_CLASSES, ESCALATION_STATUSES } from "@punarvas/shared";
+import type {
+  RelocationPriorityBucket,
+  RecommendationStatus,
+  ZoneClass,
+  GeoLineString,
+  EscalationStatus,
+} from "@punarvas/shared";
 import { geoLineStringSchema } from "./geoSchemas";
 
 /**
@@ -47,6 +53,19 @@ export interface PhasingPlanEntry {
   targetDate: Date;
 }
 
+/** Set by a DISTRICT_OFFICER's (or SUPER_ADMIN's, on their behalf) ESCALATE
+ * decision — the documented exception letting a STATE_ADMIN act on this one
+ * recommendation despite normally being barred from approving. Escalating
+ * does not itself decide the recommendation — `status` stays PENDING_REVIEW
+ * until an actual APPROVE/MODIFY/REJECT/DEFER is recorded. See
+ * docs/SECURITY.md's escalation section. */
+export interface RecommendationEscalation {
+  status: EscalationStatus;
+  escalatedBy: Types.ObjectId | null;
+  escalatedAt: Date | null;
+  reason: string | null;
+}
+
 /** A system-generated pairing of one habitation with its ranked candidate relocation sites. */
 export interface RecommendationDoc extends Document {
   habitationId: Types.ObjectId;
@@ -65,6 +84,7 @@ export interface RecommendationDoc extends Document {
   rationale: string;
   modelVersion: string;
   status: RecommendationStatus;
+  escalation: RecommendationEscalation;
   generatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -112,6 +132,16 @@ const phasingPlanEntrySchema = new Schema<PhasingPlanEntry>(
   { _id: false },
 );
 
+const recommendationEscalationSchema = new Schema<RecommendationEscalation>(
+  {
+    status: { type: String, enum: ESCALATION_STATUSES, required: true, default: "NONE" },
+    escalatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    escalatedAt: { type: Date, default: null },
+    reason: { type: String, default: null },
+  },
+  { _id: false },
+);
+
 const recommendationSchema = new Schema<RecommendationDoc>(
   {
     habitationId: { type: Schema.Types.ObjectId, ref: "Habitation", required: true },
@@ -129,6 +159,7 @@ const recommendationSchema = new Schema<RecommendationDoc>(
       required: true,
       default: "PENDING_REVIEW",
     },
+    escalation: { type: recommendationEscalationSchema, required: true, default: () => ({ status: "NONE" }) },
     generatedAt: { type: Date, required: true },
   },
   { timestamps: true },
@@ -136,6 +167,7 @@ const recommendationSchema = new Schema<RecommendationDoc>(
 
 recommendationSchema.index({ habitationId: 1, status: 1 });
 recommendationSchema.index({ districtId: 1, priorityBucket: 1, status: 1 });
+recommendationSchema.index({ districtId: 1, "escalation.status": 1 });
 
 export const Recommendation = model<RecommendationDoc>(
   "Recommendation",

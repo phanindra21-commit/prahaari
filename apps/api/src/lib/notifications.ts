@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
-import type { DecisionAction } from "@punarvas/shared";
+import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
 import { User } from "../models/User";
 import { Notification } from "../models/Notification";
 
-const ACTION_LABEL: Record<DecisionAction, string> = {
+const ACTION_LABEL: Record<Exclude<DecisionAction, "ESCALATE">, string> = {
   APPROVE: "approved",
   MODIFY: "modified",
   REJECT: "rejected",
@@ -11,7 +11,8 @@ const ACTION_LABEL: Record<DecisionAction, string> = {
 };
 
 interface NotifyOnDecisionInput {
-  action: DecisionAction;
+  action: Exclude<DecisionAction, "ESCALATE">;
+  decisionLevel: DecisionLevel;
   officerId: Types.ObjectId;
   officerName: string;
   districtId: Types.ObjectId;
@@ -19,6 +20,12 @@ interface NotifyOnDecisionInput {
   districtState: string;
   habitationName: string;
   recommendationId: Types.ObjectId;
+  /** The district officer who escalated this recommendation, if any —
+   * explicitly notified when `decisionLevel` is "STATE" (point 8: "a
+   * state-level decision notifies the originating DISTRICT_OFFICER"),
+   * in addition to (deduped against) every DISTRICT_OFFICER in the
+   * district the generic scan below already includes. */
+  escalatedByUserId?: Types.ObjectId | null;
 }
 
 /**
@@ -42,6 +49,7 @@ interface NotifyOnDecisionInput {
 export async function notifyOnDecision(input: NotifyOnDecisionInput): Promise<void> {
   const {
     action,
+    decisionLevel,
     officerId,
     officerName,
     districtId,
@@ -49,9 +57,11 @@ export async function notifyOnDecision(input: NotifyOnDecisionInput): Promise<vo
     districtState,
     habitationName,
     recommendationId,
+    escalatedByUserId,
   } = input;
 
-  const message = `${habitationName} (${districtName}, ${districtState}): recommendation ${ACTION_LABEL[action]} by ${officerName}.`;
+  const levelPhrase = decisionLevel === "STATE" ? " (state-level)" : "";
+  const message = `${habitationName} (${districtName}, ${districtState}): recommendation ${ACTION_LABEL[action]} by ${officerName}${levelPhrase}.`;
 
   const [stateAdmins, districtOfficers, analysts] = await Promise.all([
     User.find({ role: "STATE_ADMIN", "scope.state": districtState, isActive: true }, { _id: 1 }).lean(),
@@ -66,16 +76,65 @@ export async function notifyOnDecision(input: NotifyOnDecisionInput): Promise<vo
     ).lean(),
   ]);
 
-  const recipientIds = [...stateAdmins, ...districtOfficers, ...analysts]
+  const explicitRecipients = decisionLevel === "STATE" && escalatedByUserId ? [{ _id: escalatedByUserId }] : [];
+
+  const recipientIds = [...stateAdmins, ...districtOfficers, ...analysts, ...explicitRecipients]
     .map((u) => u._id as Types.ObjectId)
     .filter((id) => !id.equals(officerId));
+  const uniqueRecipientIds = [...new Map(recipientIds.map((id) => [id.toString(), id])).values()];
+
+  if (uniqueRecipientIds.length === 0) return;
+
+  await Notification.insertMany(
+    uniqueRecipientIds.map((recipientId) => ({
+      recipientId,
+      type: "DECISION_RECORDED" as const,
+      message,
+      relatedEntityType: "recommendation" as const,
+      relatedEntityId: recommendationId,
+      districtId,
+      read: false,
+    })),
+  );
+}
+
+interface NotifyOnEscalationInput {
+  officerId: Types.ObjectId;
+  officerName: string;
+  districtId: Types.ObjectId;
+  districtName: string;
+  districtState: string;
+  habitationName: string;
+  recommendationId: Types.ObjectId;
+}
+
+/**
+ * Escalation notification (point 8): notifies every STATE_ADMIN for the
+ * escalating district's state — nobody else. Unlike notifyOnDecision this
+ * deliberately does not also notify other district officers or analysts:
+ * an escalation is a request for state-level action, and the state admin
+ * is the only role that gains anything actionable from being told about it.
+ * Best-effort, same as notifyOnDecision — a notification failure must never
+ * block the ESCALATE decision itself from having been recorded.
+ */
+export async function notifyOnEscalation(input: NotifyOnEscalationInput): Promise<void> {
+  const { officerId, officerName, districtId, districtName, districtState, habitationName, recommendationId } =
+    input;
+
+  const message = `${habitationName} (${districtName}, ${districtState}): recommendation escalated to State by ${officerName}.`;
+
+  const stateAdmins = await User.find(
+    { role: "STATE_ADMIN", "scope.state": districtState, isActive: true },
+    { _id: 1 },
+  ).lean();
+  const recipientIds = stateAdmins.map((u) => u._id as Types.ObjectId).filter((id) => !id.equals(officerId));
 
   if (recipientIds.length === 0) return;
 
   await Notification.insertMany(
     recipientIds.map((recipientId) => ({
       recipientId,
-      type: "DECISION_RECORDED" as const,
+      type: "RECOMMENDATION_ESCALATED" as const,
       message,
       relatedEntityType: "recommendation" as const,
       relatedEntityId: recommendationId,

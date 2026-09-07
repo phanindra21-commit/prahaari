@@ -31,7 +31,16 @@ export const RECOMMENDATION_STATUSES = [
   "DEFERRED",
 ] as const;
 
-export const DECISION_ACTIONS = ["APPROVE", "MODIFY", "REJECT", "DEFER"] as const;
+export const DECISION_ACTIONS = ["APPROVE", "MODIFY", "REJECT", "DEFER", "ESCALATE"] as const;
+
+/** Who a Decision was taken by, structurally: STATE only when a STATE_ADMIN
+ * acted (necessarily on a recommendation a DISTRICT_OFFICER escalated —
+ * enforced server-side, see docs/SECURITY.md's escalation section); DISTRICT
+ * for every DISTRICT_OFFICER or SUPER_ADMIN action, including SUPER_ADMIN
+ * escalating on a district officer's behalf. */
+export const DECISION_LEVELS = ["DISTRICT", "STATE"] as const;
+
+export const ESCALATION_STATUSES = ["NONE", "ESCALATED"] as const;
 
 export const GENERATED_BY_VALUES = ["MODEL", "OFFICER_OVERRIDE"] as const;
 
@@ -61,7 +70,7 @@ export const JOB_STATUSES = ["PENDING", "RUNNING", "SUCCEEDED", "FAILED"] as con
 
 export const JOB_TYPES = ["ZONING_RUN", "PIPELINE_RUN"] as const;
 
-export const NOTIFICATION_TYPES = ["DECISION_RECORDED"] as const;
+export const NOTIFICATION_TYPES = ["DECISION_RECORDED", "RECOMMENDATION_ESCALATED"] as const;
 
 export const PILOT_DISTRICTS = [
   { name: "Wayanad", state: "Kerala", primaryHazard: "landslide" },

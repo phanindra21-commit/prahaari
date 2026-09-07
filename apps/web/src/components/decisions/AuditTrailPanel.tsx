@@ -6,6 +6,7 @@ const ACTION_LABELS: Record<string, string> = {
   MODIFY: "Modified",
   REJECT: "Rejected",
   DEFER: "Deferred",
+  ESCALATE: "Escalated to State",
 };
 
 export function AuditTrailPanel({ recommendationId }: { recommendationId: string }): JSX.Element {
@@ -36,7 +37,17 @@ export function AuditTrailPanel({ recommendationId }: { recommendationId: string
           return (
             <li key={decision._id} className="rounded border border-ink-600 bg-ink-800 p-2.5 text-xs">
               <div className="mb-1 flex items-center justify-between">
-                <span className="font-medium text-mist-100">{ACTION_LABELS[decision.action] ?? decision.action}</span>
+                <span className="flex items-center gap-1.5">
+                  <span className="font-medium text-mist-100">{ACTION_LABELS[decision.action] ?? decision.action}</span>
+                  {decision.decisionLevel === "STATE" && (
+                    <span
+                      className="rounded border border-zone-orange/50 bg-zone-orange/10 px-1 py-0.5 text-[10px] font-medium text-zone-orange"
+                      title="Taken by a State Admin on a recommendation a District Officer explicitly escalated"
+                    >
+                      STATE-LEVEL
+                    </span>
+                  )}
+                </span>
                 <span className="text-mist-400">{new Date(decision.decidedAt).toLocaleString("en-IN")}</span>
               </div>
               <p className="mb-1 text-mist-300">

@@ -21,7 +21,12 @@ export type LandOwnershipType = "GOVT" | "PRIVATE" | "COMMUNITY" | "FOREST";
 export type RecommendationStatus =
   "PENDING_REVIEW" | "APPROVED" | "MODIFIED" | "REJECTED" | "DEFERRED";
 
-export type DecisionAction = "APPROVE" | "MODIFY" | "REJECT" | "DEFER";
+export type DecisionAction = "APPROVE" | "MODIFY" | "REJECT" | "DEFER" | "ESCALATE";
+
+/** See DECISION_LEVELS in ./constants.ts for the exact rule that assigns this. */
+export type DecisionLevel = "DISTRICT" | "STATE";
+
+export type EscalationStatus = "NONE" | "ESCALATED";
 
 export type GeneratedBy = "MODEL" | "OFFICER_OVERRIDE";
 
@@ -49,7 +54,7 @@ export type FieldReportVerificationStatus = "PENDING" | "VERIFIED" | "REJECTED";
 export type JobStatus = "PENDING" | "RUNNING" | "SUCCEEDED" | "FAILED";
 export type JobType = "ZONING_RUN" | "PIPELINE_RUN";
 
-export type NotificationType = "DECISION_RECORDED";
+export type NotificationType = "DECISION_RECORDED" | "RECOMMENDATION_ESCALATED";
 
 export interface HealthCheckResponse {
   status: "ok";

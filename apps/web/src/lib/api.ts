@@ -9,6 +9,8 @@ import type {
   UserRole,
   RecommendationStatus,
   DecisionAction,
+  DecisionLevel,
+  EscalationStatus,
 } from "@punarvas/shared";
 import { apiRequest } from "./apiClient";
 
@@ -425,6 +427,13 @@ export interface RankedCandidateSiteDetail {
   routeSafetyScore: number | null;
 }
 
+export interface RecommendationEscalation {
+  status: EscalationStatus;
+  escalatedBy: string | null;
+  escalatedAt: string | null;
+  reason: string | null;
+}
+
 export interface RecommendationItem {
   _id: string;
   habitationId: RecommendationHabitationRef;
@@ -437,6 +446,7 @@ export interface RecommendationItem {
   rationale: string;
   modelVersion: string;
   status: RecommendationStatus;
+  escalation: RecommendationEscalation;
   generatedAt: string;
 }
 
@@ -444,6 +454,7 @@ export function listRecommendations(params: {
   districtId?: string;
   priorityBucket?: RelocationPriorityBucket;
   status?: RecommendationStatus;
+  escalationStatus?: EscalationStatus;
 }): Promise<{ items: RecommendationItem[] }> {
   return apiRequest("/recommendations", { query: params });
 }
@@ -471,6 +482,7 @@ export interface DecisionRecord {
   districtId: string;
   officerId: DecisionOfficerRef;
   action: DecisionAction;
+  decisionLevel: DecisionLevel;
   justification: string;
   overriddenFields: OverriddenFieldRecord[];
   decidedAt: string;

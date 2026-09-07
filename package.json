@@ -22,7 +22,8 @@
     "format": "prettier --write .",
     "setup": "node scripts/setup-env.js",
     "seed": "npm run seed --workspace=@punarvas/api",
-    "seed:reset": "npm run seed:reset --workspace=@punarvas/api"
+    "seed:reset": "npm run seed:reset --workspace=@punarvas/api",
+    "demo:reset": "node scripts/resetDemo.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

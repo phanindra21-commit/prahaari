@@ -604,6 +604,11 @@ cleared that bar, so it correctly receives a small residual weight.
 
 Candidate sites are ranked by `SSS` descending and passed, along with
 their carrying capacity (Section 5), to the officer decision workbench.
+A `DISTRICT_OFFICER` normally approves/modifies/rejects/defers there; a
+`STATE_ADMIN` may act only on a recommendation the district officer has
+explicitly escalated — see `docs/SECURITY.md` §4.1 for the full
+separation-of-duties reasoning and mechanism, not repeated here since
+this document covers scoring, not RBAC.
 
 ---
 

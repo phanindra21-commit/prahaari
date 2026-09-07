@@ -318,6 +318,22 @@ function loadPermissions(): PermissionsConfig {
     }
   }
 
+  // Mirrors the approverRoles assertion above for the escalation exception
+  // (docs/SECURITY.md): editing the JSON to hand recommendation:approveEscalated
+  // to a role outside escalatedApproverRoles — or forget to grant it to one
+  // inside — fails app startup, not just a lint warning.
+  const escalatedApproverPermission = "recommendation:approveEscalated";
+  const escalatedApproverRoles = new Set<string>(config.separationOfDuties.escalatedApproverRoles);
+  for (const [role, granted] of Object.entries(config.roles)) {
+    const hasApproveEscalated = granted.includes(escalatedApproverPermission);
+    const shouldHaveApproveEscalated = escalatedApproverRoles.has(role);
+    if (hasApproveEscalated !== shouldHaveApproveEscalated) {
+      throw new Error(
+        `[shared/config] permissions.json separation-of-duties violation: "${escalatedApproverPermission}" must be granted to exactly [${config.separationOfDuties.escalatedApproverRoles.join(", ")}] (role "${role}" ${hasApproveEscalated ? "has" : "lacks"} it, expected ${shouldHaveApproveEscalated ? "to have" : "not to have"} it)`,
+      );
+    }
+  }
+
   return config;
 }
 

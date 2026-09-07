@@ -271,9 +271,13 @@ function SiteSuitabilityPanel({
             demographics={demographics}
           />
         </div>
-      ) : (
+      ) : site.exclusionsFailed.length > 0 ? (
         <p className="border-t border-ink-700 pt-2 text-[11px] text-mist-400">
-          Not scored — this site failed an exclusion criterion.
+          Not scored — failed exclusion: {site.exclusionsFailed.join(", ")}.
+        </p>
+      ) : (
+        <p className="border-t border-ink-700 pt-2 text-[11px] text-zone-orange">
+          Scoring data unavailable — the site-scoring pipeline has not been run for this site yet.
         </p>
       )}
     </div>

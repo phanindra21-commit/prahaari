@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { RecommendationStatus, RelocationPriorityBucket } from "@punarvas/shared";
+import type { RecommendationStatus, RelocationPriorityBucket, EscalationStatus } from "@punarvas/shared";
 import { useDistrictStore } from "../stores/districtStore";
 import { useAuthStore } from "../stores/authStore";
 import { hasPermission } from "../lib/permissions";
@@ -24,6 +24,11 @@ const STATUS_FILTERS: Array<{ label: string; value: RecommendationStatus | undef
   { label: "Deferred", value: "DEFERRED" },
 ];
 
+const ESCALATION_FILTERS: Array<{ label: string; value: EscalationStatus | undefined }> = [
+  { label: "All", value: undefined },
+  { label: "Escalated", value: "ESCALATED" },
+];
+
 /** Step 7 Commit 3A: the officer review queue — every system-generated
  * habitation-to-site recommendation for the selected district (TopBar's
  * district switcher), filterable by priority bucket and decision status. */
@@ -36,10 +41,12 @@ export function ReviewQueuePage(): JSX.Element {
 
   const [bucket, setBucket] = useState<RelocationPriorityBucket | undefined>(undefined);
   const [status, setStatus] = useState<RecommendationStatus | undefined>(undefined);
+  const [escalationStatus, setEscalationStatus] = useState<EscalationStatus | undefined>(undefined);
   const { data, isLoading, isError } = useRecommendations({
     districtId: canReadRecommendations ? (selectedDistrictId ?? undefined) : undefined,
     priorityBucket: bucket,
     status,
+    escalationStatus,
   });
   const navigate = useNavigate();
 
@@ -68,10 +75,11 @@ export function ReviewQueuePage(): JSX.Element {
               {data.items.length} matching {data.items.length === 1 ? "record" : "records"}
               {bucket ? ` · ${BUCKET_FILTERS.find((f) => f.value === bucket)?.label}` : ""}
               {status ? ` · ${STATUS_FILTERS.find((f) => f.value === status)?.label}` : ""}
+              {escalationStatus ? ` · ${ESCALATION_FILTERS.find((f) => f.value === escalationStatus)?.label}` : ""}
             </span>
           )}
         </div>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           {BUCKET_FILTERS.map((f) => (
             <button
               key={f.label}
@@ -95,6 +103,21 @@ export function ReviewQueuePage(): JSX.Element {
               className={`rounded border px-2 py-1 text-xs transition-colors ${
                 status === f.value
                   ? "border-signal bg-signal/10 text-signal-bright"
+                  : "border-ink-600 text-mist-300 hover:text-mist-100"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+          <span className="mx-1 self-center text-ink-500">|</span>
+          {ESCALATION_FILTERS.map((f) => (
+            <button
+              key={f.label}
+              type="button"
+              onClick={() => setEscalationStatus(f.value)}
+              className={`rounded border px-2 py-1 text-xs transition-colors ${
+                escalationStatus === f.value
+                  ? "border-zone-orange bg-zone-orange/10 text-zone-orange"
                   : "border-ink-600 text-mist-300 hover:text-mist-100"
               }`}
             >
@@ -152,7 +175,17 @@ export function ReviewQueuePage(): JSX.Element {
                       <PriorityBadge bucket={rec.priorityBucket} />
                     </td>
                     <td className="px-3 py-2">
-                      <RecommendationStatusBadge status={rec.status} />
+                      <div className="flex items-center gap-1.5">
+                        <RecommendationStatusBadge status={rec.status} />
+                        {rec.escalation.status === "ESCALATED" && (
+                          <span
+                            className="rounded border border-zone-orange/50 bg-zone-orange/10 px-1 py-0.5 text-[10px] font-medium text-zone-orange"
+                            title="Escalated to State"
+                          >
+                            ESCALATED
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-3 py-2 text-xs text-mist-300">
                       {topSite?.name ?? "—"}

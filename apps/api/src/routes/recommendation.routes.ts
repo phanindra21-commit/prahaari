@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { Types } from "mongoose";
-import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES } from "@punarvas/shared";
+import { PRIORITY_BUCKETS, RECOMMENDATION_STATUSES, ESCALATION_STATUSES } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
 import { requirePermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
@@ -21,6 +21,7 @@ const listQuerySchema = z.object({
   districtId: objectIdString.optional(),
   priorityBucket: z.enum(PRIORITY_BUCKETS).optional(),
   status: z.enum(RECOMMENDATION_STATUSES).optional(),
+  escalationStatus: z.enum(ESCALATION_STATUSES).optional(),
 });
 
 /**
@@ -61,6 +62,9 @@ recommendationRouter.get(
       }
       if (query.status) {
         filter.status = query.status;
+      }
+      if (query.escalationStatus) {
+        filter["escalation.status"] = query.escalationStatus;
       }
 
       const recommendations = await Recommendation.find(filter)

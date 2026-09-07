@@ -2,12 +2,12 @@ import { Router } from "express";
 import { z } from "zod";
 import { Types } from "mongoose";
 import { DECISION_ACTIONS, justificationSchema } from "@punarvas/shared";
-import type { DecisionAction } from "@punarvas/shared";
+import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
 import { authenticate } from "../middleware/authenticate";
-import { requirePermission } from "../middleware/requirePermission";
+import { requirePermission, requireAnyPermission } from "../middleware/requirePermission";
 import { requireScope } from "../middleware/requireScope";
 import { requireDistrictInScope } from "../lib/districtScope";
-import { notifyOnDecision } from "../lib/notifications";
+import { notifyOnDecision, notifyOnEscalation } from "../lib/notifications";
 import { Decision } from "../models/Decision";
 import { Recommendation, type RecommendationDoc } from "../models/Recommendation";
 import { Habitation } from "../models/Habitation";
@@ -17,6 +17,11 @@ import { User } from "../models/User";
 export const decisionRouter = Router();
 
 const RECOMMENDATION_APPROVE = "recommendation:approve";
+/** Step: STATE_ADMIN escalation. Granted to STATE_ADMIN and SUPER_ADMIN
+ * (permissions.json). Reaching this route with only this permission (i.e.
+ * not also `recommendation:approve`) means STATE_ADMIN — every other role
+ * that can hit this route holds `recommendation:approve` instead. */
+const RECOMMENDATION_APPROVE_ESCALATED = "recommendation:approveEscalated";
 const DECISION_READ = "decision:read";
 
 const objectIdString = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId");
@@ -24,8 +29,12 @@ const objectIdString = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId")
 /** Maps a decision action to the Recommendation.status it produces —
  * DECISION_ACTIONS ("APPROVE"|"MODIFY"|"REJECT"|"DEFER") and
  * RECOMMENDATION_STATUSES don't share spelling ("APPROVE" -> "APPROVED"),
- * so this mapping is the single place that translation happens. */
-const STATUS_FOR_ACTION: Record<DecisionAction, RecommendationDoc["status"]> = {
+ * so this mapping is the single place that translation happens. ESCALATE
+ * is deliberately excluded: escalating routes a recommendation up, it does
+ * not decide it — `status` stays PENDING_REVIEW so a later real decision
+ * (by either the district officer or, now unlocked, the state admin) can
+ * still be recorded against the same recommendation. */
+const STATUS_FOR_ACTION: Record<Exclude<DecisionAction, "ESCALATE">, RecommendationDoc["status"]> = {
   APPROVE: "APPROVED",
   MODIFY: "MODIFIED",
   REJECT: "REJECTED",
@@ -109,21 +118,32 @@ function applyOverride(recommendation: RecommendationDoc, override: OverriddenFi
 
 /**
  * POST /api/v1/decisions — the human-in-the-loop action: an officer
- * approves, modifies, rejects, or defers one Recommendation. Justification
- * is mandatory (>= 30 chars, enforced both here via Zod and client-side)
- * per CLAUDE.md's "officer actions are never silent" rule. Every changed
- * field on a MODIFY is recorded with its from/to values on the Decision
- * document; the generic autoAudit middleware (see app.ts) writes the
- * hash-chained AuditLog entry once `res.locals.auditEntity` is set below.
+ * approves, modifies, rejects, defers, or (District Officer / Super Admin
+ * only) escalates one Recommendation. Justification is mandatory (>= 30
+ * chars, enforced both here via Zod and client-side) per CLAUDE.md's
+ * "officer actions are never silent" rule. Every changed field on a MODIFY
+ * is recorded with its from/to values on the Decision document; the
+ * generic autoAudit middleware (see app.ts) writes the hash-chained
+ * AuditLog entry once `res.locals.auditEntity` is set below.
+ *
+ * Two structurally different roles can reach this route:
+ * DISTRICT_OFFICER/SUPER_ADMIN via `recommendation:approve`, or STATE_ADMIN
+ * via `recommendation:approveEscalated` — the route gate below only checks
+ * "holds at least one of these", so the finer-grained rule (STATE_ADMIN may
+ * act ONLY on a recommendation a district officer has explicitly escalated,
+ * and may never escalate one themselves) is enforced inline, after the
+ * recommendation is fetched, not by the gate. See docs/SECURITY.md's
+ * escalation section for the full reasoning.
  */
 decisionRouter.post(
   "/decisions",
   authenticate,
-  requirePermission(RECOMMENDATION_APPROVE),
+  requireAnyPermission(RECOMMENDATION_APPROVE, RECOMMENDATION_APPROVE_ESCALATED),
   requireScope(),
   (req, res, next) => {
     void (async () => {
       const body = createDecisionRequestSchema.parse(req.body);
+      const role = req.auth!.role;
 
       if (body.action === "MODIFY" && body.overriddenFields.length === 0) {
         res.status(422).json({ error: "A MODIFY decision requires at least one entry in overriddenFields" });
@@ -157,11 +177,39 @@ decisionRouter.post(
         return;
       }
 
+      // SECURITY: the exploit path this project explicitly assumes will be
+      // probed (three prior scope bypasses). Neither branch is reachable
+      // by ANALYST/FIELD_VOLUNTEER — the route gate above already rejects
+      // them (they hold neither recommendation:approve nor
+      // recommendation:approveEscalated).
+      if (body.action === "ESCALATE") {
+        if (role !== "DISTRICT_OFFICER" && role !== "SUPER_ADMIN") {
+          res.status(403).json({
+            error: "Only a District Officer (or Super Admin, on their behalf) may escalate a recommendation.",
+          });
+          return;
+        }
+        if (recommendation.escalation.status === "ESCALATED") {
+          res.status(409).json({ error: "This recommendation is already escalated." });
+          return;
+        }
+      } else if (role === "STATE_ADMIN" && recommendation.escalation.status !== "ESCALATED") {
+        res.status(403).json({
+          error:
+            "A State Admin may act only on a recommendation a District Officer has explicitly escalated. " +
+            "This recommendation has not been escalated.",
+        });
+        return;
+      }
+
+      const decisionLevel: DecisionLevel = role === "STATE_ADMIN" ? "STATE" : "DISTRICT";
+
       const beforeSnapshot = {
         status: recommendation.status,
         selectedSiteId: recommendation.selectedSiteId?.toString() ?? null,
         estimatedHouseholdsToMove: recommendation.estimatedHouseholdsToMove,
         phasing: recommendation.phasing,
+        escalationStatus: recommendation.escalation.status,
       };
 
       for (const override of body.overriddenFields) {
@@ -186,7 +234,18 @@ decisionRouter.post(
         }
       }
 
-      recommendation.status = STATUS_FOR_ACTION[body.action];
+      if (body.action === "ESCALATE") {
+        recommendation.escalation = {
+          status: "ESCALATED",
+          escalatedBy: req.auth!.userId,
+          escalatedAt: new Date(),
+          reason: body.justification,
+        };
+        // status stays PENDING_REVIEW — escalating routes the
+        // recommendation up, it does not decide it.
+      } else {
+        recommendation.status = STATUS_FOR_ACTION[body.action];
+      }
       await recommendation.save();
 
       const decision = await Decision.create({
@@ -194,16 +253,17 @@ decisionRouter.post(
         districtId: recommendation.districtId,
         officerId: req.auth!.userId,
         action: body.action,
+        decisionLevel,
         justification: body.justification,
         overriddenFields: body.overriddenFields,
         decidedAt: new Date(),
         ipAddress: req.ip ?? "unknown",
       });
 
-      // Step 10 Part 6: notify relevant users. Best-effort — a
-      // notification failure must never block the decision itself from
-      // having been recorded (already committed above); errors are
-      // logged, not thrown.
+      // Step 10 Part 6 / escalation step: notify relevant users. Best-effort
+      // — a notification failure must never block the decision itself from
+      // having been recorded (already committed above); errors are logged,
+      // not thrown.
       try {
         const [habitation, district, officer] = await Promise.all([
           Habitation.findById(recommendation.habitationId, { name: 1 }).lean(),
@@ -211,19 +271,33 @@ decisionRouter.post(
           User.findById(req.auth!.userId, { name: 1 }).lean(),
         ]);
         if (habitation && district && officer) {
-          await notifyOnDecision({
-            action: body.action,
-            officerId: req.auth!.userId,
-            officerName: officer.name,
-            districtId: recommendation.districtId,
-            districtName: district.name,
-            districtState: district.state,
-            habitationName: habitation.name,
-            recommendationId: recommendation._id,
-          });
+          if (body.action === "ESCALATE") {
+            await notifyOnEscalation({
+              officerId: req.auth!.userId,
+              officerName: officer.name,
+              districtId: recommendation.districtId,
+              districtName: district.name,
+              districtState: district.state,
+              habitationName: habitation.name,
+              recommendationId: recommendation._id,
+            });
+          } else {
+            await notifyOnDecision({
+              action: body.action,
+              decisionLevel,
+              officerId: req.auth!.userId,
+              officerName: officer.name,
+              districtId: recommendation.districtId,
+              districtName: district.name,
+              districtState: district.state,
+              habitationName: habitation.name,
+              recommendationId: recommendation._id,
+              escalatedByUserId: recommendation.escalation.escalatedBy,
+            });
+          }
         }
       } catch (error) {
-        console.error("notifyOnDecision failed (decision was still recorded):", error);
+        console.error("notifyOnDecision/notifyOnEscalation failed (decision was still recorded):", error);
       }
 
       res.locals.auditEntity = {
@@ -236,7 +310,14 @@ decisionRouter.post(
           estimatedHouseholdsToMove: recommendation.estimatedHouseholdsToMove,
           phasing: recommendation.phasing,
           overriddenFields: body.overriddenFields,
+          escalation: recommendation.escalation,
+          decisionLevel,
         },
+        // A state-level decision is a routine action's audit entry at
+        // WARNING, not INFO, purely so it stands out in the log as having
+        // been taken above district level — not a signal that anything
+        // went wrong.
+        severity: decisionLevel === "STATE" ? "WARNING" : "INFO",
       };
       res.status(201).json({ decision, recommendation });
     })().catch(next);

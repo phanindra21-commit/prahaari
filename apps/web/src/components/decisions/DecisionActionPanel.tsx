@@ -8,12 +8,18 @@ import type { CreateDecisionOverride, PhasingPlanEntry, RecommendationItem } fro
 
 const MIN_JUSTIFICATION_LENGTH = 30;
 
-const ACTIONS: Array<{ value: DecisionAction; label: string; style: string }> = [
+const DECIDE_ACTIONS: Array<{ value: DecisionAction; label: string; style: string }> = [
   { value: "APPROVE", label: "Approve", style: "border-zone-green/50 text-zone-green hover:bg-zone-green/10" },
   { value: "MODIFY", label: "Modify", style: "border-zone-orange/50 text-zone-orange hover:bg-zone-orange/10" },
   { value: "REJECT", label: "Reject", style: "border-zone-red/50 text-zone-red hover:bg-zone-red/10" },
   { value: "DEFER", label: "Defer", style: "border-zone-yellow/50 text-zone-yellow hover:bg-zone-yellow/10" },
 ];
+
+const ESCALATE_ACTION: { value: DecisionAction; label: string; style: string } = {
+  value: "ESCALATE",
+  label: "Escalate to State",
+  style: "border-signal/50 text-signal-bright hover:bg-signal/10",
+};
 
 function toDateInputValue(iso: string): string {
   return iso.slice(0, 10);
@@ -25,7 +31,21 @@ interface DecisionActionPanelProps {
 
 export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps): JSX.Element {
   const user = useAuthStore((s) => s.user);
-  const canDecide = user ? hasPermission(user.role, "recommendation:approve") : false;
+  const isEscalated = recommendation.escalation.status === "ESCALATED";
+  // Two structurally different ways to reach this panel: a district-level
+  // approver (DISTRICT_OFFICER/SUPER_ADMIN) can always act; a state-level
+  // approver (STATE_ADMIN/SUPER_ADMIN) can act ONLY on a recommendation a
+  // District Officer has explicitly escalated — the server enforces this
+  // exact rule independently (decision.routes.ts), this is only what the
+  // UI shows.
+  const canDecideAtDistrictLevel = user ? hasPermission(user.role, "recommendation:approve") : false;
+  const canDecideAtStateLevel = user ? hasPermission(user.role, "recommendation:approveEscalated") : false;
+  const canDecide = canDecideAtDistrictLevel || (canDecideAtStateLevel && isEscalated);
+  // Escalating is a district-officer action (or SUPER_ADMIN on their
+  // behalf) — a STATE_ADMIN, even one who can now decide an escalated
+  // recommendation, never escalates one themselves.
+  const canEscalate = canDecideAtDistrictLevel && !isEscalated;
+  const availableActions = canEscalate ? [...DECIDE_ACTIONS, ESCALATE_ACTION] : DECIDE_ACTIONS;
 
   const [action, setAction] = useState<DecisionAction>("APPROVE");
   const [justification, setJustification] = useState("");
@@ -50,10 +70,19 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
     return (
       <div className="rounded border border-ink-600 bg-ink-800 p-3 text-xs text-mist-300">
         <p className="font-medium text-mist-100">Approval restricted</p>
-        <p className="mt-1 leading-relaxed">
-          Your role ({user.role}) can view this recommendation but cannot approve, modify, reject, or defer it.
-          Only a District Officer or Super Admin may record a decision.
-        </p>
+        {canDecideAtStateLevel ? (
+          <p className="mt-1 leading-relaxed">
+            Your role ({user.role}) can act on a recommendation only after a District Officer has explicitly
+            escalated it — this one has not been. State Admins normally cannot approve at all, since the role
+            also holds write access to the underlying habitation/hazard/site data; escalation is the documented
+            exception, not a general grant.
+          </p>
+        ) : (
+          <p className="mt-1 leading-relaxed">
+            Your role ({user.role}) can view this recommendation but cannot approve, modify, reject, defer, or
+            escalate it. Only a District Officer or Super Admin may record a decision.
+          </p>
+        )}
       </div>
     );
   }
@@ -131,8 +160,17 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
     <div className="rounded border border-ink-600 bg-ink-800 p-3">
       <p className="mb-2 text-xs font-medium text-mist-200">Record a decision</p>
 
-      <div className="mb-3 flex gap-1.5">
-        {ACTIONS.map((a) => (
+      {isEscalated && (
+        <p className="mb-3 rounded border border-signal/40 bg-signal/10 px-2 py-1.5 text-[11px] leading-relaxed text-signal-bright">
+          Escalated to State{recommendation.escalation.escalatedAt
+            ? ` on ${new Date(recommendation.escalation.escalatedAt).toLocaleDateString("en-IN")}`
+            : ""}
+          {recommendation.escalation.reason ? `: "${recommendation.escalation.reason}"` : ""}
+        </p>
+      )}
+
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        {availableActions.map((a) => (
           <button
             key={a.value}
             type="button"
@@ -253,7 +291,7 @@ export function DecisionActionPanel({ recommendation }: DecisionActionPanelProps
         onClick={submit}
         className="mt-2.5 w-full rounded border border-signal-bright/60 bg-signal/10 py-1.5 text-xs font-medium text-signal-bright transition-colors hover:bg-signal/20 disabled:cursor-not-allowed disabled:border-ink-600 disabled:bg-transparent disabled:text-mist-500"
       >
-        {isPending ? "Submitting…" : `Submit ${ACTIONS.find((a) => a.value === action)?.label ?? action}`}
+        {isPending ? "Submitting…" : `Submit ${availableActions.find((a) => a.value === action)?.label ?? action}`}
       </button>
     </div>
   );

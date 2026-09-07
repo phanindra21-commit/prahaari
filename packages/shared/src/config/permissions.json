@@ -18,6 +18,7 @@
     "notification:read",
     "pipeline:run",
     "recommendation:approve",
+    "recommendation:approveEscalated",
     "recommendation:read",
     "relocationSite:read",
     "relocationSite:write",
@@ -45,6 +46,7 @@
       "notification:read",
       "pipeline:run",
       "recommendation:approve",
+      "recommendation:approveEscalated",
       "recommendation:read",
       "relocationSite:read",
       "relocationSite:write",
@@ -69,6 +71,7 @@
       "hazardZone:write",
       "notification:read",
       "pipeline:run",
+      "recommendation:approveEscalated",
       "recommendation:read",
       "relocationSite:read",
       "relocationSite:write",
@@ -120,7 +123,8 @@
     ]
   },
   "separationOfDuties": {
-    "note": "recommendation:approve gates POST /api/v1/decisions (creating a Decision — approve/modify/reject/defer a Recommendation). It is granted to DISTRICT_OFFICER (the operational approver role) and to SUPER_ADMIN (which has every permission by definition, including break-glass override), and explicitly withheld from every other role — most importantly STATE_ADMIN, which has broad read/write but is structurally barred from being the approver of the recommendations its own state's data feeds into.",
-    "approverRoles": ["SUPER_ADMIN", "DISTRICT_OFFICER"]
+    "note": "recommendation:approve gates POST /api/v1/decisions (creating a Decision — approve/modify/reject/defer a Recommendation). It is granted to DISTRICT_OFFICER (the operational approver role) and to SUPER_ADMIN (which has every permission by definition, including break-glass override), and explicitly withheld from every other role — most importantly STATE_ADMIN, which has broad read/write but is structurally barred from being the approver of the recommendations its own state's data feeds into: whoever can edit the inputs (habitation/hazardZone/hazardEvent/relocationSite:write) must not routinely approve the output. recommendation:approveEscalated is the documented exception to that restriction, not a repeal of it: it is granted to STATE_ADMIN (and SUPER_ADMIN) but the decision route additionally requires, server-side, that the specific recommendation being decided has escalation.status === 'ESCALATED' — set only by a DISTRICT_OFFICER's (or SUPER_ADMIN's, on the district officer's behalf) explicit ESCALATE decision, itself requiring the same >=30-character justification as every other decision. A STATE_ADMIN can never act on a recommendation nobody escalated. Every decision taken this way is marked decisionLevel: 'STATE' (vs. 'DISTRICT' for everything else) in the Decision record and the audit trail, with WARNING audit severity instead of INFO, so it is always visibly distinguishable from an ordinary district-level decision — see docs/SECURITY.md's escalation section.",
+    "approverRoles": ["SUPER_ADMIN", "DISTRICT_OFFICER"],
+    "escalatedApproverRoles": ["SUPER_ADMIN", "STATE_ADMIN"]
   }
 }

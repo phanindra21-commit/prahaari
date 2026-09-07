@@ -83,8 +83,25 @@ Wait for all five to report ready (`[mongo]`, `[shared]`, `[web]`,
 complete"), then in a second terminal:
 
 ```bash
-# Terminal 2 — seed synthetic demo data, build the hazard grid, and score everything
+# Terminal 2 — seed, build the hazard grid, and score everything, in one command
+npm run demo:reset
+```
 
+This is `scripts/resetDemo.mjs`, chaining the five steps below in order.
+**It is the recovery command** — every step is independently idempotent
+(seed: natural-key upserts, with pipeline-computed fields written only
+`$setOnInsert` so a re-seed never wipes an already-scored site's
+suitability data or an already-computed hazard zone back to a
+placeholder; generate-grid/ingest-factors: upsert by h3Index; the
+pipeline: re-scores a district from scratch every time it's run) — so if
+anything looks wrong on demo day (a district's map looks stale, scores
+look missing, a recommendation shows blank suitability data), re-running
+`npm run demo:reset` against the already-running stack (`npm run dev` in
+the other terminal) always gets you back to a fully seeded, fully scored
+state for all three districts, safely, from whatever state the database
+is currently in:
+
+```bash
 # 1. Seed districts, habitations, hazard zones/events, relocation sites, and demo users
 npm run seed --workspace=@punarvas/api
 
@@ -121,8 +138,9 @@ never reuse these anywhere real):
 | District Officer (Wayanad) | `officer.wayanad@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | District Officer (Ganjam) | `officer.ganjam@punarvas.gov.in` | `PunarVas@DevDefault123` |
 | District Officer (Chamoli) | `officer.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| Analyst | `analyst@punarvas.gov.in` | `PunarVas@DevDefault123` |
-| Field Volunteer (Ganjam) | `volunteer.ganjam@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| Analyst (Wayanad / Ganjam / Chamoli) | `analyst.wayanad@`, `analyst.ganjam@`, `analyst.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| Analyst, state-level (Kerala / Odisha / Uttarakhand) | `analyst.kerala@`, `analyst.odisha@`, `analyst.uttarakhand@punarvas.gov.in` | `PunarVas@DevDefault123` |
+| Field Volunteer (Wayanad / Ganjam / Chamoli) | `volunteer.wayanad@`, `volunteer.ganjam@`, `volunteer.chamoli@punarvas.gov.in` | `PunarVas@DevDefault123` |
 
 Override the shared default via `SEED_DEFAULT_PASSWORD` (or
 `SEED_PASSWORD_<ROLE>`) in `apps/api/.env` before seeding, if you want a

@@ -30,6 +30,7 @@ const EXPECTED: Record<UserRole, string[]> = {
     "notification:read",
     "pipeline:run",
     "recommendation:approve",
+    "recommendation:approveEscalated",
     "recommendation:read",
     "relocationSite:read",
     "relocationSite:write",
@@ -54,6 +55,7 @@ const EXPECTED: Record<UserRole, string[]> = {
     "hazardZone:write",
     "notification:read",
     "pipeline:run",
+    "recommendation:approveEscalated",
     "recommendation:read",
     "relocationSite:read",
     "relocationSite:write",
@@ -160,6 +162,26 @@ describe("RBAC permission matrix (Step 3 Part C3)", () => {
     it("ANALYST cannot create Decisions or edit habitation data", () => {
       expect(hasPermission("ANALYST", "recommendation:approve")).toBe(false);
       expect(hasPermission("ANALYST", "habitation:write")).toBe(false);
+    });
+
+    it("only SUPER_ADMIN and STATE_ADMIN can act on an escalated recommendation", () => {
+      for (const role of USER_ROLES) {
+        const canApproveEscalated = hasPermission(role, "recommendation:approveEscalated");
+        const shouldApproveEscalated = role === "SUPER_ADMIN" || role === "STATE_ADMIN";
+        expect(canApproveEscalated).toBe(shouldApproveEscalated);
+      }
+    });
+
+    it("STATE_ADMIN's escalation permission is a documented exception, not a repeal: it still lacks recommendation:approve", () => {
+      expect(hasPermission("STATE_ADMIN", "recommendation:approveEscalated")).toBe(true);
+      expect(hasPermission("STATE_ADMIN", "recommendation:approve")).toBe(false);
+    });
+
+    it("DISTRICT_OFFICER holds neither habitation:write, hazardZone:write, hazardEvent:write, nor relocationSite:write — it cannot edit the evidence it approves", () => {
+      expect(hasPermission("DISTRICT_OFFICER", "habitation:write")).toBe(false);
+      expect(hasPermission("DISTRICT_OFFICER", "hazardZone:write")).toBe(false);
+      expect(hasPermission("DISTRICT_OFFICER", "hazardEvent:write")).toBe(false);
+      expect(hasPermission("DISTRICT_OFFICER", "relocationSite:write")).toBe(false);
     });
   });
 

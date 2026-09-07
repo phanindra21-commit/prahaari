@@ -1,6 +1,6 @@
 import { Schema, model, type Document, type Types } from "mongoose";
-import { DECISION_ACTIONS } from "@punarvas/shared";
-import type { DecisionAction } from "@punarvas/shared";
+import { DECISION_ACTIONS, DECISION_LEVELS } from "@punarvas/shared";
+import type { DecisionAction, DecisionLevel } from "@punarvas/shared";
 
 export interface OverriddenField {
   field: string;
@@ -23,6 +23,12 @@ export interface DecisionDoc extends Document {
   districtId: Types.ObjectId;
   officerId: Types.ObjectId;
   action: DecisionAction;
+  /** DISTRICT for every DISTRICT_OFFICER/SUPER_ADMIN action (an ESCALATE
+   * included); STATE only for a STATE_ADMIN's decision on a recommendation
+   * a district officer escalated — see docs/SECURITY.md's escalation
+   * section. Derived from the actor's role at decision time, not supplied
+   * by the client. */
+  decisionLevel: DecisionLevel;
   justification: string;
   overriddenFields: OverriddenField[];
   decidedAt: Date;
@@ -46,6 +52,7 @@ const decisionSchema = new Schema<DecisionDoc>(
     districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     officerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     action: { type: String, enum: DECISION_ACTIONS, required: true },
+    decisionLevel: { type: String, enum: DECISION_LEVELS, required: true },
     justification: { type: String, required: true, minlength: 30, trim: true },
     overriddenFields: { type: [overriddenFieldSchema], required: true, default: [] },
     decidedAt: { type: Date, required: true },

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { RecommendationStatus, RelocationPriorityBucket, ZoneClass } from "@punarvas/shared";
+import type { RecommendationStatus, RelocationPriorityBucket, ZoneClass, EscalationStatus } from "@punarvas/shared";
 import * as api from "../lib/api";
 
 export function useDistricts() {
@@ -101,6 +101,7 @@ export function useRecommendations(params: {
   districtId?: string;
   priorityBucket?: RelocationPriorityBucket;
   status?: RecommendationStatus;
+  escalationStatus?: EscalationStatus;
 }) {
   return useQuery({
     queryKey: ["recommendations", params],

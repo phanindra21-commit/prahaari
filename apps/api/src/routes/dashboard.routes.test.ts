@@ -315,6 +315,7 @@ describe("dashboard routes integration", () => {
       districtId: district._id,
       officerId: officer._id,
       action: "APPROVE",
+      decisionLevel: "DISTRICT",
       justification: "Approved after reviewing suitability and capacity for this habitation.",
       overriddenFields: [],
       decidedAt: new Date(),

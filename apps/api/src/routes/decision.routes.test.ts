@@ -14,11 +14,11 @@ import { signAccessToken } from "../lib/tokens";
 
 const app = createApp();
 
-async function seedDistrict(lgdCode: string) {
+async function seedDistrict(lgdCode: string, state = "Kerala") {
   return District.create({
     lgdCode,
     name: "Test District",
-    state: "Kerala",
+    state,
     boundary: {
       type: "Polygon",
       coordinates: [[[76.0, 11.6], [76.2, 11.6], [76.2, 11.8], [76.0, 11.8], [76.0, 11.6]]],
@@ -131,6 +131,22 @@ async function makeUser(
 }
 
 const LONG_JUSTIFICATION = "This site clears every hard exclusion and has enough headroom for this habitation.";
+
+/** autoAudit writes the AuditLog entry from a `res.on("finish")` handler —
+ * fire-and-forget relative to the HTTP response supertest awaits (see
+ * autoAudit.ts and audit.ts's own "best-effort... not a distributed-lock
+ * guarantee" note). Every other test in this file checks audit state after
+ * exactly one decision, which in practice never races; a test that fires
+ * two decisions back-to-back on the same recommendation needs this short
+ * poll instead of a bare findOne. */
+async function pollForAuditEntry(entityId: string, timeoutMs = 2000): Promise<InstanceType<typeof AuditLog> | null> {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const entry = await AuditLog.findOne({ entityType: "decision", entityId });
+    if (entry || Date.now() > deadline) return entry;
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+}
 
 describe("decision routes integration", () => {
   it("APPROVE: creates a Decision, sets Recommendation status, and writes a hash-chained AuditLog entry", async () => {
@@ -522,6 +538,253 @@ describe("decision routes integration", () => {
       // correct, not a bug.
       const notifications = await Notification.find({ districtId });
       expect(notifications).toHaveLength(0);
+    });
+  });
+
+  describe("escalation", () => {
+    it("DISTRICT_OFFICER can escalate: escalation.status becomes ESCALATED, decisionLevel is DISTRICT, and the recommendation stays PENDING_REVIEW", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-001");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-001-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const token = await tokenForRole("DISTRICT_OFFICER", districtId);
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.decision.action).toBe("ESCALATE");
+      expect(res.body.decision.decisionLevel).toBe("DISTRICT");
+      expect(res.body.recommendation.status).toBe("PENDING_REVIEW");
+      expect(res.body.recommendation.escalation.status).toBe("ESCALATED");
+
+      const updated = await Recommendation.findById(recommendation._id as Types.ObjectId);
+      expect(updated!.status).toBe("PENDING_REVIEW");
+      expect(updated!.escalation.status).toBe("ESCALATED");
+      expect(updated!.escalation.reason).toBe(LONG_JUSTIFICATION);
+    });
+
+    it("escalation requires the same >= 30-character justification as every other decision", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-002");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-002-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const token = await tokenForRole("DISTRICT_OFFICER", districtId);
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: "Too short.",
+        });
+
+      expect(res.status).toBe(400);
+      const untouched = await Recommendation.findById(recommendation._id as Types.ObjectId);
+      expect(untouched!.escalation.status).toBe("NONE");
+    });
+
+    it("SECURITY: STATE_ADMIN is blocked (403) from deciding a recommendation that has NOT been escalated", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-003", "Kerala");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-003-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const stateToken = await tokenForRole("STATE_ADMIN", undefined, "Kerala");
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${stateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "APPROVE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(403);
+      const untouched = await Recommendation.findById(recommendation._id as Types.ObjectId);
+      expect(untouched!.status).toBe("PENDING_REVIEW");
+    });
+
+    it("STATE_ADMIN can decide a recommendation escalated by a District Officer in their own state — marked decisionLevel STATE with WARNING audit severity", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-004", "Kerala");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-004-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const officerToken = await tokenForRole("DISTRICT_OFFICER", districtId);
+      const stateToken = await tokenForRole("STATE_ADMIN", undefined, "Kerala");
+
+      const escalate = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${officerToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+      expect(escalate.status).toBe(201);
+
+      const decide = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${stateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "APPROVE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(decide.status).toBe(201);
+      expect(decide.body.decision.decisionLevel).toBe("STATE");
+      expect(decide.body.recommendation.status).toBe("APPROVED");
+
+      const auditEntry = await pollForAuditEntry(decide.body.decision._id);
+      expect(auditEntry).not.toBeNull();
+      expect(auditEntry!.severity).toBe("WARNING");
+    });
+
+    it("SECURITY: STATE_ADMIN is blocked (404, scoped out — never reaches the escalation check) from an escalated recommendation in a DIFFERENT state", async () => {
+      const wayanad = await seedDistrict("DEC-RT-ESC-005", "Kerala");
+      const wayanadId = wayanad._id as Types.ObjectId;
+      const habitation = await seedHabitation(wayanadId, "DEC-RT-ESC-005-H1");
+      const site = await seedSite(wayanadId, "Site A");
+      const recommendation = await seedRecommendation(wayanadId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const keralaOfficerToken = await tokenForRole("DISTRICT_OFFICER", wayanadId);
+      const odishaStateToken = await tokenForRole("STATE_ADMIN", undefined, "Odisha");
+
+      const escalate = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${keralaOfficerToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+      expect(escalate.status).toBe(201);
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${odishaStateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "APPROVE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(404);
+    });
+
+    it("STATE_ADMIN cannot escalate a recommendation itself (403) — escalation is a district-officer action", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-006", "Kerala");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-006-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const stateToken = await tokenForRole("STATE_ADMIN", undefined, "Kerala");
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${stateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(403);
+    });
+
+    it("a second ESCALATE on an already-escalated recommendation is rejected (409)", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-007");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-007-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const token = await tokenForRole("DISTRICT_OFFICER", districtId);
+      const body = {
+        recommendationId: (recommendation._id as Types.ObjectId).toString(),
+        action: "ESCALATE",
+        justification: LONG_JUSTIFICATION,
+      };
+
+      const first = await request(app).post("/api/v1/decisions").set("Authorization", `Bearer ${token}`).send(body);
+      expect(first.status).toBe(201);
+
+      const second = await request(app).post("/api/v1/decisions").set("Authorization", `Bearer ${token}`).send(body);
+      expect(second.status).toBe(409);
+    });
+
+    it("SUPER_ADMIN can escalate on a district officer's behalf, marked decisionLevel DISTRICT", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-008");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-008-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const superToken = await tokenForRole("SUPER_ADMIN");
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${superToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.decision.decisionLevel).toBe("DISTRICT");
+    });
+
+    it("escalating notifies the STATE_ADMIN for that state; a state-level decision notifies the originating District Officer", async () => {
+      const district = await seedDistrict("DEC-RT-ESC-009", "Kerala");
+      const districtId = district._id as Types.ObjectId;
+      const habitation = await seedHabitation(districtId, "DEC-RT-ESC-009-H1");
+      const site = await seedSite(districtId, "Site A");
+      const recommendation = await seedRecommendation(districtId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+
+      const districtOfficer = await makeUser("DISTRICT_OFFICER", { state: "Kerala", districtId });
+      const officerToken = signAccessToken(districtOfficer).token;
+      const stateAdmin = await makeUser("STATE_ADMIN", { state: "Kerala" });
+      const stateToken = signAccessToken(stateAdmin).token;
+      await makeUser("STATE_ADMIN", { state: "Odisha" }); // noise: must not be notified
+
+      const escalate = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${officerToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "ESCALATE",
+          justification: LONG_JUSTIFICATION,
+        });
+      expect(escalate.status).toBe(201);
+
+      const afterEscalate = await Notification.find({}).lean();
+      expect(afterEscalate.map((n) => n.recipientId.toString())).toEqual([(stateAdmin._id as Types.ObjectId).toString()]);
+      expect(afterEscalate[0]!.type).toBe("RECOMMENDATION_ESCALATED");
+
+      const decide = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${stateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "APPROVE",
+          justification: LONG_JUSTIFICATION,
+        });
+      expect(decide.status).toBe(201);
+
+      const afterDecide = await Notification.find({ type: "DECISION_RECORDED" }).lean();
+      const recipientIds = afterDecide.map((n) => n.recipientId.toString());
+      expect(recipientIds).toContain((districtOfficer._id as Types.ObjectId).toString());
+      expect(recipientIds).not.toContain((stateAdmin._id as Types.ObjectId).toString());
     });
   });
 });

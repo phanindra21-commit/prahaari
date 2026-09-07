@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   objectIdSchema,
   decisionActionSchema,
+  decisionLevelSchema,
   justificationSchema,
   timestampsSchema,
 } from "./common";
@@ -21,6 +22,10 @@ export const decisionSchema = z
     districtId: objectIdSchema,
     officerId: objectIdSchema,
     action: decisionActionSchema,
+    /** DISTRICT for every DISTRICT_OFFICER/SUPER_ADMIN action (including an
+     * ESCALATE); STATE only for a STATE_ADMIN's decision on a recommendation
+     * a district officer escalated — see docs/SECURITY.md. */
+    decisionLevel: decisionLevelSchema,
     justification: justificationSchema,
     overriddenFields: z.array(overriddenFieldSchema),
     decidedAt: z.date(),

@@ -3,6 +3,7 @@ import {
   objectIdSchema,
   priorityBucketSchema,
   recommendationStatusSchema,
+  escalationStatusSchema,
   timestampsSchema,
   zoneClassSchema,
   geoLineStringSchema,
@@ -46,6 +47,21 @@ export const phasingPlanEntrySchema = z.object({
 });
 export type PhasingPlanEntry = z.infer<typeof phasingPlanEntrySchema>;
 
+/** Set by a DISTRICT_OFFICER's (or SUPER_ADMIN's, on their behalf) ESCALATE
+ * decision — the documented exception that lets a STATE_ADMIN act on this
+ * one recommendation despite normally being barred from approving (see
+ * docs/SECURITY.md). Escalating does not itself decide the recommendation:
+ * `status` stays PENDING_REVIEW until an actual APPROVE/MODIFY/REJECT/DEFER
+ * is recorded, by either the district officer or (now unlocked) the state
+ * admin. */
+export const escalationSchema = z.object({
+  status: escalationStatusSchema,
+  escalatedBy: objectIdSchema.nullable(),
+  escalatedAt: z.date().nullable(),
+  reason: z.string().nullable(),
+});
+export type Escalation = z.infer<typeof escalationSchema>;
+
 /** A system-generated pairing of a habitation with its ranked candidate relocation sites. */
 export const recommendationSchema = z
   .object({
@@ -60,6 +76,7 @@ export const recommendationSchema = z
     rationale: z.string().min(1),
     modelVersion: z.string().min(1),
     status: recommendationStatusSchema,
+    escalation: escalationSchema,
     generatedAt: z.date(),
   })
   .merge(timestampsSchema);

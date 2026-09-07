@@ -8,6 +8,8 @@ import {
   LAND_OWNERSHIP_TYPES,
   RECOMMENDATION_STATUSES,
   DECISION_ACTIONS,
+  DECISION_LEVELS,
+  ESCALATION_STATUSES,
   GENERATED_BY_VALUES,
   DATA_PROVENANCE_VALUES,
   HAZARD_EVENT_SOURCES,
@@ -32,6 +34,8 @@ export const consentStatusSchema = z.enum(CONSENT_STATUSES);
 export const landOwnershipTypeSchema = z.enum(LAND_OWNERSHIP_TYPES);
 export const recommendationStatusSchema = z.enum(RECOMMENDATION_STATUSES);
 export const decisionActionSchema = z.enum(DECISION_ACTIONS);
+export const decisionLevelSchema = z.enum(DECISION_LEVELS);
+export const escalationStatusSchema = z.enum(ESCALATION_STATUSES);
 export const generatedBySchema = z.enum(GENERATED_BY_VALUES);
 export const dataProvenanceSchema = z.enum(DATA_PROVENANCE_VALUES);
 export const hazardEventSourceSchema = z.enum(HAZARD_EVENT_SOURCES);
