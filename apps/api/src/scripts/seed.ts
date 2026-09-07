@@ -231,8 +231,20 @@ async function seedHazardZones(districtByLgdCode: Map<string, Types.ObjectId>): 
             zoneClass: feature.properties.zoneClass,
             dataProvenance: "SYNTHETIC_DEMO",
           },
+          // HazardZone is versioned and never mutated in place (see the
+          // model's docstring and zoneVersioning.ts::writeZoneVersion) —
+          // the live zoning pipeline inserts a fresh doc per run and closes
+          // the previous one via validTo, and its output carries the exact
+          // same dataProvenance/generatedBy tags as this seed placeholder
+          // (nothing distinguishes the two at the schema level). So this
+          // upsert must NEVER touch a document that already exists,
+          // whether it came from an earlier seed run or a live pipeline
+          // run: $setOnInsert only creates a placeholder zone for a
+          // district that has none yet, and leaves every already-active
+          // zone (seeded or pipeline-computed) untouched. Re-seeding
+          // changed fixture geometry requires `npm run seed:reset`.
           update: {
-            $set: {
+            $setOnInsert: {
               districtId,
               hazardType: feature.properties.hazardType,
               geometry: feature.geometry,
@@ -321,6 +333,16 @@ async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId
         updateOne: {
           filter: { districtId, name: feature.properties.name },
           update: {
+            // Seed-owned fields are always synced from the fixture, even
+            // on an existing document. Scoring fields are computed live by
+            // the pipeline's site-scoring stage (siteStage.ts), not
+            // seeded — $setOnInsert only, so a fresh site starts unscored
+            // (same "PENDING_SCORE" convention as GridCell before a
+            // zoning run) but re-running `npm run seed` never wipes a
+            // site's already-computed scores back to null. That was a
+            // real bug here: this used to $set these fields unconditionally,
+            // silently erasing every previously-scored site's suitability
+            // data on every plain `npm run seed` re-run.
             $set: {
               districtId,
               name: feature.properties.name,
@@ -329,10 +351,9 @@ async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId
               areaSqm: feature.properties.areaSqm,
               landOwnership: feature.properties.landOwnership,
               rawAttributes: feature.properties.rawAttributes,
-              // exclusions/suitability/capacity are computed live by the
-              // pipeline's site-scoring stage, not seeded — a freshly
-              // seeded site starts unscored, same convention as GridCell's
-              // "PENDING_SCORE" before a zoning run.
+              dataProvenance: feature.properties.dataProvenance,
+            },
+            $setOnInsert: {
               exclusionsPassed: [],
               exclusionsFailed: [],
               suitabilitySubScores: new Map(),
@@ -340,7 +361,6 @@ async function seedRelocationSites(districtByLgdCode: Map<string, Types.ObjectId
               carryingCapacity: null,
               scoredAt: null,
               modelVersion: null,
-              dataProvenance: feature.properties.dataProvenance,
             },
           },
           upsert: true,
