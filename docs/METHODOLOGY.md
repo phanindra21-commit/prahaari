@@ -604,11 +604,14 @@ cleared that bar, so it correctly receives a small residual weight.
 
 Candidate sites are ranked by `SSS` descending and passed, along with
 their carrying capacity (Section 5), to the officer decision workbench.
-A `DISTRICT_OFFICER` normally approves/modifies/rejects/defers there; a
-`STATE_ADMIN` may act only on a recommendation the district officer has
-explicitly escalated — see `docs/SECURITY.md` §4.1 for the full
-separation-of-duties reasoning and mechanism, not repeated here since
-this document covers scoring, not RBAC.
+A `DISTRICT_OFFICER`, `STATE_ADMIN`, or `SUPER_ADMIN` may
+approve/modify/reject/defer a recommendation there (a `STATE_ADMIN`
+confined to their own state); a `DISTRICT_OFFICER` may additionally
+escalate one to flag it for state-level attention — see
+`docs/SECURITY.md` §4 for the full separation-of-duties reasoning
+(including the deliberate product decision behind granting `STATE_ADMIN`
+approval rights) and mechanism, not repeated here since this document
+covers scoring, not RBAC.
 
 ---
 

@@ -180,7 +180,7 @@ separate RBAC change to reach it.
 | `hazardZone:write`       |     ✅      |     ✅      |                  |         |                 |
 | `notification:read`      |     ✅      |     ✅      |        ✅        |   ✅    |       ✅        |
 | `pipeline:run`           |     ✅      |     ✅      |                  |   ✅    |                 |
-| `recommendation:approve` |     ✅      |             |        ✅        |         |                 |
+| `recommendation:approve` |     ✅      |     ✅      |        ✅        |         |                 |
 | `recommendation:approveEscalated` | ✅ |     ✅      |                  |         |                 |
 | `recommendation:read`    |     ✅      |     ✅      |        ✅        |   ✅    |                 |
 | `relocationSite:read`    |     ✅      |     ✅      |        ✅        |   ✅    |                 |
@@ -194,62 +194,93 @@ separate RBAC change to reach it.
 **Separation of duties — the load-bearing row is `recommendation:approve`.**
 It gates `POST /api/v1/decisions` (creating a `Decision`: approve /
 modify / reject / defer a `Recommendation`). It is granted to
-`DISTRICT_OFFICER` (the operational approver) and `SUPER_ADMIN` (which
-has every permission by definition, as a break-glass override) — and
-explicitly **withheld from `STATE_ADMIN`**, despite `STATE_ADMIN` having
-broad read/write everywhere else in its state. The reasoning is
-structural, not a judgment about `STATE_ADMIN` specifically: `STATE_ADMIN`
-holds `habitation:write`, `hazardZone:write`, `hazardEvent:write`, and
-`relocationSite:write` — every write permission over the evidence a
-recommendation is built from — so a role that can shape the inputs must
-not also be able to routinely sign off on the output. This is enforced
-structurally, not just by convention: `packages/shared/src/config/loader.ts`
-asserts at import time that `recommendation:approve` is granted to
-_exactly_ `permissions.json`'s `separationOfDuties.approverRoles` list
-and no other role — editing the JSON to accidentally hand `STATE_ADMIN`
-approval rights fails the whole app's startup, not just a lint warning.
-`DISTRICT_OFFICER`, by contrast, holds none of those four `*:write`
-permissions — it can approve exactly because it cannot edit the evidence
-it approves.
+`DISTRICT_OFFICER`, `STATE_ADMIN`, and `SUPER_ADMIN`.
 
-### 4.1 The escalation exception
+**This project earlier held a stricter property here — worth stating
+plainly rather than quietly dropping.** `STATE_ADMIN` was originally
+withheld from `recommendation:approve` entirely, on the reasoning that
+`STATE_ADMIN` also holds `habitation:write`, `hazardZone:write`,
+`hazardEvent:write`, and `relocationSite:write` — every write permission
+over the evidence a recommendation is built from — so a role that can
+shape the inputs should not also routinely sign off on the output. A
+narrower escalation-only exception (`recommendation:approveEscalated`,
+§4.1) was added first, before this restriction was lifted entirely: a
+`STATE_ADMIN` may now approve/modify/reject/defer **any** recommendation
+in their own state, not only an escalated one. **This is a deliberate
+product decision, made explicitly, not an oversight or a regression** —
+recorded here, and in `permissions.json`'s own `separationOfDuties.note`,
+precisely so a future reader does not find code that contradicts a
+comment still claiming the old restriction.
 
-The restriction above is real operational friction: a District Officer
-can be unavailable, a recommendation can span districts, or an officer
-can judge a case above their level and want a state-level sign-off. Not
-supporting that at all would just push officers to work around the
-restriction informally (verbal approval passed down, or the account
-shared) — worse for accountability than a documented exception with its
-own audit marking. So `STATE_ADMIN` gets **one narrow, explicit escape
-hatch**, not a repeal of the restriction:
+**What this weakens:** there is no longer a technical barrier preventing
+one `STATE_ADMIN` account from both altering the evidence a
+recommendation is built from and approving that recommendation, within
+their own state. A compromised or misused `STATE_ADMIN` account can do
+both with no second role required to sign off. `DISTRICT_OFFICER`, by
+contrast, still holds none of the four `*:write` permissions above — the
+original "cannot edit what it approves" property still holds for that
+role, unchanged.
+
+**The mitigation is procedural and evidentiary, not access-control:**
+every decision, from any role, still requires a >= 30-character
+justification (`justificationSchema`, enforced both client- and
+server-side) and is written to the append-only, hash-chained `AuditLog`
+(§6) — nothing a `STATE_ADMIN` does here is silent or later deniable.
+Every `STATE_ADMIN` decision — escalated or not — is additionally marked
+`decisionLevel: "STATE"` (vs. `"DISTRICT"` for a `DISTRICT_OFFICER`/
+`SUPER_ADMIN` decision) on the `Decision` document and in the audit
+trail, rendered as a visible "STATE-LEVEL" badge in the UI, and audited
+at `WARNING` severity instead of `INFO` — so state-level activity is
+always visibly distinguishable from routine district-level activity to
+whoever reviews the log afterward, even though nothing blocks it from
+happening in the first place.
+
+This is enforced structurally, not just by convention:
+`packages/shared/src/config/loader.ts` asserts at import time that
+`recommendation:approve` is granted to _exactly_ `permissions.json`'s
+`separationOfDuties.approverRoles` list (now `["SUPER_ADMIN",
+"DISTRICT_OFFICER", "STATE_ADMIN"]`) and no other role — editing the
+JSON to hand approval rights to `ANALYST` or `FIELD_VOLUNTEER`, say,
+fails the whole app's startup, not just a lint warning. What that
+assertion can no longer claim is that `STATE_ADMIN` is excluded — it
+isn't, deliberately, as above.
+
+`requireScope()` (row-level, pre-query — §5) is unchanged and is what
+still confines a `STATE_ADMIN` to their own state's recommendations: an
+out-of-state attempt gets 404 before this route's own logic ever runs,
+exactly as for every other resource.
+
+### 4.1 The escalation path (routing/visibility, not a gate)
+
+`recommendation:approveEscalated` and the `ESCALATE` `DecisionAction`
+predate the change above and remain in place, now serving a narrower,
+purely additive purpose: a `DISTRICT_OFFICER` (or `SUPER_ADMIN`, on the
+district officer's behalf) can still explicitly flag a recommendation as
+needing state-level attention.
 
 - **`recommendation:approveEscalated`** is granted to `STATE_ADMIN` and
-  `SUPER_ADMIN` — but holding it is not sufficient on its own.
-  `POST /api/v1/decisions` additionally requires, server-side, that the
-  *specific* recommendation being decided has
-  `escalation.status === "ESCALATED"` — checked after the recommendation
-  is fetched (`req.scopeFilter`-scoped, so a `STATE_ADMIN` never even
-  learns whether an out-of-state recommendation exists, let alone whether
-  it's escalated), not by the route's permission gate. A `STATE_ADMIN`
-  can never act on a recommendation nobody escalated, and can never
-  escalate one themselves — escalating is a `DISTRICT_OFFICER` action (or
-  `SUPER_ADMIN`, on the district officer's behalf); a `STATE_ADMIN`
-  attempting `action: "ESCALATE"` gets a 403.
+  `SUPER_ADMIN` — both of whom also hold `recommendation:approve`
+  directly now, so this permission is no longer load-bearing for
+  reaching `POST /api/v1/decisions`. It is kept for the `ESCALATE` action
+  itself and because it has independent meaning: a future role could be
+  granted it to act on escalated recommendations only, without full
+  approval rights, without touching `recommendation:approve`'s own grant
+  list.
 - Escalating (`Recommendation.escalation`: `{status, escalatedBy,
   escalatedAt, reason}`) does not itself decide the recommendation —
-  `status` stays `PENDING_REVIEW`, and the `DISTRICT_OFFICER` can still
-  record the real decision themselves if the state admin never acts. It
-  requires the same >= 30-character justification as every other
-  decision (`ESCALATE` is a `DecisionAction`, written as its own
-  `Decision` document), so an escalation is exactly as accountable and
-  audit-trailed as an approval.
-- Every decision a `STATE_ADMIN` actually records this way is marked
-  `decisionLevel: "STATE"` (vs. `"DISTRICT"` for every `DISTRICT_OFFICER`/
-  `SUPER_ADMIN` decision, including an `ESCALATE`) on the `Decision`
-  document, rendered as a visible "STATE-LEVEL" badge in the audit trail
-  UI, and audited at `WARNING` severity instead of `INFO` — not because
-  anything went wrong, but so a state-level action always stands out from
-  routine district-level activity in the log.
+  `status` stays `PENDING_REVIEW`. It requires the same >= 30-character
+  justification as every other decision (`ESCALATE` is a
+  `DecisionAction`, written as its own `Decision` document), and it
+  triggers a notification to the state's `STATE_ADMIN`(s)
+  (`notifications.ts`'s `notifyOnEscalation`) — its practical effect
+  today is visibility and routing, not unlocking an approval right the
+  state admin didn't already have.
+- Escalating stays `DISTRICT_OFFICER`/`SUPER_ADMIN`-only, enforced inline
+  in `decision.routes.ts` (not by the route's permission gate) — a
+  `STATE_ADMIN` attempting `action: "ESCALATE"` still gets a 403; a
+  `STATE_ADMIN` deciding an already-escalated recommendation is still
+  marked `decisionLevel: "STATE"` with `WARNING` severity, same as any
+  other `STATE_ADMIN` decision.
 - `loader.ts` mirrors the `recommendation:approve` assertion above for
   `recommendation:approveEscalated` against
   `separationOfDuties.escalatedApproverRoles` — the same
@@ -319,8 +350,9 @@ as the `X-Request-Id` response header —
 snapshots where applicable, and a `severity` of `INFO` / `WARNING` /
 `CRITICAL`. A route can override the default `INFO` on its own
 `res.locals.auditEntity.severity` (`autoAudit.ts`) — used by
-`POST /api/v1/decisions` to mark a `STATE_ADMIN`'s escalated-recommendation
-decision `WARNING` (see §4.1) so it stands out from routine activity.
+`POST /api/v1/decisions` to mark every `STATE_ADMIN` decision `WARNING`
+(see §4) so state-level activity always stands out from routine
+district-level activity in the log.
 
 ### 6.2 Append-only enforcement
 

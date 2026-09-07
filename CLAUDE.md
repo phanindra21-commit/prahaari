@@ -946,12 +946,24 @@ derive_factors.py → ingest-factors → run-pipeline) into one command,
 safe to run from any state since every step is independently idempotent
 (this fix included). README's demo path now leads with it.
 
-**Part 2 (STATE_ADMIN escalation exception).** `STATE_ADMIN` cannot
-approve a `Recommendation` — a deliberate separation-of-duties
-restriction (`STATE_ADMIN` holds every `*:write` permission over the
-evidence a recommendation is built from) already documented before this
-session. That restriction stayed; a documented, narrow exception was
-added for the real cases it blocks: an unavailable district officer, a
+**Part 2 (STATE_ADMIN escalation exception) — SUPERSEDED by Part 3 below,
+same session's later follow-up.** The escalation mechanics this part
+describes (the `ESCALATE` action, `Recommendation.escalation`, the
+`decisionLevel`/`WARNING` marking) are all still exactly as built here.
+What is **no longer current**: the claim that a `STATE_ADMIN` can decide
+**only** an escalated recommendation. Part 3 below broadens
+`STATE_ADMIN` to approve any in-state recommendation; left this
+paragraph and the ones below it intact as a record of what was built and
+why, rather than rewritten in place, per this file's own convention for
+a same-day design reversal (see the "Step 5"/"Step 6" reused-name notes
+above for the precedent) — read Part 3 for the current behavior.
+
+`STATE_ADMIN` could not, at this point in the session, approve a
+`Recommendation` — a deliberate separation-of-duties restriction
+(`STATE_ADMIN` holds every `*:write` permission over the evidence a
+recommendation is built from) already documented before this session.
+That restriction stayed; a documented, narrow exception was added for
+the real cases it blocks: an unavailable district officer, a
 cross-district recommendation, or a case an officer judges above their
 level.
 
@@ -990,22 +1002,93 @@ state-level decision explicitly notifies the originating district
 officer (`notifications.ts`'s `notifyOnEscalation`, and `notifyOnDecision`
 extended with an explicit, deduped recipient for this case).
 
-Verified: 281 API tests (was 264 — 9 new escalation route tests, 4 new
-permission-matrix tests, 1 pre-existing fixture updated for the new
-required `decisionLevel` field), typecheck and lint clean on every
-workspace (one pre-existing, untouched lint error in a build script,
-unrelated). Verified in a real browser (Playwright against the built
-production bundle): logged in as Priya Nair (Wayanad `DISTRICT_OFFICER`),
-escalated a recommendation with a justification; logged in as Ravi Varma
-(Kerala `STATE_ADMIN`), confirmed decision controls appeared on that one
-recommendation and not on an ordinary one, approved it, confirmed the
-audit trail's state-level marking and chain-verified badge — kept as
-`apps/web/e2e/escalation.spec.ts`, retargeted to Chamoli/Uttarakhand
-(same scenario, different pilot district) since every other standing e2e
-spec already logs in as `officer.wayanad@` at least once and that
-account's 5-attempts/15-min login-rate-limit budget was already fully
-spent by the rest of the suite in one run — full 10-spec e2e suite passes
-together in one clean run.
+Verified at the end of Part 2: 281 API tests, typecheck/lint clean, full
+10-spec e2e suite passing, real-browser Playwright verification as Priya
+Nair (Wayanad `DISTRICT_OFFICER`) and Ravi Varma (Kerala `STATE_ADMIN`)
+— all against the escalation-gated behavior described above, since
+superseded by Part 3.
+
+**Part 3 (STATE_ADMIN approves ANY in-state recommendation — same
+session, immediate follow-up).** User instruction, quoted in full since
+it is the reason Part 2's restriction no longer holds: grant
+`STATE_ADMIN` the ability to approve/modify/reject/defer any
+recommendation within their state, not only escalated ones.
+
+- `recommendation:approve` added to `STATE_ADMIN`'s grant in
+  `permissions.json` (`DISTRICT_OFFICER`'s grant unchanged);
+  `separationOfDuties.approverRoles` extended to
+  `["SUPER_ADMIN", "DISTRICT_OFFICER", "STATE_ADMIN"]` (the
+  `loader.ts` startup assertion enforces this exactly, so the JSON and
+  the actual grants can never silently drift apart).
+- `separationOfDuties.note` rewritten honestly: states this is a
+  **deliberate product decision**, not an oversight; names the control
+  it weakens (`STATE_ADMIN` now holds both evidence-write and approval
+  for its own state — no technical barrier stops one compromised or
+  misused account from doing both); names the mitigation (mandatory
+  >=30-char justification on every decision regardless of role,
+  append-only hash-chained `AuditLog`, and every `STATE_ADMIN` decision
+  — escalated or not — marked `decisionLevel: "STATE"` with `WARNING`
+  audit severity so it is always visibly distinguishable from routine
+  district-level activity after the fact). No comment anywhere in the
+  codebase claims the old restriction still holds.
+- `decision.routes.ts`: removed the `else if (role === "STATE_ADMIN" &&
+  escalation.status !== "ESCALATED") { 403 }` gate entirely — a
+  `STATE_ADMIN` now reaches the same approve/modify/reject/defer path as
+  a `DISTRICT_OFFICER`/`SUPER_ADMIN`, confined only by `requireScope()`'s
+  row-level filter (unchanged: an out-of-state attempt still 404s before
+  this route's own logic runs). `ESCALATE` itself is untouched —
+  still `DISTRICT_OFFICER`/`SUPER_ADMIN`-only — now serving as a
+  routing/visibility signal to the state admin rather than a
+  precondition for their approval right; escalating still notifies the
+  state's `STATE_ADMIN`(s) and still flags the recommendation in the
+  review queue.
+- `DecisionActionPanel.tsx` (web): `canDecide` simplified to a direct
+  `recommendation:approve` check (now true for `STATE_ADMIN` too, so the
+  "Approval restricted" panel no longer renders for that role on any
+  in-state recommendation); `canEscalate` changed to an explicit role
+  check (`DISTRICT_OFFICER`/`SUPER_ADMIN` only) since it can no longer
+  piggyback on the now-broader approve check. Panel still shows for
+  `ANALYST`/`FIELD_VOLUNTEER` only, unchanged.
+- Tests updated to assert the new behavior rather than deleted:
+  `permissions.test.ts`'s hand-restated matrix and separation-of-duties
+  describe block now assert `STATE_ADMIN` holds `recommendation:approve`
+  (previously asserted the opposite); `decision.routes.test.ts`'s
+  "STATE_ADMIN blocked when not escalated" test rewritten to assert 201
+  with `decisionLevel: "STATE"` instead; kept and extended the cross-state
+  block test (a Kerala `STATE_ADMIN` still 404s on a Ganjam recommendation,
+  both ordinary and escalated); the one test using STATE_ADMIN as a
+  generic "role without approve" example swapped to `FIELD_VOLUNTEER`,
+  which still genuinely lacks it. 281 API tests total (net unchanged —
+  one permission test removed as no-longer-true, one decision test added).
+- `docs/SECURITY.md` §4 rewritten in the same honest register as
+  `permissions.json`'s note (what changed, what it weakens, what
+  mitigates it) rather than silently amended; §4.1 reframed as
+  "routing/visibility, not a gate." `docs/METHODOLOGY.md`'s one-sentence
+  cross-reference updated to match.
+- `apps/web/e2e/escalation.spec.ts` rewritten: a `STATE_ADMIN` now decides
+  an **ordinary, non-escalated** Chamoli recommendation directly (the new
+  headline case — no "Approval restricted", no "Escalate to State" option
+  for that role), while a `DISTRICT_OFFICER`'s escalation still works as
+  a routing signal on a separate recommendation; a second test resolves a
+  real, current Ganjam recommendation id via the API (never hardcoded —
+  ids are regenerated by every pipeline run) and confirms a Kerala
+  `STATE_ADMIN` still cannot open it. Found and fixed one real, unrelated
+  test collision while getting this green: the review queue's
+  "ESCALATED" flag (Part 2) renders inside the same table cell
+  `worklist-filters.spec.ts` asserts is exactly "Pending review" — a
+  legitimate combined state, not a regression, so that assertion was
+  loosened to allow the flag rather than the flag being removed.
+
+Verified: 281 API tests, typecheck/lint clean on every workspace (same
+one pre-existing, untouched lint error as Part 2, unrelated), full
+11-spec e2e suite passing together in one clean run. Verified live in a
+real browser as the specifically-named accounts: logged in as Ravi Varma
+(Kerala `STATE_ADMIN`), opened an ordinary (non-escalated) Wayanad
+recommendation (Achooranam) — "Approval restricted" not shown, decision
+controls present, approved it, confirmed the STATE-LEVEL badge and
+chain-verified badge in the audit trail; then confirmed a real, current
+Ganjam recommendation (a different state) still shows "Could not load
+this recommendation" for the same Kerala `STATE_ADMIN`.
 
 ## Why Python Is a Separate Service
 

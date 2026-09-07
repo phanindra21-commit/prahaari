@@ -66,9 +66,13 @@ test.describe("worklist and review queue filters actually filter (requires the d
 
     await page.getByRole("button", { name: "Pending review", exact: true }).click();
     await expect(page.getByText(/matching record/)).toContainText("Pending review");
+    // The status cell also shows an "ESCALATED" flag next to the status for
+    // a recommendation a District Officer has escalated (STATE_ADMIN
+    // escalation feature) — a legitimate combined state, not evidence the
+    // filter stopped working, so allow that optional trailing text.
     const pendingStatuses = await page.locator("table tbody tr td:nth-child(3)").allTextContents();
     for (const status of pendingStatuses) {
-      expect(status).toBe("Pending review");
+      expect(status === "Pending review" || status === "Pending reviewESCALATED").toBe(true);
     }
   });
 });

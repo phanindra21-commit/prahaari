@@ -55,6 +55,7 @@ const EXPECTED: Record<UserRole, string[]> = {
     "hazardZone:write",
     "notification:read",
     "pipeline:run",
+    "recommendation:approve",
     "recommendation:approveEscalated",
     "recommendation:read",
     "relocationSite:read",
@@ -126,17 +127,20 @@ describe("RBAC permission matrix (Step 3 Part C3)", () => {
   }
 
   describe("separation of duties", () => {
-    it("only SUPER_ADMIN and DISTRICT_OFFICER can approve recommendations", () => {
+    it("SUPER_ADMIN, DISTRICT_OFFICER, and STATE_ADMIN can all approve recommendations; ANALYST and FIELD_VOLUNTEER cannot", () => {
       for (const role of USER_ROLES) {
         const canApprove = hasPermission(role, "recommendation:approve");
-        const shouldApprove = role === "SUPER_ADMIN" || role === "DISTRICT_OFFICER";
+        const shouldApprove = role === "SUPER_ADMIN" || role === "DISTRICT_OFFICER" || role === "STATE_ADMIN";
         expect(canApprove).toBe(shouldApprove);
       }
     });
 
-    it("STATE_ADMIN specifically cannot approve, despite broad read/write", () => {
+    it("STATE_ADMIN holds both evidence-write and approval — a deliberate product decision, not the earlier strict separation-of-duties property (see permissions.json's separationOfDuties.note for the mitigation: mandatory justification, hash-chained audit log, distinct decisionLevel/severity marking)", () => {
       expect(hasPermission("STATE_ADMIN", "habitation:write")).toBe(true);
-      expect(hasPermission("STATE_ADMIN", "recommendation:approve")).toBe(false);
+      expect(hasPermission("STATE_ADMIN", "hazardZone:write")).toBe(true);
+      expect(hasPermission("STATE_ADMIN", "hazardEvent:write")).toBe(true);
+      expect(hasPermission("STATE_ADMIN", "relocationSite:write")).toBe(true);
+      expect(hasPermission("STATE_ADMIN", "recommendation:approve")).toBe(true);
     });
 
     it("only SUPER_ADMIN can unlock accounts", () => {
@@ -164,17 +168,12 @@ describe("RBAC permission matrix (Step 3 Part C3)", () => {
       expect(hasPermission("ANALYST", "habitation:write")).toBe(false);
     });
 
-    it("only SUPER_ADMIN and STATE_ADMIN can act on an escalated recommendation", () => {
+    it("only SUPER_ADMIN and STATE_ADMIN hold recommendation:approveEscalated (kept as an explicit routing/visibility permission alongside their direct recommendation:approve grant, not as their only path to approval)", () => {
       for (const role of USER_ROLES) {
         const canApproveEscalated = hasPermission(role, "recommendation:approveEscalated");
         const shouldApproveEscalated = role === "SUPER_ADMIN" || role === "STATE_ADMIN";
         expect(canApproveEscalated).toBe(shouldApproveEscalated);
       }
-    });
-
-    it("STATE_ADMIN's escalation permission is a documented exception, not a repeal: it still lacks recommendation:approve", () => {
-      expect(hasPermission("STATE_ADMIN", "recommendation:approveEscalated")).toBe(true);
-      expect(hasPermission("STATE_ADMIN", "recommendation:approve")).toBe(false);
     });
 
     it("DISTRICT_OFFICER holds neither habitation:write, hazardZone:write, hazardEvent:write, nor relocationSite:write — it cannot edit the evidence it approves", () => {

@@ -318,6 +318,9 @@ describe("decision routes integration", () => {
   });
 
   it("rejects a role without recommendation:approve", async () => {
+    // FIELD_VOLUNTEER — not STATE_ADMIN, which now legitimately holds
+    // recommendation:approve for its own state (a deliberate product
+    // decision, see permissions.json's separationOfDuties.note).
     const district = await seedDistrict("DEC-RT-007");
     const habitation = await seedHabitation(district._id as Types.ObjectId, "DEC-RT-007-H1");
     const site = await seedSite(district._id as Types.ObjectId, "Site A");
@@ -326,7 +329,7 @@ describe("decision routes integration", () => {
       habitation._id as Types.ObjectId,
       site._id as Types.ObjectId,
     );
-    const token = await tokenForRole("STATE_ADMIN", undefined, "Kerala");
+    const token = await tokenForRole("FIELD_VOLUNTEER", district._id as Types.ObjectId);
 
     const res = await request(app)
       .post("/api/v1/decisions")
@@ -593,7 +596,7 @@ describe("decision routes integration", () => {
       expect(untouched!.escalation.status).toBe("NONE");
     });
 
-    it("SECURITY: STATE_ADMIN is blocked (403) from deciding a recommendation that has NOT been escalated", async () => {
+    it("STATE_ADMIN can decide an ordinary, NOT-escalated recommendation in their own state — approval no longer requires escalation (deliberate product decision, see permissions.json's separationOfDuties.note)", async () => {
       const district = await seedDistrict("DEC-RT-ESC-003", "Kerala");
       const districtId = district._id as Types.ObjectId;
       const habitation = await seedHabitation(districtId, "DEC-RT-ESC-003-H1");
@@ -610,9 +613,16 @@ describe("decision routes integration", () => {
           justification: LONG_JUSTIFICATION,
         });
 
-      expect(res.status).toBe(403);
-      const untouched = await Recommendation.findById(recommendation._id as Types.ObjectId);
-      expect(untouched!.status).toBe("PENDING_REVIEW");
+      expect(res.status).toBe(201);
+      expect(res.body.decision.decisionLevel).toBe("STATE");
+      expect(res.body.recommendation.status).toBe("APPROVED");
+      const updated = await Recommendation.findById(recommendation._id as Types.ObjectId);
+      expect(updated!.status).toBe("APPROVED");
+      expect(updated!.escalation.status).toBe("NONE");
+
+      const auditEntry = await pollForAuditEntry(res.body.decision._id);
+      expect(auditEntry).not.toBeNull();
+      expect(auditEntry!.severity).toBe("WARNING");
     });
 
     it("STATE_ADMIN can decide a recommendation escalated by a District Officer in their own state — marked decisionLevel STATE with WARNING audit severity", async () => {
@@ -652,10 +662,32 @@ describe("decision routes integration", () => {
       expect(auditEntry!.severity).toBe("WARNING");
     });
 
-    it("SECURITY: STATE_ADMIN is blocked (404, scoped out — never reaches the escalation check) from an escalated recommendation in a DIFFERENT state", async () => {
+    it("SECURITY: a Kerala STATE_ADMIN is blocked (404, scoped out by requireScope() before this handler's own logic runs) from an ordinary recommendation in a DIFFERENT state", async () => {
       const wayanad = await seedDistrict("DEC-RT-ESC-005", "Kerala");
       const wayanadId = wayanad._id as Types.ObjectId;
       const habitation = await seedHabitation(wayanadId, "DEC-RT-ESC-005-H1");
+      const site = await seedSite(wayanadId, "Site A");
+      const recommendation = await seedRecommendation(wayanadId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
+      const odishaStateToken = await tokenForRole("STATE_ADMIN", undefined, "Odisha");
+
+      const res = await request(app)
+        .post("/api/v1/decisions")
+        .set("Authorization", `Bearer ${odishaStateToken}`)
+        .send({
+          recommendationId: (recommendation._id as Types.ObjectId).toString(),
+          action: "APPROVE",
+          justification: LONG_JUSTIFICATION,
+        });
+
+      expect(res.status).toBe(404);
+      const untouched = await Recommendation.findById(recommendation._id as Types.ObjectId);
+      expect(untouched!.status).toBe("PENDING_REVIEW");
+    });
+
+    it("SECURITY: a Kerala STATE_ADMIN is blocked (404) from a DIFFERENT state's recommendation even once it has been escalated", async () => {
+      const wayanad = await seedDistrict("DEC-RT-ESC-005B", "Kerala");
+      const wayanadId = wayanad._id as Types.ObjectId;
+      const habitation = await seedHabitation(wayanadId, "DEC-RT-ESC-005B-H1");
       const site = await seedSite(wayanadId, "Site A");
       const recommendation = await seedRecommendation(wayanadId, habitation._id as Types.ObjectId, site._id as Types.ObjectId);
       const keralaOfficerToken = await tokenForRole("DISTRICT_OFFICER", wayanadId);

@@ -17,10 +17,15 @@ import { User } from "../models/User";
 export const decisionRouter = Router();
 
 const RECOMMENDATION_APPROVE = "recommendation:approve";
-/** Step: STATE_ADMIN escalation. Granted to STATE_ADMIN and SUPER_ADMIN
- * (permissions.json). Reaching this route with only this permission (i.e.
- * not also `recommendation:approve`) means STATE_ADMIN — every other role
- * that can hit this route holds `recommendation:approve` instead. */
+/** Granted to STATE_ADMIN and SUPER_ADMIN (permissions.json). Now that
+ * STATE_ADMIN also holds `recommendation:approve` directly (a deliberate
+ * product decision — see permissions.json's separationOfDuties.note), this
+ * permission is no longer load-bearing for reaching this route (every role
+ * that holds it also holds `recommendation:approve`); kept in the gate
+ * below for defense-in-depth and because `recommendation:approveEscalated`
+ * still has independent meaning — it is what a future role could be
+ * granted to act on escalated recommendations only, without full approval
+ * rights. */
 const RECOMMENDATION_APPROVE_ESCALATED = "recommendation:approveEscalated";
 const DECISION_READ = "decision:read";
 
@@ -118,22 +123,26 @@ function applyOverride(recommendation: RecommendationDoc, override: OverriddenFi
 
 /**
  * POST /api/v1/decisions — the human-in-the-loop action: an officer
- * approves, modifies, rejects, defers, or (District Officer / Super Admin
- * only) escalates one Recommendation. Justification is mandatory (>= 30
- * chars, enforced both here via Zod and client-side) per CLAUDE.md's
- * "officer actions are never silent" rule. Every changed field on a MODIFY
- * is recorded with its from/to values on the Decision document; the
- * generic autoAudit middleware (see app.ts) writes the hash-chained
- * AuditLog entry once `res.locals.auditEntity` is set below.
+ * approves, modifies, rejects, or defers one Recommendation; a
+ * DISTRICT_OFFICER (or SUPER_ADMIN, on their behalf) may additionally
+ * escalate one. Justification is mandatory (>= 30 chars, enforced both
+ * here via Zod and client-side) per CLAUDE.md's "officer actions are never
+ * silent" rule. Every changed field on a MODIFY is recorded with its
+ * from/to values on the Decision document; the generic autoAudit
+ * middleware (see app.ts) writes the hash-chained AuditLog entry once
+ * `res.locals.auditEntity` is set below.
  *
- * Two structurally different roles can reach this route:
- * DISTRICT_OFFICER/SUPER_ADMIN via `recommendation:approve`, or STATE_ADMIN
- * via `recommendation:approveEscalated` — the route gate below only checks
- * "holds at least one of these", so the finer-grained rule (STATE_ADMIN may
- * act ONLY on a recommendation a district officer has explicitly escalated,
- * and may never escalate one themselves) is enforced inline, after the
- * recommendation is fetched, not by the gate. See docs/SECURITY.md's
- * escalation section for the full reasoning.
+ * DISTRICT_OFFICER, STATE_ADMIN, and SUPER_ADMIN can all approve/modify/
+ * reject/defer any in-scope recommendation — STATE_ADMIN's approval right
+ * is not conditioned on escalation (see permissions.json's
+ * separationOfDuties.note for why this is a deliberate product decision,
+ * not an oversight, and what mitigates the control it weakens). Only
+ * `requireScope()`'s row-level filter confines a STATE_ADMIN to their own
+ * state's recommendations — a cross-state attempt gets 404 before this
+ * handler even runs its own logic. ESCALATE remains DISTRICT_OFFICER/
+ * SUPER_ADMIN-only, enforced inline below (not by the route's permission
+ * gate) — it is now a routing/visibility signal to the state admin, not a
+ * precondition for their approval right. See docs/SECURITY.md §4.1.
  */
 decisionRouter.post(
   "/decisions",
@@ -177,11 +186,11 @@ decisionRouter.post(
         return;
       }
 
-      // SECURITY: the exploit path this project explicitly assumes will be
-      // probed (three prior scope bypasses). Neither branch is reachable
-      // by ANALYST/FIELD_VOLUNTEER — the route gate above already rejects
-      // them (they hold neither recommendation:approve nor
-      // recommendation:approveEscalated).
+      // SECURITY: ESCALATE stays DISTRICT_OFFICER/SUPER_ADMIN-only — not
+      // reachable by ANALYST/FIELD_VOLUNTEER (the route gate above already
+      // rejects them) or by STATE_ADMIN (who can approve directly now, but
+      // still does not initiate an escalation — that stays a district-level
+      // action/signal to the state).
       if (body.action === "ESCALATE") {
         if (role !== "DISTRICT_OFFICER" && role !== "SUPER_ADMIN") {
           res.status(403).json({
@@ -193,13 +202,6 @@ decisionRouter.post(
           res.status(409).json({ error: "This recommendation is already escalated." });
           return;
         }
-      } else if (role === "STATE_ADMIN" && recommendation.escalation.status !== "ESCALATED") {
-        res.status(403).json({
-          error:
-            "A State Admin may act only on a recommendation a District Officer has explicitly escalated. " +
-            "This recommendation has not been escalated.",
-        });
-        return;
       }
 
       const decisionLevel: DecisionLevel = role === "STATE_ADMIN" ? "STATE" : "DISTRICT";
