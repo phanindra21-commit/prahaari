@@ -65,6 +65,9 @@ export function TopBar(): JSX.Element {
           <NavLink to="/map" className={navLinkClass}>
             Map
           </NavLink>
+          <NavLink to="/deployment" className={navLinkClass}>
+            Deployment
+          </NavLink>
           {user && hasPermission(user.role, "assessment:read") && (
             <NavLink to="/priorities" className={navLinkClass}>
               Priority worklist

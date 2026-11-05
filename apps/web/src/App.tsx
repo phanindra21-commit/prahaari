@@ -3,6 +3,7 @@ import { LoginPage } from "./routes/LoginPage";
 import { ProtectedLayout } from "./routes/ProtectedLayout";
 import { DashboardPage } from "./routes/DashboardPage";
 import { MapPage } from "./routes/MapPage";
+import { DeploymentPage } from "./routes/DeploymentPage";
 import { PrioritiesPage } from "./routes/PrioritiesPage";
 import { ReviewQueuePage } from "./routes/ReviewQueuePage";
 import { RecommendationDetailPage } from "./routes/RecommendationDetailPage";
@@ -18,6 +19,7 @@ export function App(): JSX.Element {
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/deployment" element={<DeploymentPage />} />
           <Route path="/priorities" element={<PrioritiesPage />} />
           <Route path="/recommendations" element={<ReviewQueuePage />} />
           <Route path="/recommendations/:id" element={<RecommendationDetailPage />} />

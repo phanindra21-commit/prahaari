@@ -1097,3 +1097,41 @@ See `docs/ARCHITECTURE.md` for the full rationale — in short: geospatial
 is Python-native and not realistically portable to Node without losing
 ecosystem support, so `services/ml` is a separate FastAPI process that
 `apps/api` calls over HTTP rather than a library imported into Node.
+
+## Seva First Innovation Challenge (SFIC) — status and next steps
+
+PRAHARI is also entered in the Seva First Innovation Challenge (Ministry of
+Education), Theme 5 Surakshit Bharat, Open level, Track A (Product &
+Technology). Team CoDevils, ACE Engineering College. Submission target:
+6 Nov 2026; Stage 2 (IISc Bengaluru) runs 16 Nov – 5 Dec 2026 if selected.
+
+Branch: `feature/seva-first-upgrade`.
+
+Added for SFIC:
+
+- `apps/web/src/lib/deploymentCost.ts` and `apps/web/src/routes/DeploymentPage.tsx`
+  (route `/deployment`, nav link in `TopBar.tsx`): editable cost assumptions,
+  year-one breakdown (defaults give about ₹8.7 lakh for 3 districts) and a
+  "what that buys" block. Assumptions are estimates, not quotes.
+- `docs/demo/` — demo video script and a Windows voiceover generator.
+
+Honest limits (keep these visible in any pitch or document):
+
+- All demo data is synthetic (`SYNTHETIC_DEMO`); real events are tagged as
+  public records.
+- ML is trained on synthetic labels, so reported accuracy is circular.
+- Chooralmala ranks Short-term for the 2024 Wayanad event (should rank higher).
+- No field survey or government pilot yet.
+
+Stage-2 backlog, in priority order:
+
+1. Real data for Wayanad (GSI inventory, SRTM/Bhuvan terrain, IMD rainfall,
+   Census) and a backtest against the 30 July 2024 landslide.
+2. Add a Telangana pilot district.
+3. Public hosted demo (MongoDB Atlas + hosted API + hosted ML service + static
+   web build). Not done yet; the app currently runs only locally.
+4. Offline-first field-volunteer app.
+
+Before any demo or recording run `npm run demo:reset`, then
+`npm run typecheck`. Do not commit the pre-existing modified seed and engine
+files without reviewing them first.

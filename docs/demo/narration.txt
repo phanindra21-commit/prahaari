@@ -1,0 +1,17 @@
+This is PRAHARI, built by Team CoDevils from ACE Engineering College for the Seva First Innovation Challenge, under the theme Surakshit Bharat. In July 2024, a landslide in Wayanad killed over two hundred thirty people. The warnings were issued. What was missing was an earlier answer: which settlements should have moved, in what order, and to where.
+---
+PRAHARI is a decision-support platform for district disaster authorities. Here, an officer logs in with a role-based account. Every user sees only the districts they are allowed to.
+---
+This is the map for Wayanad. The district is divided into small hexagonal cells, each scored for landslide, flood and cloudburst hazard, and coloured Green, Yellow, Orange or Red. The dots are habitations.
+---
+Let's open one habitation. PRAHARI scores its vulnerability from housing, access, and the share of children, elderly and disabled residents. It then declares the habitation safe or unsafe, by comparing its composite risk with its coping capacity. The top contributing factors are shown in plain language, so the officer can explain the result.
+---
+The priority worklist ranks every habitation as Immediate, Short-term or Medium-term. Here is the recommended relocation site. PRAHARI checks the site's carrying capacity: land, water, schools, health care and road access. It names the limiting factor, and it also plots the safest route avoiding red and orange cells. When no viable site exists, it says so, so the Collector can start acquiring land early.
+---
+Now the key part: a human decides. The officer can approve, modify, reject, defer or escalate, but must write a justification of at least thirty characters. Let's approve this one.
+---
+Every action is written to a tamper-evident, hash-chained audit log. This badge confirms the chain is intact.
+---
+Officers can also run what-if scenarios, such as the 2024 rainfall or a severe cyclone, without changing the official zoning. And this deployment page estimates the cost of a three-district pilot at about eight point seven lakh rupees in year one, based on stated assumptions.
+---
+To be clear about our stage: this is a working prototype on synthetic but realistic data, tested end to end. Our next step is real data and a backtest on the 2024 Wayanad event. PRAHARI. Plan the move before the disaster, and keep a human accountable for the decision. Thank you.
