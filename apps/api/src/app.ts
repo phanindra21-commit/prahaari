@@ -1,3 +1,4 @@
+import path from "node:path";
 import express, { type Express } from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -22,7 +23,13 @@ export function createApp(): Express {
   // limiting and forge audit log IPs — see docs/SECURITY.md.
   app.set("trust proxy", 1);
 
-  app.use(helmet());
+  // Optional single-origin hosting: when SERVE_WEB_DIST points at the built web
+  // app (apps/web/dist), this server also serves it, so the SPA and the API
+  // share one origin (the strict refresh-token cookie then works without CORS).
+  // The CSP is relaxed only in that mode because the map loads tiles and
+  // workers from other origins. Used for the hosted demo only.
+  const webDist = process.env.SERVE_WEB_DIST ? path.resolve(process.env.SERVE_WEB_DIST) : undefined;
+  app.use(helmet(webDist ? { contentSecurityPolicy: false } : undefined));
   app.use(
     cors({
       origin: corsAllowedOrigins,
@@ -44,6 +51,13 @@ export function createApp(): Express {
   });
 
   app.use("/api/v1", apiV1Router);
+
+  if (webDist) {
+    app.use(express.static(webDist));
+    app.get(/^\/(?!api\/|health).*/, (_req, res) => {
+      res.sendFile(path.join(webDist, "index.html"));
+    });
+  }
 
   app.use(errorHandler);
 
